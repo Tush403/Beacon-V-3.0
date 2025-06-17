@@ -5,10 +5,7 @@ import { AppHeader } from '@/components/beacon/AppHeader';
 // Toaster is in RootLayout, no need to import here unless it's scoped
 import React from 'react'; // Ensure React is imported
 
-export const metadata: Metadata = {
-  title: 'Beacon: AI Test Tool Navigator',
-  description: 'AI-powered test automation tool selection by Firebase Studio',
-};
+// Removed metadata export as it's not allowed in client components
 
 export default function NavigatorLayout({
   children,
