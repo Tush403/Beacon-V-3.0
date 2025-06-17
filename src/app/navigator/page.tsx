@@ -15,9 +15,7 @@ import {
   Sidebar, 
   SidebarContent, 
   SidebarInset,
-  // SidebarHeader, // Removed SidebarHeader import
 } from '@/components/ui/sidebar';
-// import { Filter as FilterIcon } from 'lucide-react'; // FilterIcon no longer needed
 
 export default function NavigatorPage() {
   const [filters, setFilters] = useState<FilterCriteria | null>(null);
@@ -100,17 +98,6 @@ export default function NavigatorPage() {
     <SidebarProvider defaultOpen={true}>
       <div className="flex flex-1">
         <Sidebar className="h-auto border-r" collapsible="icon">
-          {/* Removed SidebarHeader section 
-          <SidebarHeader className="p-4 border-b">
-            <div className="flex items-center gap-2 text-lg font-semibold text-primary">
-              <FilterIcon className="h-5 w-5" />
-              <span>Filter Tools</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Narrow down your search by specific criteria.
-            </p>
-          </SidebarHeader>
-          */}
           <SidebarContent className="p-4">
             <FilterForm 
               onSubmit={handleFilterSubmit} 
