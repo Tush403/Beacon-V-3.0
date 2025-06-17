@@ -101,7 +101,7 @@ export function ROIChart({ recommendedTools }: ROIChartProps) {
               <RechartsTooltip
                 cursor={{ stroke: 'hsl(var(--primary))', strokeDasharray: '3 3' }}
                 content={<ChartTooltipContent 
-                  formatter={(value) => `${value}%`} 
+                  formatter={(value, name) => `${name} ${value}%`} 
                   labelFormatter={(label, payload) => {
                     if (payload && payload.length > 0 && payload[0].payload.month) {
                        // Format M1 to Month 1 etc.
