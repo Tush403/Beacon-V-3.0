@@ -123,7 +123,7 @@ export default function NavigatorPage() {
             {recommendations.length > 0 && (
               <>
                 <Separator className="my-12" />
-                <div className="grid md:grid-cols-2 gap-8">
+                <div className="space-y-8"> {/* Changed from grid to space-y for vertical stacking */}
                   <ROIChart recommendedTools={recommendations} />
                   <TrendAnalysisCard />
                 </div>
