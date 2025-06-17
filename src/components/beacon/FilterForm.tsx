@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   Select,
@@ -26,7 +25,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Loader2, RotateCcw, Settings2 } from 'lucide-react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Loader2, RotateCcw, Settings2, Filter } from 'lucide-react';
 import type { FilterCriteria } from '@/types';
 
 const filterSchema = z.object({
@@ -135,7 +140,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
       { value: 'real-time', label: 'Real-time Monitoring' },
       { value: 'integration', label: 'Integration with BI Tools' },
     ],
-    automationTool: [ // Placeholder options for automation tool select
+    automationTool: [ 
       { value: 'none', label: 'None selected / Undecided' },
       { value: 'toolA', label: 'Functionize' },
       { value: 'toolB', label: 'ZeTA Automation' },
@@ -143,46 +148,213 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
     ],
   };
 
+  const handleResetToolFilters = () => {
+    const toolFilterDefaults = (Object.keys(defaultFormValues) as Array<keyof FilterFormValues>)
+      .reduce((acc, key) => {
+        if (!['automationTool', 'complexityLow', 'complexityMedium', 'complexityHigh', 'complexityHighlyComplex', 'useStandardFramework', 'cicdPipelineIntegrated', 'qaTeamSize'].includes(key)) {
+          acc[key] = defaultFormValues[key];
+        }
+        return acc;
+      }, {} as Partial<FilterFormValues>);
+    form.reset({...form.getValues(), ...toolFilterDefaults});
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-1">
-        {/* Tool Filter Section */}
-        {(Object.keys(filterOptions) as Array<keyof typeof filterOptions>)
-         .filter(key => !['automationTool'].includes(key)) // Exclude estimator's tool select for now
-         .map((key) => (
-          <FormField
-            key={key}
-            control={form.control}
-            name={key as keyof FilterFormValues} // Cast key to FilterFormValues key
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  {key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}
-                </FormLabel>
-                <Select 
-                    onValueChange={field.onChange} 
-                    defaultValue={field.value?.toString() ?? ""}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={filterOptions[key as keyof typeof filterOptions].find(opt => opt.value === defaultFormValues[key as keyof FilterFormValues])?.label || "Select an option"} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {filterOptions[key as keyof typeof filterOptions].map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        ))}
-        
-        <div className="space-y-3 pt-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="p-1">
+        <Accordion type="multiple" defaultValue={['filter-tools', 'ai-estimator']} className="w-full">
+          <AccordionItem value="filter-tools">
+            <AccordionTrigger>
+              <div className="flex items-center text-lg font-semibold text-primary hover:no-underline">
+                <Filter className="mr-2 h-5 w-5" />
+                Filter Tools
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pt-4 space-y-6">
+              {(Object.keys(filterOptions) as Array<keyof typeof filterOptions>)
+              .filter(key => !['automationTool'].includes(key))
+              .map((key) => (
+                <FormField
+                  key={key}
+                  control={form.control}
+                  name={key as keyof FilterFormValues}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}
+                      </FormLabel>
+                      <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value?.toString() ?? ""}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder={filterOptions[key as keyof typeof filterOptions].find(opt => opt.value === defaultFormValues[key as keyof FilterFormValues])?.label || "Select an option"} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {filterOptions[key as keyof typeof filterOptions].map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ))}
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="ai-estimator">
+            <AccordionTrigger>
+              <div className="flex items-center text-lg font-semibold text-primary hover:no-underline">
+                <Settings2 className="mr-2 h-5 w-5" />
+                AI Effort Estimator
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pt-4 space-y-4">
+              <p className="text-xs text-muted-foreground">
+                Provide project details to get an effort estimation.
+              </p>
+              <FormField
+                control={form.control}
+                name="automationTool"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Automation Tool</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="None selected / Undecided" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {filterOptions.automationTool.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="complexityLow"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Complexity - Low (Test Cases)</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="e.g., 50" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="complexityMedium"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Complexity - Medium (Test Cases)</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="e.g., 30" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="complexityHigh"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Complexity - High (Test Cases)</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="e.g., 15" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="complexityHighlyComplex"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Complexity - Highly Complex (Test Cases)</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="e.g., 5" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="useStandardFramework"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <FormLabel>Using a Standard Test Framework?</FormLabel>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="cicdPipelineIntegrated"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <FormLabel>CI/CD Pipeline Integrated?</FormLabel>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="qaTeamSize"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>QA Team Size (Engineers)</FormLabel>
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback className="bg-muted text-muted-foreground text-xs">N</AvatarFallback>
+                      </Avatar>
+                      <FormControl>
+                        <Input type="number" placeholder="e.g., 1" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="button" variant="secondary" className="w-full" onClick={() => console.log("Get Estimate clicked", form.getValues())}>
+                Get Estimate
+              </Button>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        <div className="space-y-3 pt-6">
           <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading}>
             {isLoading ? (
               <>
@@ -196,174 +368,14 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
           <Button
             type="button"
             variant="outline"
-            onClick={() => {
-              const toolFilterDefaults = (Object.keys(defaultFormValues) as Array<keyof FilterFormValues>)
-                .reduce((acc, key) => {
-                  if (!['automationTool', 'complexityLow', 'complexityMedium', 'complexityHigh', 'complexityHighlyComplex', 'useStandardFramework', 'cicdPipelineIntegrated', 'qaTeamSize'].includes(key)) {
-                    acc[key] = defaultFormValues[key];
-                  }
-                  return acc;
-                }, {} as Partial<FilterFormValues>);
-              form.reset({...form.getValues(), ...toolFilterDefaults});
-            }}
+            onClick={handleResetToolFilters}
             className="w-full"
           >
-            <RotateCcw className="mr-2 h-4 w-4" /> Reset Filters
+            <RotateCcw className="mr-2 h-4 w-4" /> Reset Tool Filters
           </Button>
-        </div>
-
-        <Separator className="my-8" />
-
-        {/* AI Effort Estimator Section */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center text-primary">
-            <Settings2 className="mr-2 h-5 w-5" />
-            AI Effort Estimator
-          </h3>
-          <p className="text-xs text-muted-foreground">
-            Provide project details to get an effort estimation.
-          </p>
-
-          <FormField
-            control={form.control}
-            name="automationTool"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Automation Tool</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="None selected / Undecided" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {filterOptions.automationTool.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="complexityLow"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Complexity - Low (Test Cases)</FormLabel>
-                <FormControl>
-                  <Input type="number" placeholder="e.g., 50" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="complexityMedium"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Complexity - Medium (Test Cases)</FormLabel>
-                <FormControl>
-                  <Input type="number" placeholder="e.g., 30" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="complexityHigh"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Complexity - High (Test Cases)</FormLabel>
-                <FormControl>
-                  <Input type="number" placeholder="e.g., 15" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="complexityHighlyComplex"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Complexity - Highly Complex (Test Cases)</FormLabel>
-                <FormControl>
-                  <Input type="number" placeholder="e.g., 5" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="useStandardFramework"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                <div className="space-y-0.5">
-                  <FormLabel>Using a Standard Test Framework?</FormLabel>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="cicdPipelineIntegrated"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                <div className="space-y-0.5">
-                  <FormLabel>CI/CD Pipeline Integrated?</FormLabel>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="qaTeamSize"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>QA Team Size (Engineers)</FormLabel>
-                <div className="flex items-center gap-2">
-                   <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-muted text-muted-foreground text-xs">N</AvatarFallback>
-                  </Avatar>
-                  <FormControl>
-                    <Input type="number" placeholder="e.g., 1" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
-                  </FormControl>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <Button type="button" variant="secondary" className="w-full" onClick={() => console.log("Get Estimate clicked", form.getValues())}>
-            Get Estimate 
-          </Button>
-           {/* This button is type="button" for now to prevent submitting to recommendToolsAction. 
-               It will log values to console. We can make it functional later. */}
         </div>
       </form>
     </Form>
   );
 }
+
