@@ -15,9 +15,9 @@ import {
   Sidebar, 
   SidebarContent, 
   SidebarInset,
-  SidebarHeader,
+  // SidebarHeader, // Removed SidebarHeader import
 } from '@/components/ui/sidebar';
-import { Filter as FilterIcon } from 'lucide-react';
+// import { Filter as FilterIcon } from 'lucide-react'; // FilterIcon no longer needed
 
 export default function NavigatorPage() {
   const [filters, setFilters] = useState<FilterCriteria | null>(null);
@@ -78,7 +78,7 @@ export default function NavigatorPage() {
       const analysisInput: GenerateToolAnalysisInput = { toolName };
       const analysisResult = await generateToolAnalysisAction(analysisInput);
       setToolAnalyses((prev) => ({ ...prev, [toolName]: analysisResult }));
-    } catch (e: any) { // Added missing opening brace here
+    } catch (e: any) {
       setError(e.message || `An unknown error occurred while fetching analysis for ${toolName}.`);
       toast({
         title: 'Error',
@@ -100,6 +100,7 @@ export default function NavigatorPage() {
     <SidebarProvider defaultOpen={true}>
       <div className="flex flex-1">
         <Sidebar className="h-auto border-r" collapsible="icon">
+          {/* Removed SidebarHeader section 
           <SidebarHeader className="p-4 border-b">
             <div className="flex items-center gap-2 text-lg font-semibold text-primary">
               <FilterIcon className="h-5 w-5" />
@@ -109,6 +110,7 @@ export default function NavigatorPage() {
               Narrow down your search by specific criteria.
             </p>
           </SidebarHeader>
+          */}
           <SidebarContent className="p-4">
             <FilterForm 
               onSubmit={handleFilterSubmit} 
