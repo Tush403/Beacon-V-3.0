@@ -27,7 +27,7 @@ export interface Trend {
 }
 
 export interface DocumentationLink {
-  toolName: string;
+  toolName:string;
   url: string;
   label: string;
 }
@@ -41,6 +41,16 @@ export const RecommendToolsInputSchema = z.object({
   codingLanguage: z.string().describe('The preferred coding language if scripting is involved (e.g., "JavaScript", "Python", "Java", "Any Language").'),
   pricingModel: z.string().describe('The preferred pricing model for the tool (e.g., "Open Source", "Subscription", "Perpetual License", "Any Model").'),
   reportingAnalytics: z.string().describe('The required level of reporting and analytics capabilities (e.g., "Basic Reporting", "Advanced Analytics", "Dashboard Integration", "Any Analytics").'),
+  
+  // AI Effort Estimator Fields
+  automationTool: z.string().optional().describe('Selected automation tool for effort estimation.'),
+  complexityLow: z.number().optional().describe('Number of low complexity test cases.'),
+  complexityMedium: z.number().optional().describe('Number of medium complexity test cases.'),
+  complexityHigh: z.number().optional().describe('Number of high complexity test cases.'),
+  complexityHighlyComplex: z.number().optional().describe('Number of highly complex test cases.'),
+  useStandardFramework: z.boolean().optional().describe('Whether a standard test framework is in use.'),
+  cicdPipelineIntegrated: z.boolean().optional().describe('Whether CI/CD pipeline is integrated.'),
+  qaTeamSize: z.number().optional().describe('Size of the QA team in engineers.'),
 });
 
 // This ensures that RecommendToolsInput is exactly what the flow expects.
@@ -54,4 +64,3 @@ export interface GenerateToolAnalysisInput {
 // Keep FilterCriteria as an alias or separate interface if used directly by UI components
 // and ensure it aligns with RecommendToolsInput.
 export interface FilterCriteria extends RecommendToolsInput {}
-

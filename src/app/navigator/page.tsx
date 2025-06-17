@@ -36,6 +36,15 @@ export default function NavigatorPage() {
     codingLanguage: 'any',
     pricingModel: 'any',
     reportingAnalytics: 'any',
+    // AI Effort Estimator defaults
+    automationTool: 'none',
+    complexityLow: 50,
+    complexityMedium: 30,
+    complexityHigh: 15,
+    complexityHighlyComplex: 5,
+    useStandardFramework: false,
+    cicdPipelineIntegrated: false,
+    qaTeamSize: 1,
   };
 
   const handleFilterSubmit = async (data: FilterCriteria) => {
@@ -69,8 +78,7 @@ export default function NavigatorPage() {
       const analysisInput: GenerateToolAnalysisInput = { toolName };
       const analysisResult = await generateToolAnalysisAction(analysisInput);
       setToolAnalyses((prev) => ({ ...prev, [toolName]: analysisResult }));
-    } catch (e: any) {
-      setError(e.message || `An unknown error occurred while fetching analysis for ${toolName}.`);
+    } catch (e: any)      setError(e.message || `An unknown error occurred while fetching analysis for ${toolName}.`);
       toast({
         title: 'Error',
         description: e.message || `Failed to get analysis for ${toolName}.`,
