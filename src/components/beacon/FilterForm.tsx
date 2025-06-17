@@ -140,7 +140,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
       { value: 'real-time', label: 'Real-time Monitoring' },
       { value: 'integration', label: 'Integration with BI Tools' },
     ],
-    automationTool: [ 
+    automationTool: [
       { value: 'none', label: 'None selected / Undecided' },
       { value: 'toolA', label: 'Functionize' },
       { value: 'toolB', label: 'ZeTA Automation' },
@@ -152,7 +152,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
     const toolFilterDefaults = (Object.keys(defaultFormValues) as Array<keyof FilterFormValues>)
       .reduce((acc, key) => {
         if (!['automationTool', 'complexityLow', 'complexityMedium', 'complexityHigh', 'complexityHighlyComplex', 'useStandardFramework', 'cicdPipelineIntegrated', 'qaTeamSize'].includes(key)) {
-          acc[key] = defaultFormValues[key];
+          acc[key] = defaultFormValues[key as keyof FilterFormValues];
         }
         return acc;
       }, {} as Partial<FilterFormValues>);
@@ -205,6 +205,26 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                   )}
                 />
               ))}
+              <div className="space-y-3 pt-4">
+                <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Getting Recommendations...
+                    </>
+                  ) : (
+                    'Get AI Recommendations'
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleResetToolFilters}
+                  className="w-full"
+                >
+                  <RotateCcw className="mr-2 h-4 w-4" /> Reset Tool Filters
+                </Button>
+              </div>
             </AccordionContent>
           </AccordionItem>
 
@@ -353,27 +373,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-
-        <div className="space-y-3 pt-6">
-          <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Getting Recommendations...
-              </>
-            ) : (
-              'Get AI Recommendations'
-            )}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleResetToolFilters}
-            className="w-full"
-          >
-            <RotateCcw className="mr-2 h-4 w-4" /> Reset Tool Filters
-          </Button>
-        </div>
       </form>
     </Form>
   );
