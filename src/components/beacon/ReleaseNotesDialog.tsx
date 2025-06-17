@@ -121,11 +121,6 @@ export function ReleaseNotesDialog({ isOpen, onOpenChange, onAcknowledge }: Rele
               </ul>
             </section>
             
-            <div className="mt-4 text-xs text-muted-foreground flex items-center">
-                <AlertTriangle className="h-4 w-4 mr-1.5 text-amber-500" />
-                Beacon V.2.0 - Powered by Firebase Studio
-            </div>
-
           </div>
         </ScrollArea>
 
