@@ -98,7 +98,7 @@ export default function NavigatorPage() {
     <SidebarProvider defaultOpen={true}>
       <div className="flex flex-1">
         <Sidebar className="h-auto border-r" collapsible="icon">
-          <SidebarContent className="p-4">
+          <SidebarContent className="px-4 pb-4">
             <FilterForm 
               onSubmit={handleFilterSubmit} 
               isLoading={isLoadingRecommendations}
