@@ -31,12 +31,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Loader2, RotateCcw, Settings2, Filter, CheckCircle2, AlertCircle } from 'lucide-react';
-import type { FilterCriteria, EstimateEffortInput, EstimateEffortOutput } from '@/types'; // Added EstimateEffort types
-import { useState } from 'react'; // Added useState
-import { estimateEffortAction } from '@/app/actions'; // Import the new action
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'; // For displaying result
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // For errors
+import { Loader2, RotateCcw, Settings2, Filter } from 'lucide-react';
+import type { FilterCriteria, EstimateEffortInput } from '@/types'; 
+import { useState } from 'react'; 
+import { estimateEffortAction } from '@/app/actions'; 
+import { useToast } from '@/hooks/use-toast';
 
 
 const filterSchema = z.object({
@@ -48,7 +47,6 @@ const filterSchema = z.object({
   pricingModel: z.string().min(1, 'Please select an option').default('any'),
   reportingAnalytics: z.string().min(1, 'Please select an option').default('any'),
 
-  // AI Effort Estimator Fields
   automationTool: z.string().optional().default('none'),
   complexityLow: z.coerce.number().min(0, 'Must be zero or positive').optional().default(0),
   complexityMedium: z.coerce.number().min(0, 'Must be zero or positive').optional().default(0),
@@ -75,7 +73,6 @@ const defaultFormValues: FilterFormValues = {
   codingLanguage: 'any',
   pricingModel: 'any',
   reportingAnalytics: 'any',
-  // Estimator defaults
   automationTool: 'none',
   complexityLow: 0,
   complexityMedium: 0,
@@ -92,9 +89,8 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
     defaultValues: { ...defaultFormValues, ...defaultValues },
   });
 
-  const [effortEstimate, setEffortEstimate] = useState<EstimateEffortOutput | null>(null);
+  const { toast } = useToast();
   const [isEstimatingEffort, setIsEstimatingEffort] = useState(false);
-  const [effortError, setEffortError] = useState<string | null>(null);
 
   const handleGetEstimate = async () => {
     const formData = form.getValues();
@@ -107,17 +103,39 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
       useStandardFramework: formData.useStandardFramework || false,
       cicdPipelineIntegrated: formData.cicdPipelineIntegrated || false,
       qaTeamSize: formData.qaTeamSize || 0,
-      // projectDescription: "Brief project description if available" // Add if a field is created
     };
 
     setIsEstimatingEffort(true);
-    setEffortError(null);
-    setEffortEstimate(null);
     try {
       const result = await estimateEffortAction(effortInput);
-      setEffortEstimate(result);
+      toast({
+        title: "AI Effort Estimation Result",
+        description: (
+          <div className="text-sm space-y-1.5">
+            <p>
+              <span className="font-semibold text-foreground">Estimated Effort: </span>
+              {result.estimatedEffortDaysMin} - {result.estimatedEffortDaysMax} person-days
+            </p>
+            {result.confidenceScore !== undefined && (
+               <p>
+                 <span className="font-semibold text-foreground">Confidence: </span>
+                 {result.confidenceScore}%
+               </p>
+            )}
+            <div>
+              <span className="font-semibold text-foreground">Explanation:</span>
+              <p className="text-muted-foreground whitespace-pre-line text-xs mt-1">{result.explanation}</p>
+            </div>
+          </div>
+        ),
+        duration: 15000, // Increased duration for readability
+      });
     } catch (e: any) {
-      setEffortError(e.message || 'Failed to get effort estimate.');
+      toast({
+        title: 'Estimation Error',
+        description: e.message || 'Failed to get effort estimate.',
+        variant: 'destructive',
+      });
     } finally {
       setIsEstimatingEffort(false);
     }
@@ -182,7 +200,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
     const toolFilterDefaults = (Object.keys(defaultFormValues) as Array<keyof FilterFormValues>)
       .reduce((acc, key) => {
         if (!['automationTool', 'complexityLow', 'complexityMedium', 'complexityHigh', 'complexityHighlyComplex', 'useStandardFramework', 'cicdPipelineIntegrated', 'qaTeamSize'].includes(key)) {
-          acc[key] = defaultFormValues[key as keyof FilterFormValues];
+          acc[key as keyof FilterFormValues] = defaultFormValues[key as keyof FilterFormValues];
         }
         return acc;
       }, {} as Partial<FilterFormValues>);
@@ -406,41 +424,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                   'Get Estimate'
                 )}
               </Button>
-
-              {effortError && (
-                <Alert variant="destructive" className="mt-4">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Estimation Error</AlertTitle>
-                  <AlertDescription>{effortError}</AlertDescription>
-                </Alert>
-              )}
-
-              {effortEstimate && !effortError && (
-                <Card className="mt-4 bg-card/80 border-primary/50">
-                  <CardHeader className="pb-3 pt-4">
-                    <CardTitle className="text-base flex items-center gap-2 text-primary">
-                      <CheckCircle2 className="h-5 w-5" />
-                      Effort Estimation Result
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-xs space-y-1.5 pb-4">
-                    <p>
-                      <span className="font-semibold text-foreground">Estimated Effort: </span>
-                      {effortEstimate.estimatedEffortDaysMin} - {effortEstimate.estimatedEffortDaysMax} person-days
-                    </p>
-                    {effortEstimate.confidenceScore !== undefined && (
-                       <p>
-                         <span className="font-semibold text-foreground">Confidence: </span>
-                         {effortEstimate.confidenceScore}%
-                       </p>
-                    )}
-                    <div>
-                      <span className="font-semibold text-foreground">Key Factors & Explanation:</span>
-                      <p className="text-muted-foreground whitespace-pre-line text-xs mt-1">{effortEstimate.explanation}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
