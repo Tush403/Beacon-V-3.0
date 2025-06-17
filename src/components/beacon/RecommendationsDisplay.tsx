@@ -28,12 +28,12 @@ const mockEfforts: Record<string, ProjectEffort> = {
 };
 
 const mockDocLinks: Record<string, DocumentationLink> = {
-  'Tool A': { toolName: 'Tool A', url: 'https://example.com/tool-a.pdf', label: 'View Tool A Docs' },
-  'Tool B': { toolName: 'Tool B', url: 'https://example.com/tool-b.pdf', label: 'View Tool B Docs' },
-  'Tool C': { toolName: 'Tool C', url: 'https://example.com/tool-c.pdf', label: 'View Tool C Docs' },
-  'DefaultTool1': { toolName: 'DefaultTool1', url: 'https://example.com/default-tool1.pdf', label: 'View DefaultTool1 Docs' },
-  'DefaultTool2': { toolName: 'DefaultTool2', url: 'https://example.com/default-tool2.pdf', label: 'View DefaultTool2 Docs' },
-  'DefaultTool3': { toolName: 'DefaultTool3', url: 'https://example.com/default-tool3.pdf', label: 'View DefaultTool3 Docs' },
+  'Tool A': { toolName: 'Tool A', url: 'https://example.com/tool-a.pdf', label: 'Visit Official Website' },
+  'Tool B': { toolName: 'Tool B', url: 'https://example.com/tool-b.pdf', label: 'Visit Official Website' },
+  'Tool C': { toolName: 'Tool C', url: 'https://example.com/tool-c.pdf', label: 'Visit Official Website' },
+  'DefaultTool1': { toolName: 'DefaultTool1', url: 'https://example.com/default-tool1.pdf', label: 'Visit Official Website' },
+  'DefaultTool2': { toolName: 'DefaultTool2', url: 'https://example.com/default-tool2.pdf', label: 'Visit Official Website' },
+  'DefaultTool3': { toolName: 'DefaultTool3', url: 'https://example.com/default-tool3.pdf', label: 'Visit Official Website' },
 };
 
 

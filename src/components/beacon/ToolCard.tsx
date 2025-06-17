@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -132,7 +133,7 @@ export function ToolCard({
           <Button variant="outline" asChild className="w-full">
             <a href={docLink.url} target="_blank" rel="noopener noreferrer">
               <FileText className="mr-2 h-4 w-4" />
-              {docLink.label}
+              Visit Official Website
               <ExternalLink className="ml-auto h-4 w-4 opacity-70" />
             </a>
           </Button>
