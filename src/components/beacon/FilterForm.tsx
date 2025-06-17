@@ -4,30 +4,30 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'; // Keep Card for structure if Sidebar doesn't have header
 import { Filter, Loader2 } from 'lucide-react';
 import type { FilterCriteria } from '@/types';
 
 const filterSchema = z.object({
-  applicationType: z.string().min(1, 'Application type is required'),
-  os: z.string().min(1, 'Operating system is required'),
-  testType: z.string().min(1, 'Test type is required'),
-  codingNeeds: z.string().min(1, 'Coding needs are required'),
+  complexityMedium: z.coerce.number().min(0, 'Must be non-negative').default(30),
+  complexityHigh: z.coerce.number().min(0, 'Must be non-negative').default(15),
+  complexityHighlyComplex: z.coerce.number().min(0, 'Must be non-negative').default(5),
+  useStandardFramework: z.boolean().default(false),
+  cicdPipelineIntegrated: z.boolean().default(false),
+  qaTeamSize: z.coerce.number().int().positive('Must be a positive integer').default(1),
 });
 
 type FilterFormValues = z.infer<typeof filterSchema>;
@@ -38,144 +38,126 @@ interface FilterFormProps {
   defaultValues?: Partial<FilterCriteria>;
 }
 
-const applicationTypes = ['Web', 'Mobile', 'API', 'Desktop', 'Backend'];
-const osOptions = ['Windows', 'macOS', 'Linux', 'Android', 'iOS', 'Cross-Platform'];
-const testTypes = ['Functional', 'Performance', 'Security', 'Usability', 'API Testing', 'E2E Automation', 'Unit Testing'];
-const codingNeedsOptions = ['No-code/Low-code', 'Scripting', 'Full Code', 'Hybrid'];
-
 export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormProps) {
   const form = useForm<FilterFormValues>({
     resolver: zodResolver(filterSchema),
     defaultValues: {
-      applicationType: defaultValues?.applicationType || 'Web',
-      os: defaultValues?.os || 'Cross-Platform',
-      testType: defaultValues?.testType || 'Functional',
-      codingNeeds: defaultValues?.codingNeeds || 'Scripting',
+      complexityMedium: defaultValues?.complexityMedium ?? 30,
+      complexityHigh: defaultValues?.complexityHigh ?? 15,
+      complexityHighlyComplex: defaultValues?.complexityHighlyComplex ?? 5,
+      useStandardFramework: defaultValues?.useStandardFramework ?? false,
+      cicdPipelineIntegrated: defaultValues?.cicdPipelineIntegrated ?? false,
+      qaTeamSize: defaultValues?.qaTeamSize ?? 1,
     },
   });
 
   return (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-xl font-headline">
-          <Filter className="h-6 w-6 text-primary" />
-          Find Your Perfect Test Tool
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="applicationType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Application Type</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select application type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {applicationTypes.map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="os"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Operating System</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select OS" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {osOptions.map((os) => (
-                          <SelectItem key={os} value={os}>
-                            {os}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="testType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Test Type</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select test type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {testTypes.map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="codingNeeds"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Coding Needs</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select coding needs" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {codingNeedsOptions.map((needs) => (
-                          <SelectItem key={needs} value={needs}>
-                            {needs}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <Button type="submit" className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Getting Recommendations...
-                </>
-              ) : (
-                'Get AI Recommendations'
-              )}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+    // The Card component might be redundant if used within SidebarHeader context
+    // For now, keeping it simple and letting the parent structure (Sidebar) handle titles if needed
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-1"> {/* Reduced padding if inside sidebar */}
+        <FormField
+          control={form.control}
+          name="complexityMedium"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Complexity - Medium (Test Cases)</FormLabel>
+              <FormControl>
+                <Input type="number" placeholder="e.g., 30" {...field} onChange={e => field.onChange(parseInt(e.target.value,10) || 0)} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="complexityHigh"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Complexity - High (Test Cases)</FormLabel>
+              <FormControl>
+                <Input type="number" placeholder="e.g., 15" {...field} onChange={e => field.onChange(parseInt(e.target.value,10) || 0)} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="complexityHighlyComplex"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Complexity - Highly Complex (Test Cases)</FormLabel>
+              <FormControl>
+                <Input type="number" placeholder="e.g., 5" {...field} onChange={e => field.onChange(parseInt(e.target.value,10) || 0)} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="useStandardFramework"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-background">
+              <div className="space-y-0.5">
+                <FormLabel>Using a Standard Test Framework?</FormLabel>
+              </div>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="cicdPipelineIntegrated"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-background">
+              <div className="space-y-0.5">
+                <FormLabel>CI/CD Pipeline Integrated?</FormLabel>
+              </div>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="qaTeamSize"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>QA Team Size (Engineers)</FormLabel>
+              <div className="flex items-center gap-2">
+                <Avatar className="h-10 w-10">
+                  <AvatarFallback className="bg-muted text-muted-foreground">N</AvatarFallback>
+                </Avatar>
+                <FormControl>
+                  <Input type="number" placeholder="e.g., 1" {...field} className="w-full" onChange={e => field.onChange(parseInt(e.target.value,10) || 0)} />
+                </FormControl>
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading}>
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Getting Recommendations...
+            </>
+          ) : (
+            'Get AI Recommendations'
+          )}
+        </Button>
+      </form>
+    </Form>
   );
 }

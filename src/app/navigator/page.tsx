@@ -1,15 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-// Removed AppHeader import, it's in navigator/layout.tsx
 import { FilterForm } from '@/components/beacon/FilterForm';
 import { RecommendationsDisplay } from '@/components/beacon/RecommendationsDisplay';
 import { ROIChart } from '@/components/beacon/ROIChart';
 import { TrendAnalysisCard } from '@/components/beacon/TrendAnalysisCard';
-import { recommendToolsAction, generateToolAnalysisAction } from '../actions'; // Adjusted path for actions
+import { recommendToolsAction, generateToolAnalysisAction } from '../actions';
 import { useToast } from '@/hooks/use-toast';
 import type { FilterCriteria, ToolRecommendationItem, ToolAnalysisItem } from '@/types';
 import { Separator } from '@/components/ui/separator';
+import { 
+  SidebarProvider, 
+  Sidebar, 
+  SidebarContent, 
+  SidebarInset,
+  SidebarHeader,
+  SidebarTrigger // Optional: if you want a button to toggle sidebar on mobile/desktop
+} from '@/components/ui/sidebar';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card'; // For filter title if needed
+import { Filter as FilterIcon } from 'lucide-react';
 
 export default function NavigatorPage() {
   const [filters, setFilters] = useState<FilterCriteria | null>(null);
@@ -63,48 +72,61 @@ export default function NavigatorPage() {
   };
   
   const initialFilterValues: FilterCriteria = {
-    applicationType: 'Web',
-    os: 'Cross-Platform',
-    testType: 'Functional',
-    codingNeeds: 'Scripting',
+    complexityMedium: 30,
+    complexityHigh: 15,
+    complexityHighlyComplex: 5,
+    useStandardFramework: false,
+    cicdPipelineIntegrated: false,
+    qaTeamSize: 1,
   };
 
   useEffect(() => {
      // handleFilterSubmit(initialFilterValues); // Uncomment to auto-load on page init
   }, []);
 
-
   return (
-    // Removed outer div and AppHeader, handled by layout
-    // Main tag from original page.tsx structure preserved here
-    <div className="space-y-10">
-      <FilterForm 
-        onSubmit={handleFilterSubmit} 
-        isLoading={isLoadingRecommendations}
-        defaultValues={initialFilterValues}
-      />
-      
-      <RecommendationsDisplay
-        recommendations={recommendations}
-        toolAnalyses={toolAnalyses}
-        projectEfforts={{}} 
-        docLinks={{}}
-        onGetAnalysis={handleGetAnalysis}
-        isLoadingRecommendations={isLoadingRecommendations}
-        isLoadingAnalysis={isLoadingAnalysis}
-        error={error}
-      />
+    <SidebarProvider defaultOpen={true}> {/* Sidebar open by default on desktop */}
+      <div className="flex flex-1"> {/* This div is important for SidebarProvider's direct child */}
+        <Sidebar className="h-auto border-r" collapsible="icon"> {/* Use 'icon' for desktop collapse, offcanvas for mobile */}
+          <SidebarHeader className="p-4 border-b">
+            <div className="flex items-center gap-2 text-lg font-semibold text-primary">
+              <FilterIcon className="h-5 w-5" />
+              <span>Filter Options</span>
+            </div>
+          </SidebarHeader>
+          <SidebarContent className="p-4">
+            <FilterForm 
+              onSubmit={handleFilterSubmit} 
+              isLoading={isLoadingRecommendations}
+              defaultValues={initialFilterValues}
+            />
+          </SidebarContent>
+        </Sidebar>
+        <SidebarInset>
+          <div className="p-4 md:p-8 space-y-10"> {/* Add padding to main content area */}
+            <RecommendationsDisplay
+              recommendations={recommendations}
+              toolAnalyses={toolAnalyses}
+              projectEfforts={{}} 
+              docLinks={{}}
+              onGetAnalysis={handleGetAnalysis}
+              isLoadingRecommendations={isLoadingRecommendations}
+              isLoadingAnalysis={isLoadingAnalysis}
+              error={error}
+            />
 
-      {recommendations.length > 0 && (
-        <>
-          <Separator className="my-12" />
-          <div className="grid md:grid-cols-2 gap-8">
-            <ROIChart recommendedTools={recommendations} />
-            <TrendAnalysisCard />
+            {recommendations.length > 0 && (
+              <>
+                <Separator className="my-12" />
+                <div className="grid md:grid-cols-2 gap-8">
+                  <ROIChart recommendedTools={recommendations} />
+                  <TrendAnalysisCard />
+                </div>
+              </>
+            )}
           </div>
-        </>
-      )}
-    </div>
-    // Removed footer, handled by layout
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 }

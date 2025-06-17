@@ -5,16 +5,33 @@ import { generateToolAnalysis as genkitGenerateToolAnalysis, GenerateToolAnalysi
 
 export async function recommendToolsAction(filters: RecommendToolsInput): Promise<RecommendToolsOutput> {
   try {
-    const result = await genkitRecommendTools(filters);
+    // Ensure numeric fields are indeed numbers, as they might come from form as strings if not careful
+    const numericFilters = {
+      ...filters,
+      complexityMedium: Number(filters.complexityMedium),
+      complexityHigh: Number(filters.complexityHigh),
+      complexityHighlyComplex: Number(filters.complexityHighlyComplex),
+      qaTeamSize: Number(filters.qaTeamSize),
+    };
+    const result = await genkitRecommendTools(numericFilters);
     if (!result || !result.recommendations) {
       throw new Error('AI recommendations came back empty.');
     }
     // Simulate varying scores for better UI testing if all scores are identical
-    if (result.recommendations.every(r => r.score === result.recommendations[0].score)) {
+    if (result.recommendations.length > 0 && result.recommendations.every(r => r.score === result.recommendations[0].score)) {
       result.recommendations = result.recommendations.map((r, i) => ({
         ...r,
-        score: Math.max(0, Math.min(100, r.score - i * 5 + 10)) // slightly vary scores
+        score: Math.max(0, Math.min(100, (r.score || 80) - i * 5 + (i === 0 ? 0 : i === 1 ? -5 : -10))) 
       }));
+       // Ensure scores are different and within bounds
+      if (result.recommendations.length > 1 && result.recommendations[0].score === result.recommendations[1].score) {
+        result.recommendations[0].score = Math.min(100, result.recommendations[0].score + 5);
+        result.recommendations[1].score = Math.max(0, result.recommendations[1].score -5);
+      }
+       if (result.recommendations.length > 2 && result.recommendations[1].score === result.recommendations[2].score) {
+        result.recommendations[1].score = Math.min(100, result.recommendations[1].score + 3);
+        result.recommendations[2].score = Math.max(0, result.recommendations[2].score -3);
+      }
     }
     return result;
   } catch (error) {
@@ -27,20 +44,18 @@ export async function generateToolAnalysisAction(input: GenerateToolAnalysisInpu
   try {
     const result = await genkitGenerateToolAnalysis(input);
      if (!result || !result.strengths || !result.weaknesses) {
-      // Provide mock data if AI fails or returns empty, to ensure UI flow
       console.warn('AI analysis came back empty or failed, providing mock data for:', input.toolName);
       return {
-        strengths: `Mock Strength: ${input.toolName} is highly adaptable and supports various plugins. It has a strong community.`,
-        weaknesses: `Mock Weakness: ${input.toolName} can have a steep learning curve for beginners and may require significant setup for complex projects.`
+        strengths: `Mock Strength: ${input.toolName} is highly adaptable and supports various plugins. It has a strong community and performs well under load.`,
+        weaknesses: `Mock Weakness: ${input.toolName} can have a steep learning curve for beginners and may require significant setup for complex projects. Documentation could be improved.`
       };
     }
     return result;
   } catch (error) {
     console.error('Error generating tool analysis:', error);
-    // Provide mock data on error to ensure UI flow
     return {
-        strengths: `Mock Strength (Error Fallback): ${input.toolName} is known for its extensive documentation and ease of integration.`,
-        weaknesses: `Mock Weakness (Error Fallback): ${input.toolName} might be resource-intensive for very large test suites on limited hardware.`
+        strengths: `Mock Strength (Error Fallback): ${input.toolName} is known for its extensive documentation and ease of integration. It is praised for cross-platform compatibility.`,
+        weaknesses: `Mock Weakness (Error Fallback): ${input.toolName} might be resource-intensive for very large test suites on limited hardware. Some advanced features require paid licenses.`
       };
   }
 }

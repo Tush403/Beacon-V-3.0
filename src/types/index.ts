@@ -1,4 +1,4 @@
-import type { RecommendToolsOutput, GenerateToolAnalysisOutput } from '@/ai/flows/recommend-tools';
+import type { RecommendToolsInput as GenkitRecommendToolsInput, RecommendToolsOutput, GenerateToolAnalysisOutput } from '@/ai/flows/recommend-tools';
 
 export interface ToolRecommendationItem extends RecommendToolsOutput['recommendations'][0] {}
 
@@ -25,9 +25,18 @@ export interface DocumentationLink {
   label: string;
 }
 
+// Updated FilterCriteria
 export interface FilterCriteria {
-  applicationType: string;
-  os: string;
-  testType: string;
-  codingNeeds: string;
+  complexityMedium: number;
+  complexityHigh: number;
+  complexityHighlyComplex: number;
+  useStandardFramework: boolean;
+  cicdPipelineIntegrated: boolean;
+  qaTeamSize: number;
 }
+
+// This type is used by the AI flow, ensure it matches the new FilterCriteria structure if it's intended to be the same.
+// For now, GenkitRecommendToolsInput is defined in the flow itself.
+// If FilterCriteria is meant to be the same as RecommendToolsInput, then this re-export might be needed or schema updated.
+// For clarity, we'll assume FilterCriteria is the UI-side representation and the flow will adapt.
+export type RecommendToolsInput = GenkitRecommendToolsInput;

@@ -16,12 +16,14 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-
+// Updated input schema to match new filter criteria
 const RecommendToolsInputSchema = z.object({
-  applicationType: z.string().describe('The type of application to be tested (e.g., web, mobile, API).'),
-  os: z.string().describe('The operating system for testing (e.g., Windows, iOS, Android, Linux).'),
-  testType: z.string().describe('The type of testing to be performed (e.g., functional, performance, security).'),
-  codingNeeds: z.string().describe('The level of coding required (e.g., low-code, code-based).'),
+  complexityMedium: z.number().describe('Number of medium complexity test cases (e.g., 30).'),
+  complexityHigh: z.number().describe('Number of high complexity test cases (e.g., 15).'),
+  complexityHighlyComplex: z.number().describe('Number of highly complex test cases (e.g., 5).'),
+  useStandardFramework: z.boolean().describe('Whether a standard test framework is used (true/false).'),
+  cicdPipelineIntegrated: z.boolean().describe('Whether CI/CD pipeline is integrated (true/false).'),
+  qaTeamSize: z.number().int().positive().describe('Size of the QA team in engineers (e.g., 1).'),
 });
 export type RecommendToolsInput = z.infer<typeof RecommendToolsInputSchema>;
 
@@ -50,10 +52,12 @@ const recommendToolsPrompt = ai.definePrompt({
   Explain why each tool is a good fit based on the criteria, and provide a score between 0 and 100.
 
   Criteria:
-  Application Type: {{{applicationType}}}
-  OS: {{{os}}}
-  Test Type: {{{testType}}}
-  Coding Needs: {{{codingNeeds}}}
+  Medium Complexity Test Cases: {{{complexityMedium}}}
+  High Complexity Test Cases: {{{complexityHigh}}}
+  Highly Complex Test Cases: {{{complexityHighlyComplex}}}
+  Uses Standard Test Framework: {{{useStandardFramework}}}
+  CI/CD Pipeline Integrated: {{{cicdPipelineIntegrated}}}
+  QA Team Size: {{{qaTeamSize}}} engineers
 
   Format your response as a JSON object with a "recommendations" array.
   Each entry in the array should include "toolName", "score", and "justification" fields.
