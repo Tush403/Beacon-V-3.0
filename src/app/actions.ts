@@ -3,6 +3,7 @@
 
 import { recommendTools as genkitRecommendTools, RecommendToolsInput, RecommendToolsOutput } from '@/ai/flows/recommend-tools';
 import { generateToolAnalysis as genkitGenerateToolAnalysis, GenerateToolAnalysisOutput } from '@/ai/flows/generate-tool-analysis';
+import { estimateEffort as genkitEstimateEffort, EstimateEffortInput, EstimateEffortOutput } from '@/ai/flows/estimate-effort-flow';
 import type { GenerateToolAnalysisInput } from '@/types';
 
 
@@ -53,5 +54,18 @@ export async function generateToolAnalysisAction(input: GenerateToolAnalysisInpu
         strengths: `Mock Strength (Error Fallback): ${input.toolName} is known for its extensive documentation and ease of integration. It is praised for cross-platform compatibility.`,
         weaknesses: `Mock Weakness (Error Fallback): ${input.toolName} might be resource-intensive for very large test suites on limited hardware. Some advanced features require paid licenses.`
       };
+  }
+}
+
+export async function estimateEffortAction(input: EstimateEffortInput): Promise<EstimateEffortOutput> {
+  try {
+    const result = await genkitEstimateEffort(input);
+    if (!result) {
+      throw new Error('AI effort estimation came back empty.');
+    }
+    return result;
+  } catch (error) {
+    console.error('Error estimating effort:', error);
+    throw new Error(`Failed to get effort estimation. ${error instanceof Error ? error.message : ''}`);
   }
 }

@@ -42,7 +42,7 @@ export const RecommendToolsInputSchema = z.object({
   pricingModel: z.string().describe('The preferred pricing model for the tool (e.g., "Open Source", "Subscription", "Perpetual License", "Any Model").'),
   reportingAnalytics: z.string().describe('The required level of reporting and analytics capabilities (e.g., "Basic Reporting", "Advanced Analytics", "Dashboard Integration", "Any Analytics").'),
   
-  // AI Effort Estimator Fields
+  // AI Effort Estimator Fields (also part of RecommendToolsInput as they are on the same form)
   automationTool: z.string().optional().describe('Selected automation tool for effort estimation.'),
   complexityLow: z.number().optional().describe('Number of low complexity test cases.'),
   complexityMedium: z.number().optional().describe('Number of medium complexity test cases.'),
@@ -64,3 +64,26 @@ export interface GenerateToolAnalysisInput {
 // Keep FilterCriteria as an alias or separate interface if used directly by UI components
 // and ensure it aligns with RecommendToolsInput.
 export interface FilterCriteria extends RecommendToolsInput {}
+
+
+// Schema for AI Effort Estimation
+export const EstimateEffortInputSchema = z.object({
+  automationTool: z.string().optional().describe('The name of the automation tool being considered or used. Can be "None" or "Undecided".'),
+  complexityLow: z.number().optional().default(0).describe('Number of low complexity test cases.'),
+  complexityMedium: z.number().optional().default(0).describe('Number of medium complexity test cases.'),
+  complexityHigh: z.number().optional().default(0).describe('Number of high complexity test cases.'),
+  complexityHighlyComplex: z.number().optional().default(0).describe('Number of highly complex test cases.'),
+  useStandardFramework: z.boolean().optional().default(false).describe('Is a standard, well-defined test automation framework being used? (e.g., Page Object Model, BDD framework)'),
+  cicdPipelineIntegrated: z.boolean().optional().default(false).describe('Is the test automation integrated into a CI/CD pipeline?'),
+  qaTeamSize: z.number().optional().default(0).describe('Number of QA engineers available for the automation effort.'),
+  projectDescription: z.string().optional().describe('A brief description of the project or features to be automated.'),
+});
+export type EstimateEffortInput = z.infer<typeof EstimateEffortInputSchema>;
+
+export const EstimateEffortOutputSchema = z.object({
+  estimatedEffortDaysMin: z.number().describe('The minimum estimated effort in person-days.'),
+  estimatedEffortDaysMax: z.number().describe('The maximum estimated effort in person-days.'),
+  explanation: z.string().describe('A brief explanation of how the estimate was derived, including key factors considered.'),
+  confidenceScore: z.number().min(0).max(100).optional().describe('A score (0-100) indicating the confidence in this estimate.'),
+});
+export type EstimateEffortOutput = z.infer<typeof EstimateEffortOutputSchema>;

@@ -31,8 +31,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Loader2, RotateCcw, Settings2, Filter } from 'lucide-react';
-import type { FilterCriteria } from '@/types';
+import { Loader2, RotateCcw, Settings2, Filter, CheckCircle2, AlertCircle } from 'lucide-react';
+import type { FilterCriteria, EstimateEffortInput, EstimateEffortOutput } from '@/types'; // Added EstimateEffort types
+import { useState } from 'react'; // Added useState
+import { estimateEffortAction } from '@/app/actions'; // Import the new action
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'; // For displaying result
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // For errors
+
 
 const filterSchema = z.object({
   applicationUnderTest: z.string().min(1, 'Please select an option').default('all'),
@@ -45,13 +50,13 @@ const filterSchema = z.object({
 
   // AI Effort Estimator Fields
   automationTool: z.string().optional().default('none'),
-  complexityLow: z.coerce.number().min(0, 'Must be zero or positive').optional(),
-  complexityMedium: z.coerce.number().min(0, 'Must be zero or positive').optional(),
-  complexityHigh: z.coerce.number().min(0, 'Must be zero or positive').optional(),
-  complexityHighlyComplex: z.coerce.number().min(0, 'Must be zero or positive').optional(),
+  complexityLow: z.coerce.number().min(0, 'Must be zero or positive').optional().default(0),
+  complexityMedium: z.coerce.number().min(0, 'Must be zero or positive').optional().default(0),
+  complexityHigh: z.coerce.number().min(0, 'Must be zero or positive').optional().default(0),
+  complexityHighlyComplex: z.coerce.number().min(0, 'Must be zero or positive').optional().default(0),
   useStandardFramework: z.boolean().default(false),
   cicdPipelineIntegrated: z.boolean().default(false),
-  qaTeamSize: z.coerce.number().min(0, 'Must be zero or positive').optional(),
+  qaTeamSize: z.coerce.number().min(0, 'Must be zero or positive').optional().default(0),
 });
 
 type FilterFormValues = z.infer<typeof filterSchema>;
@@ -86,6 +91,37 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
     resolver: zodResolver(filterSchema),
     defaultValues: { ...defaultFormValues, ...defaultValues },
   });
+
+  const [effortEstimate, setEffortEstimate] = useState<EstimateEffortOutput | null>(null);
+  const [isEstimatingEffort, setIsEstimatingEffort] = useState(false);
+  const [effortError, setEffortError] = useState<string | null>(null);
+
+  const handleGetEstimate = async () => {
+    const formData = form.getValues();
+    const effortInput: EstimateEffortInput = {
+      automationTool: formData.automationTool || 'None',
+      complexityLow: formData.complexityLow || 0,
+      complexityMedium: formData.complexityMedium || 0,
+      complexityHigh: formData.complexityHigh || 0,
+      complexityHighlyComplex: formData.complexityHighlyComplex || 0,
+      useStandardFramework: formData.useStandardFramework || false,
+      cicdPipelineIntegrated: formData.cicdPipelineIntegrated || false,
+      qaTeamSize: formData.qaTeamSize || 0,
+      // projectDescription: "Brief project description if available" // Add if a field is created
+    };
+
+    setIsEstimatingEffort(true);
+    setEffortError(null);
+    setEffortEstimate(null);
+    try {
+      const result = await estimateEffortAction(effortInput);
+      setEffortEstimate(result);
+    } catch (e: any) {
+      setEffortError(e.message || 'Failed to get effort estimate.');
+    } finally {
+      setIsEstimatingEffort(false);
+    }
+  };
 
   const filterOptions = {
     applicationUnderTest: [
@@ -257,7 +293,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                   <FormItem>
                     <FormLabel>Complexity - Low (Test Cases)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? 0} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -270,7 +306,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                   <FormItem>
                     <FormLabel>Complexity - Medium (Test Cases)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? 0} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -283,7 +319,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                   <FormItem>
                     <FormLabel>Complexity - High (Test Cases)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? 0} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -296,7 +332,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                   <FormItem>
                     <FormLabel>Complexity - Highly Complex (Test Cases)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? 0} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -347,16 +383,64 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                         <AvatarFallback className="bg-muted text-muted-foreground text-xs">N</AvatarFallback>
                       </Avatar>
                       <FormControl>
-                        <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                        <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? 0} />
                       </FormControl>
                     </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="button" variant="secondary" className="w-full" onClick={() => console.log("Get Estimate clicked", form.getValues())}>
-                Get Estimate
+              <Button 
+                type="button" 
+                variant="secondary" 
+                className="w-full" 
+                onClick={handleGetEstimate}
+                disabled={isEstimatingEffort}
+              >
+                {isEstimatingEffort ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Estimating...
+                  </>
+                ) : (
+                  'Get Estimate'
+                )}
               </Button>
+
+              {effortError && (
+                <Alert variant="destructive" className="mt-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Estimation Error</AlertTitle>
+                  <AlertDescription>{effortError}</AlertDescription>
+                </Alert>
+              )}
+
+              {effortEstimate && !effortError && (
+                <Card className="mt-4 bg-card/80 border-primary/50">
+                  <CardHeader className="pb-3 pt-4">
+                    <CardTitle className="text-base flex items-center gap-2 text-primary">
+                      <CheckCircle2 className="h-5 w-5" />
+                      Effort Estimation Result
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-xs space-y-1.5 pb-4">
+                    <p>
+                      <span className="font-semibold text-foreground">Estimated Effort: </span>
+                      {effortEstimate.estimatedEffortDaysMin} - {effortEstimate.estimatedEffortDaysMax} person-days
+                    </p>
+                    {effortEstimate.confidenceScore !== undefined && (
+                       <p>
+                         <span className="font-semibold text-foreground">Confidence: </span>
+                         {effortEstimate.confidenceScore}%
+                       </p>
+                    )}
+                    <div>
+                      <span className="font-semibold text-foreground">Key Factors & Explanation:</span>
+                      <p className="text-muted-foreground whitespace-pre-line text-xs mt-1">{effortEstimate.explanation}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
