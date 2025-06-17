@@ -124,13 +124,16 @@ export function ReleaseNotesDialog({ isOpen, onOpenChange, onAcknowledge }: Rele
           </div>
         </ScrollArea>
 
-        <DialogFooter className="p-6 pt-4 border-t">
-          <DialogClose asChild>
-            <Button variant="outline">Close</Button>
-          </DialogClose>
-          <Button onClick={onAcknowledge} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            Acknowledge & Continue
-          </Button>
+        <DialogFooter className="p-6 pt-4 border-t flex flex-col items-center gap-3">
+          <p className="text-xs text-muted-foreground">Beacon V.2.0 - Powered by Firebase Studio</p>
+          <div className="flex flex-row gap-2">
+            <DialogClose asChild>
+              <Button variant="outline">Close</Button>
+            </DialogClose>
+            <Button onClick={onAcknowledge} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              Acknowledge & Continue
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
