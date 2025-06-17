@@ -1,6 +1,9 @@
+'use client';
+
 import type { Metadata } from 'next';
 import { AppHeader } from '@/components/beacon/AppHeader';
 // Toaster is in RootLayout, no need to import here unless it's scoped
+import React from 'react'; // Ensure React is imported
 
 export const metadata: Metadata = {
   title: 'Beacon: AI Test Tool Navigator',
@@ -30,6 +33,3 @@ export default function NavigatorLayout({
     </div>
   );
 }
-
-// Need to import React for useState and useEffect
-import React from 'react';
