@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -15,6 +16,7 @@ import {
   SidebarContent, 
   SidebarInset,
 } from '@/components/ui/sidebar';
+import { BackToTopButton } from '@/components/beacon/BackToTopButton';
 
 export default function NavigatorPage() {
   const [filters, setFilters] = useState<FilterCriteria | null>(null);
@@ -130,6 +132,7 @@ export default function NavigatorPage() {
           </div>
         </SidebarInset>
       </div>
+      <BackToTopButton />
     </SidebarProvider>
   );
 }
