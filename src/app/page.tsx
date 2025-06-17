@@ -1,9 +1,11 @@
+
 'use client';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { CogIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { CookieConsent } from '@/components/beacon/CookieConsent';
 
 const LandingHeader = () => (
   <header className="py-6 px-4 md:px-8">
@@ -50,6 +52,7 @@ export default function LandingPage() {
         </Button>
       </main>
       <LandingFooter />
+      <CookieConsent />
     </div>
   );
 }
