@@ -140,12 +140,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
       { value: 'real-time', label: 'Real-time Monitoring' },
       { value: 'integration', label: 'Integration with BI Tools' },
     ],
-    automationTool: [
-      { value: 'none', label: 'None selected / Undecided' },
-      { value: 'toolA', label: 'Functionize' },
-      { value: 'toolB', label: 'ZeTA Automation' },
-      { value: 'toolC', label: 'Selenium' },
-    ],
   };
 
   const handleResetToolFilters = () => {
@@ -172,7 +166,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
             </AccordionTrigger>
             <AccordionContent className="pt-4 space-y-4">
               {(Object.keys(filterOptions) as Array<keyof typeof filterOptions>)
-              .filter(key => !['automationTool'].includes(key))
               .map((key) => (
                 <FormField
                   key={key}
@@ -245,20 +238,14 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Automation Tool</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="None selected / Undecided" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {filterOptions.automationTool.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <Input 
+                        type="text" 
+                        placeholder="Enter tool name, or 'None'" 
+                        {...field} 
+                        value={field.value || ''} // Ensure value is not undefined for controlled input
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -378,3 +365,5 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
   );
 }
 
+
+    
