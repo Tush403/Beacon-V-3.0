@@ -48,13 +48,13 @@ const filterSchema = z.object({
   reportingAnalytics: z.string().min(1, 'Please select an option').default('any'),
 
   automationTool: z.string().optional().default('none'),
-  complexityLow: z.coerce.number().min(0, 'Must be zero or positive').optional().default(0),
-  complexityMedium: z.coerce.number().min(0, 'Must be zero or positive').optional().default(0),
-  complexityHigh: z.coerce.number().min(0, 'Must be zero or positive').optional().default(0),
-  complexityHighlyComplex: z.coerce.number().min(0, 'Must be zero or positive').optional().default(0),
+  complexityLow: z.coerce.number().min(0, 'Must be zero or positive').optional(),
+  complexityMedium: z.coerce.number().min(0, 'Must be zero or positive').optional(),
+  complexityHigh: z.coerce.number().min(0, 'Must be zero or positive').optional(),
+  complexityHighlyComplex: z.coerce.number().min(0, 'Must be zero or positive').optional(),
   useStandardFramework: z.boolean().default(false),
   cicdPipelineIntegrated: z.boolean().default(false),
-  qaTeamSize: z.coerce.number().min(0, 'Must be zero or positive').optional().default(0),
+  qaTeamSize: z.coerce.number().min(0, 'Must be zero or positive').optional(),
 });
 
 type FilterFormValues = z.infer<typeof filterSchema>;
@@ -74,13 +74,13 @@ const defaultFormValues: FilterFormValues = {
   pricingModel: 'any',
   reportingAnalytics: 'any',
   automationTool: 'none',
-  complexityLow: 0,
-  complexityMedium: 0,
-  complexityHigh: 0,
-  complexityHighlyComplex: 0,
+  complexityLow: undefined,
+  complexityMedium: undefined,
+  complexityHigh: undefined,
+  complexityHighlyComplex: undefined,
   useStandardFramework: false,
   cicdPipelineIntegrated: false,
-  qaTeamSize: 0,
+  qaTeamSize: undefined,
 };
 
 export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormProps) {
@@ -96,13 +96,13 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
     const formData = form.getValues();
     const effortInput: EstimateEffortInput = {
       automationTool: formData.automationTool || 'None',
-      complexityLow: formData.complexityLow || 0,
-      complexityMedium: formData.complexityMedium || 0,
-      complexityHigh: formData.complexityHigh || 0,
-      complexityHighlyComplex: formData.complexityHighlyComplex || 0,
+      complexityLow: formData.complexityLow,
+      complexityMedium: formData.complexityMedium,
+      complexityHigh: formData.complexityHigh,
+      complexityHighlyComplex: formData.complexityHighlyComplex,
       useStandardFramework: formData.useStandardFramework || false,
       cicdPipelineIntegrated: formData.cicdPipelineIntegrated || false,
-      qaTeamSize: formData.qaTeamSize || 0,
+      qaTeamSize: formData.qaTeamSize,
     };
 
     setIsEstimatingEffort(true);
@@ -128,7 +128,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
             </div>
           </div>
         ),
-        duration: 15000, // Increased duration for readability
+        duration: 15000, 
       });
     } catch (e: any) {
       toast({
@@ -311,7 +311,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                   <FormItem>
                     <FormLabel>Complexity - Low (Test Cases)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? 0} />
+                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -324,7 +324,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                   <FormItem>
                     <FormLabel>Complexity - Medium (Test Cases)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? 0} />
+                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -337,7 +337,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                   <FormItem>
                     <FormLabel>Complexity - High (Test Cases)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? 0} />
+                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -350,7 +350,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                   <FormItem>
                     <FormLabel>Complexity - Highly Complex (Test Cases)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? 0} />
+                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -401,7 +401,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                         <AvatarFallback className="bg-muted text-muted-foreground text-xs">N</AvatarFallback>
                       </Avatar>
                       <FormControl>
-                        <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? 0} />
+                        <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                     </div>
                     <FormMessage />
