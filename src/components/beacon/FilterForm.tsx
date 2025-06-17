@@ -165,12 +165,12 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
         <Accordion type="multiple" defaultValue={['filter-tools', 'ai-estimator']} className="w-full">
           <AccordionItem value="filter-tools">
             <AccordionTrigger>
-              <div className="flex items-center text-lg font-semibold text-primary hover:no-underline">
+              <div className="flex items-center text-base font-semibold text-primary hover:no-underline">
                 <Filter className="mr-2 h-5 w-5" />
                 Filter Tools
               </div>
             </AccordionTrigger>
-            <AccordionContent className="pt-4 space-y-6">
+            <AccordionContent className="pt-4 space-y-4">
               {(Object.keys(filterOptions) as Array<keyof typeof filterOptions>)
               .filter(key => !['automationTool'].includes(key))
               .map((key) => (
@@ -230,7 +230,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
 
           <AccordionItem value="ai-estimator">
             <AccordionTrigger>
-              <div className="flex items-center text-lg font-semibold text-primary hover:no-underline">
+              <div className="flex items-center text-base font-semibold text-primary hover:no-underline">
                 <Settings2 className="mr-2 h-5 w-5" />
                 AI Effort Estimator
               </div>
