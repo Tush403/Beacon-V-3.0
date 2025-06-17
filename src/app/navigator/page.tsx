@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,7 +8,7 @@ import { ROIChart } from '@/components/beacon/ROIChart';
 import { TrendAnalysisCard } from '@/components/beacon/TrendAnalysisCard';
 import { recommendToolsAction, generateToolAnalysisAction } from '../actions';
 import { useToast } from '@/hooks/use-toast';
-import type { FilterCriteria, ToolRecommendationItem, ToolAnalysisItem } from '@/types';
+import type { FilterCriteria, ToolRecommendationItem, ToolAnalysisItem, GenerateToolAnalysisInput } from '@/types';
 import { Separator } from '@/components/ui/separator';
 import { 
   SidebarProvider, 
@@ -15,9 +16,7 @@ import {
   SidebarContent, 
   SidebarInset,
   SidebarHeader,
-  SidebarTrigger // Optional: if you want a button to toggle sidebar on mobile/desktop
 } from '@/components/ui/sidebar';
-import { Card, CardHeader, CardTitle } from '@/components/ui/card'; // For filter title if needed
 import { Filter as FilterIcon } from 'lucide-react';
 
 export default function NavigatorPage() {
@@ -29,12 +28,23 @@ export default function NavigatorPage() {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
+  const initialFilterValues: FilterCriteria = {
+    applicationUnderTest: 'all',
+    testType: 'all',
+    operatingSystem: 'all',
+    codingRequirement: 'any',
+    codingLanguage: 'any',
+    pricingModel: 'any',
+    reportingAnalytics: 'any',
+  };
+
   const handleFilterSubmit = async (data: FilterCriteria) => {
     setIsLoadingRecommendations(true);
     setError(null);
     setRecommendations([]); 
     setToolAnalyses({}); 
     try {
+      // The data from the form should match RecommendToolsInput, which is FilterCriteria
       const result = await recommendToolsAction(data);
       setRecommendations(result.recommendations);
       setFilters(data); 
@@ -56,7 +66,8 @@ export default function NavigatorPage() {
     setIsLoadingAnalysis((prev) => ({ ...prev, [toolName]: true }));
     setError(null);
     try {
-      const analysisResult = await generateToolAnalysisAction({ toolName });
+      const analysisInput: GenerateToolAnalysisInput = { toolName };
+      const analysisResult = await generateToolAnalysisAction(analysisInput);
       setToolAnalyses((prev) => ({ ...prev, [toolName]: analysisResult }));
     } catch (e: any) {
       setError(e.message || `An unknown error occurred while fetching analysis for ${toolName}.`);
@@ -71,28 +82,23 @@ export default function NavigatorPage() {
     }
   };
   
-  const initialFilterValues: FilterCriteria = {
-    complexityMedium: 30,
-    complexityHigh: 15,
-    complexityHighlyComplex: 5,
-    useStandardFramework: false,
-    cicdPipelineIntegrated: false,
-    qaTeamSize: 1,
-  };
-
   useEffect(() => {
-     // handleFilterSubmit(initialFilterValues); // Uncomment to auto-load on page init
+     // To auto-load on page init with default filters:
+     // handleFilterSubmit(initialFilterValues); 
   }, []);
 
   return (
-    <SidebarProvider defaultOpen={true}> {/* Sidebar open by default on desktop */}
-      <div className="flex flex-1"> {/* This div is important for SidebarProvider's direct child */}
-        <Sidebar className="h-auto border-r" collapsible="icon"> {/* Use 'icon' for desktop collapse, offcanvas for mobile */}
+    <SidebarProvider defaultOpen={true}>
+      <div className="flex flex-1">
+        <Sidebar className="h-auto border-r" collapsible="icon">
           <SidebarHeader className="p-4 border-b">
             <div className="flex items-center gap-2 text-lg font-semibold text-primary">
               <FilterIcon className="h-5 w-5" />
-              <span>Filter Options</span>
+              <span>Filter Tools</span>
             </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Narrow down your search by specific criteria.
+            </p>
           </SidebarHeader>
           <SidebarContent className="p-4">
             <FilterForm 
@@ -103,7 +109,7 @@ export default function NavigatorPage() {
           </SidebarContent>
         </Sidebar>
         <SidebarInset>
-          <div className="p-4 md:p-8 space-y-10"> {/* Add padding to main content area */}
+          <div className="p-4 md:p-8 space-y-10">
             <RecommendationsDisplay
               recommendations={recommendations}
               toolAnalyses={toolAnalyses}

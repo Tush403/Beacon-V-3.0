@@ -1,8 +1,17 @@
-import type { RecommendToolsInput as GenkitRecommendToolsInput, RecommendToolsOutput, GenerateToolAnalysisOutput } from '@/ai/flows/recommend-tools';
+
+import type { RecommendToolsOutput } from '@/ai/flows/recommend-tools';
+import type { z } from 'genkit';
+// Import the schema directly to avoid circular dependencies if RecommendToolsInput was also here
+import type { RecommendToolsInputSchema } from '@/ai/flows/recommend-tools'; 
 
 export interface ToolRecommendationItem extends RecommendToolsOutput['recommendations'][0] {}
 
-export interface ToolAnalysisItem extends GenerateToolAnalysisOutput {}
+// Make sure this matches GenerateToolAnalysisOutput from its flow
+export interface ToolAnalysisItem {
+  strengths: string;
+  weaknesses: string;
+}
+
 
 export interface ProjectEffort {
   toolName: string;
@@ -25,18 +34,21 @@ export interface DocumentationLink {
   label: string;
 }
 
-// Updated FilterCriteria
+// Updated FilterCriteria to match the new "Filter Tools" section
 export interface FilterCriteria {
-  complexityMedium: number;
-  complexityHigh: number;
-  complexityHighlyComplex: number;
-  useStandardFramework: boolean;
-  cicdPipelineIntegrated: boolean;
-  qaTeamSize: number;
+  applicationUnderTest: string;
+  testType: string;
+  operatingSystem: string;
+  codingRequirement: string;
+  codingLanguage: string;
+  pricingModel: string;
+  reportingAnalytics: string;
 }
 
-// This type is used by the AI flow, ensure it matches the new FilterCriteria structure if it's intended to be the same.
-// For now, GenkitRecommendToolsInput is defined in the flow itself.
-// If FilterCriteria is meant to be the same as RecommendToolsInput, then this re-export might be needed or schema updated.
-// For clarity, we'll assume FilterCriteria is the UI-side representation and the flow will adapt.
-export type RecommendToolsInput = GenkitRecommendToolsInput;
+// This ensures that RecommendToolsInput is exactly what the flow expects.
+export type RecommendToolsInput = z.infer<typeof RecommendToolsInputSchema>;
+
+// This type is used by generateToolAnalysisAction
+export interface GenerateToolAnalysisInput {
+  toolName: string;
+}

@@ -1,19 +1,15 @@
+
 'use server';
 
 import { recommendTools as genkitRecommendTools, RecommendToolsInput, RecommendToolsOutput } from '@/ai/flows/recommend-tools';
-import { generateToolAnalysis as genkitGenerateToolAnalysis, GenerateToolAnalysisInput, GenerateToolAnalysisOutput } from '@/ai/flows/generate-tool-analysis';
+import { generateToolAnalysis as genkitGenerateToolAnalysis, GenerateToolAnalysisOutput } from '@/ai/flows/generate-tool-analysis';
+import type { GenerateToolAnalysisInput } from '@/types';
+
 
 export async function recommendToolsAction(filters: RecommendToolsInput): Promise<RecommendToolsOutput> {
   try {
-    // Ensure numeric fields are indeed numbers, as they might come from form as strings if not careful
-    const numericFilters = {
-      ...filters,
-      complexityMedium: Number(filters.complexityMedium),
-      complexityHigh: Number(filters.complexityHigh),
-      complexityHighlyComplex: Number(filters.complexityHighlyComplex),
-      qaTeamSize: Number(filters.qaTeamSize),
-    };
-    const result = await genkitRecommendTools(numericFilters);
+    // Input 'filters' should now directly match RecommendToolsInput schema which expects strings
+    const result = await genkitRecommendTools(filters);
     if (!result || !result.recommendations) {
       throw new Error('AI recommendations came back empty.');
     }
