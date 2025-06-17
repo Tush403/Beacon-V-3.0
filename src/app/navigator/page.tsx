@@ -78,7 +78,8 @@ export default function NavigatorPage() {
       const analysisInput: GenerateToolAnalysisInput = { toolName };
       const analysisResult = await generateToolAnalysisAction(analysisInput);
       setToolAnalyses((prev) => ({ ...prev, [toolName]: analysisResult }));
-    } catch (e: any)      setError(e.message || `An unknown error occurred while fetching analysis for ${toolName}.`);
+    } catch (e: any) { // Added missing opening brace here
+      setError(e.message || `An unknown error occurred while fetching analysis for ${toolName}.`);
       toast({
         title: 'Error',
         description: e.message || `Failed to get analysis for ${toolName}.`,
