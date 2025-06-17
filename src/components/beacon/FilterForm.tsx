@@ -257,7 +257,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                   <FormItem>
                     <FormLabel>Complexity - Low (Test Cases)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 50" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -270,7 +270,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                   <FormItem>
                     <FormLabel>Complexity - Medium (Test Cases)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 30" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -283,7 +283,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                   <FormItem>
                     <FormLabel>Complexity - High (Test Cases)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 15" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -296,7 +296,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                   <FormItem>
                     <FormLabel>Complexity - Highly Complex (Test Cases)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 5" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -347,7 +347,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                         <AvatarFallback className="bg-muted text-muted-foreground text-xs">N</AvatarFallback>
                       </Avatar>
                       <FormControl>
-                        <Input type="number" placeholder="e.g., 1" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
+                        <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} />
                       </FormControl>
                     </div>
                     <FormMessage />
@@ -364,6 +364,4 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
     </Form>
   );
 }
-
-
     
