@@ -128,7 +128,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
             </div>
           </div>
         ),
-        duration: 15000, 
       });
     } catch (e: any) {
       toast({
