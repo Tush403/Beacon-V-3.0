@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { CogIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { CookieConsent } from '@/components/beacon/CookieConsent';
+import { ReleaseNotesDialog } from '@/components/beacon/ReleaseNotesDialog';
 
 const LandingHeader = () => (
   <header className="py-6 px-4 md:px-8">
@@ -35,6 +37,18 @@ const LandingFooter = () => {
 
 
 export default function LandingPage() {
+  const [showReleaseNotes, setShowReleaseNotes] = useState(false);
+  const router = useRouter();
+
+  const handleGetStartedClick = () => {
+    setShowReleaseNotes(true);
+  };
+
+  const handleAcknowledgeReleaseNotes = () => {
+    setShowReleaseNotes(false);
+    router.push('/navigator');
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <LandingHeader />
@@ -47,12 +61,22 @@ export default function LandingPage() {
           engine demystifies tool selection, providing data-driven recommendations to optimize your
           QA processes, accelerate delivery, and drive innovation at scale.
         </p>
-        <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground px-10 py-6 text-lg rounded-lg shadow-lg transform transition-transform hover:scale-105">
-          <Link href="/navigator">Get Started</Link>
+        <Button 
+          size="lg" 
+          className="bg-accent hover:bg-accent/90 text-accent-foreground px-10 py-6 text-lg rounded-lg shadow-lg transform transition-transform hover:scale-105"
+          onClick={handleGetStartedClick}
+        >
+          Get Started
         </Button>
       </main>
       <LandingFooter />
       <CookieConsent />
+      <ReleaseNotesDialog 
+        isOpen={showReleaseNotes} 
+        onOpenChange={setShowReleaseNotes}
+        onAcknowledge={handleAcknowledgeReleaseNotes} 
+      />
     </div>
   );
 }
+
