@@ -45,13 +45,13 @@ const filterSchema = z.object({
 
   // AI Effort Estimator Fields
   automationTool: z.string().optional().default('none'),
-  complexityLow: z.coerce.number().positive({message: 'Must be positive'}).optional(),
-  complexityMedium: z.coerce.number().positive({message: 'Must be positive'}).optional(),
-  complexityHigh: z.coerce.number().positive({message: 'Must be positive'}).optional(),
-  complexityHighlyComplex: z.coerce.number().positive({message: 'Must be positive'}).optional(),
+  complexityLow: z.coerce.number().min(0, 'Must be zero or positive').optional(),
+  complexityMedium: z.coerce.number().min(0, 'Must be zero or positive').optional(),
+  complexityHigh: z.coerce.number().min(0, 'Must be zero or positive').optional(),
+  complexityHighlyComplex: z.coerce.number().min(0, 'Must be zero or positive').optional(),
   useStandardFramework: z.boolean().default(false),
   cicdPipelineIntegrated: z.boolean().default(false),
-  qaTeamSize: z.coerce.number().positive({message: 'Must be positive'}).optional(),
+  qaTeamSize: z.coerce.number().min(0, 'Must be zero or positive').optional(),
 });
 
 type FilterFormValues = z.infer<typeof filterSchema>;
@@ -72,13 +72,13 @@ const defaultFormValues: FilterFormValues = {
   reportingAnalytics: 'any',
   // Estimator defaults
   automationTool: 'none',
-  complexityLow: 50,
-  complexityMedium: 30,
-  complexityHigh: 15,
-  complexityHighlyComplex: 5,
+  complexityLow: 0,
+  complexityMedium: 0,
+  complexityHigh: 0,
+  complexityHighlyComplex: 0,
   useStandardFramework: false,
   cicdPipelineIntegrated: false,
-  qaTeamSize: 1,
+  qaTeamSize: 0,
 };
 
 export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormProps) {
@@ -243,7 +243,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                         type="text" 
                         placeholder="Enter tool name, or 'None'" 
                         {...field} 
-                        value={field.value || ''} // Ensure value is not undefined for controlled input
+                        value={field.value || ''} 
                       />
                     </FormControl>
                     <FormMessage />

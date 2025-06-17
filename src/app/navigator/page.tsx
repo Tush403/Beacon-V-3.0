@@ -37,13 +37,13 @@ export default function NavigatorPage() {
     reportingAnalytics: 'any',
     // AI Effort Estimator defaults
     automationTool: 'none',
-    complexityLow: 50,
-    complexityMedium: 30,
-    complexityHigh: 15,
-    complexityHighlyComplex: 5,
+    complexityLow: 0,
+    complexityMedium: 0,
+    complexityHigh: 0,
+    complexityHighlyComplex: 0,
     useStandardFramework: false,
     cicdPipelineIntegrated: false,
-    qaTeamSize: 1,
+    qaTeamSize: 0,
   };
 
   const handleFilterSubmit = async (data: FilterCriteria) => {
@@ -123,7 +123,7 @@ export default function NavigatorPage() {
             {recommendations.length > 0 && (
               <>
                 <Separator className="my-12" />
-                <div className="space-y-8"> {/* Changed from grid to space-y for vertical stacking */}
+                <div className="space-y-8">
                   <ROIChart recommendedTools={recommendations} />
                   <TrendAnalysisCard />
                 </div>
