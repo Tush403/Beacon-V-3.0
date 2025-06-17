@@ -1,10 +1,8 @@
 
 import type { RecommendToolsOutput } from '@/ai/flows/recommend-tools';
-import type { z } from 'genkit';
-// Import the schema directly to avoid circular dependencies if RecommendToolsInput was also here
-import type { RecommendToolsInputSchema } from '@/ai/flows/recommend-tools'; 
+import { z } from 'genkit'; // Import z from genkit
 
-export interface ToolRecommendationItem extends RecommendToolsOutput['recommendations'][0] {}
+export type ToolRecommendationItem = RecommendToolsOutput['recommendations'][0];
 
 // Make sure this matches GenerateToolAnalysisOutput from its flow
 export interface ToolAnalysisItem {
@@ -34,16 +32,16 @@ export interface DocumentationLink {
   label: string;
 }
 
-// Updated FilterCriteria to match the new "Filter Tools" section
-export interface FilterCriteria {
-  applicationUnderTest: string;
-  testType: string;
-  operatingSystem: string;
-  codingRequirement: string;
-  codingLanguage: string;
-  pricingModel: string;
-  reportingAnalytics: string;
-}
+// Define the Zod schema for filter criteria here
+export const RecommendToolsInputSchema = z.object({
+  applicationUnderTest: z.string().describe('The type of application to be tested (e.g., "Web Applications", "Mobile Applications", "API", "All Applications").'),
+  testType: z.string().describe('The type of testing to be performed (e.g., "UI Testing", "API Testing", "Performance Testing", "All Test Types").'),
+  operatingSystem: z.string().describe('The target operating system (e.g., "Windows", "MacOS", "Linux", "All OS").'),
+  codingRequirement: z.string().describe('The level of coding required (e.g., "Codeless", "Low Code", "Scripting Heavy", "Any Requirement").'),
+  codingLanguage: z.string().describe('The preferred coding language if scripting is involved (e.g., "JavaScript", "Python", "Java", "Any Language").'),
+  pricingModel: z.string().describe('The preferred pricing model for the tool (e.g., "Open Source", "Subscription", "Perpetual License", "Any Model").'),
+  reportingAnalytics: z.string().describe('The required level of reporting and analytics capabilities (e.g., "Basic Reporting", "Advanced Analytics", "Dashboard Integration", "Any Analytics").'),
+});
 
 // This ensures that RecommendToolsInput is exactly what the flow expects.
 export type RecommendToolsInput = z.infer<typeof RecommendToolsInputSchema>;
@@ -52,3 +50,8 @@ export type RecommendToolsInput = z.infer<typeof RecommendToolsInputSchema>;
 export interface GenerateToolAnalysisInput {
   toolName: string;
 }
+
+// Keep FilterCriteria as an alias or separate interface if used directly by UI components
+// and ensure it aligns with RecommendToolsInput.
+export interface FilterCriteria extends RecommendToolsInput {}
+
