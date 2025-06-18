@@ -86,10 +86,10 @@ export function RecommendationsDisplay({
 
   if (recommendations.length === 0) {
     return (
-      <div className="mt-8 text-center py-10 bg-card rounded-lg">
-        <Lightbulb className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-        <h3 className="text-xl font-semibold text-muted-foreground">No recommendations yet.</h3>
-        <p className="text-muted-foreground">Adjust your filters and try again to get AI-powered tool suggestions.</p>
+      <div className="mt-8 text-center py-8"> {/* Removed bg-card, rounded-lg and reduced py */}
+        <Lightbulb className="h-10 w-10 mx-auto mb-3 text-muted-foreground" /> {/* Reduced icon size and mb */}
+        <h3 className="text-lg font-semibold text-muted-foreground">No recommendations yet.</h3> {/* Reduced text size */}
+        <p className="text-sm text-muted-foreground">Adjust your filters and try again to get AI-powered tool suggestions.</p> {/* Reduced text size */}
       </div>
     );
   }
