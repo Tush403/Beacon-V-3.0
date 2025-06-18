@@ -43,10 +43,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Loader2, RotateCcw, Settings2, Filter, ChevronsUpDown, Check, PlusCircle, GitCompare } from 'lucide-react';
-import type { FilterCriteria, EstimateEffortInput } from '@/types'; 
-import { useState, useEffect } from 'react'; 
-import { estimateEffortAction } from '@/app/actions'; 
+import { Loader2, RotateCcw, Settings2, Filter, ChevronsUpDown, Check, PlusCircle, GitCompare, XCircle } from 'lucide-react';
+import type { FilterCriteria, EstimateEffortInput } from '@/types';
+import { useState, useEffect } from 'react';
+import { estimateEffortAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
@@ -60,7 +60,7 @@ const filterSchema = z.object({
   pricingModel: z.string().min(1, 'Please select an option').default('any'),
   reportingAnalytics: z.string().min(1, 'Please select an option').default('any'),
 
-  automationTool: z.string().optional(), 
+  automationTool: z.string().optional(),
   complexityLow: z.coerce.number().min(0, 'Must be zero or positive').optional(),
   complexityMedium: z.coerce.number().min(0, 'Must be zero or positive').optional(),
   complexityHigh: z.coerce.number().min(0, 'Must be zero or positive').optional(),
@@ -92,7 +92,7 @@ const defaultFormValues: FilterFormValues = {
   codingLanguage: 'any',
   pricingModel: 'any',
   reportingAnalytics: 'any',
-  automationTool: undefined, 
+  automationTool: undefined,
   complexityLow: undefined,
   complexityMedium: undefined,
   complexityHigh: undefined,
@@ -161,15 +161,24 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
 
   const { toast } = useToast();
   const [isEstimatingEffort, setIsEstimatingEffort] = useState(false);
-  const [comboboxOpen, setComboboxOpen] = useState(false);
-  const [comboboxCompare1Open, setComboboxCompare1Open] = useState(false);
-  const [comboboxCompare2Open, setComboboxCompare2Open] = useState(false);
-  const [comboboxCompare3Open, setComboboxCompare3Open] = useState(false);
+
+  // State for combobox popover visibility
+  const [automationToolPopoverOpen, setAutomationToolPopoverOpen] = useState(false);
+  const [toolToCompare1PopoverOpen, setToolToCompare1PopoverOpen] = useState(false);
+  const [toolToCompare2PopoverOpen, setToolToCompare2PopoverOpen] = useState(false);
+  const [toolToCompare3PopoverOpen, setToolToCompare3PopoverOpen] = useState(false);
+
+  // State for combobox search input values
+  const [automationToolSearch, setAutomationToolSearch] = useState('');
+  const [toolToCompare1Search, setToolToCompare1Search] = useState('');
+  const [toolToCompare2Search, setToolToCompare2Search] = useState('');
+  const [toolToCompare3Search, setToolToCompare3Search] = useState('');
+
 
   const handleGetEstimate = async () => {
     const formData = form.getValues();
     const effortInput: EstimateEffortInput = {
-      automationTool: formData.automationTool ? (automationToolOptions.find(opt => opt.value === formData.automationTool)?.label || formData.automationTool) : 'None', 
+      automationTool: formData.automationTool ? (automationToolOptions.find(opt => opt.value === formData.automationTool)?.label || formData.automationTool) : 'None',
       complexityLow: formData.complexityLow,
       complexityMedium: formData.complexityMedium,
       complexityHigh: formData.complexityHigh,
@@ -218,7 +227,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
   const handleCompareTools = () => {
     const formData = form.getValues();
     const toolValues = [formData.toolToCompare1, formData.toolToCompare2, formData.toolToCompare3].filter(Boolean) as string[];
-    
+
     if (toolValues.length < 2) {
       toast({
         title: "Select More Tools",
@@ -230,11 +239,25 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
 
     const toolDisplayNames = toolValues.map(value => {
       const option = automationToolOptions.find(opt => opt.value === value);
-      return option ? option.label : value; // Use label if found, otherwise the value itself (for custom tools)
+      return option ? option.label : value;
     });
 
     onCompareSubmit(toolDisplayNames);
   };
+  
+  const handleResetCompareTools = () => {
+    form.setValue('toolToCompare1', undefined);
+    form.setValue('toolToCompare2', undefined);
+    form.setValue('toolToCompare3', undefined);
+    setToolToCompare1Search('');
+    setToolToCompare2Search('');
+    setToolToCompare3Search('');
+    // Optionally, close popovers if they are open
+    setToolToCompare1PopoverOpen(false);
+    setToolToCompare2PopoverOpen(false);
+    setToolToCompare3PopoverOpen(false);
+  };
+
 
   const filterOptions = {
     applicationUnderTest: [
@@ -301,68 +324,83 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
       }, {} as Partial<FilterFormValues>);
     form.reset({...form.getValues(), ...toolFilterDefaults});
   };
-  
-  const renderToolCombobox = (fieldName: "automationTool" | "toolToCompare1" | "toolToCompare2" | "toolToCompare3", popoverOpen: boolean, setPopoverOpen: (open: boolean) => void, placeholder: string) => (
-    <FormField
-      control={form.control}
-      name={fieldName}
-      render={({ field }) => {
-        const searchTerm = field.value || "";
-        // Check if the current input value is a custom tool by seeing if it's not one of the predefined `value` fields
-        const isCustomTool = searchTerm && !automationToolOptions.some(opt => opt.value.toLowerCase() === searchTerm.toLowerCase());
-        
-        return (
+
+  const renderToolCombobox = (
+    fieldName: "automationTool" | "toolToCompare1" | "toolToCompare2" | "toolToCompare3",
+    popoverOpen: boolean,
+    setPopoverOpen: (open: boolean) => void,
+    placeholder: string,
+    currentSearchValue: string,
+    setCurrentSearchValue: (value: string) => void
+  ) => {
+    const currentFieldValue = form.watch(fieldName);
+
+    // Effect to initialize or update search text when popover opens or field value changes
+    useEffect(() => {
+      if (popoverOpen) {
+        const selectedOption = automationToolOptions.find(opt => opt.value === currentFieldValue);
+        setCurrentSearchValue(selectedOption ? selectedOption.label : currentFieldValue || '');
+      }
+    }, [popoverOpen, currentFieldValue, setCurrentSearchValue]);
+    
+    return (
+      <FormField
+        control={form.control}
+        name={fieldName}
+        render={({ field }) => (
           <FormItem>
             <FormLabel>{fieldName.startsWith("toolToCompare") ? `Tool ${fieldName.slice(-1)}` : "Automation Tool (Optional)"}</FormLabel>
-            <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+            <Popover open={popoverOpen} onOpenChange={(isOpen) => {
+              setPopoverOpen(isOpen);
+              if (!isOpen) { // When closing, ensure search reflects current value if nothing typed
+                const selectedOption = automationToolOptions.find(opt => opt.value === field.value);
+                setCurrentSearchValue(selectedOption ? selectedOption.label : field.value || '');
+              } else { // When opening
+                 const selectedOption = automationToolOptions.find(opt => opt.value === field.value);
+                 setCurrentSearchValue(selectedOption ? selectedOption.label : field.value || '');
+              }
+            }}>
               <PopoverTrigger asChild>
                 <FormControl>
                   <Button
                     variant="outline"
                     role="combobox"
+                    aria-expanded={popoverOpen}
                     className={cn(
                       "w-full justify-between text-xs",
                       !field.value && "text-muted-foreground"
                     )}
                   >
                     {field.value
-                      ? automationToolOptions.find( // Find by value
-                          (option) => option.value === field.value
-                        )?.label || field.value // Display label or value if custom
+                      ? automationToolOptions.find(option => option.value === field.value)?.label || field.value
                       : placeholder}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </FormControl>
               </PopoverTrigger>
               <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-                <Command
-                  filter={(value, search) => {
-                    const option = automationToolOptions.find(opt => opt.value === value);
-                    if (option && option.label.toLowerCase().includes(search.toLowerCase())) return 1;
-                    if (value.toLowerCase().includes(search.toLowerCase())) return 1; // Also match custom typed values
-                    return 0;
-                  }}
-                >
+                <Command shouldFilter={false}>
                   <CommandInput
                     placeholder="Search tool or type custom..."
                     className="text-xs"
-                    value={field.value || ""} // Controlled input for search
-                    onValueChange={(search) => { // Update field value as user types for custom tool entry
-                       field.onChange(search);
-                    }}
+                    value={currentSearchValue}
+                    onValueChange={setCurrentSearchValue}
                   />
                   <CommandEmpty>
-                    {field.value && !automationToolOptions.some(opt => opt.value.toLowerCase() === field.value?.toLowerCase()) 
-                      ? `Press Enter or click to use "${field.value}"`
+                    {currentSearchValue.trim() && !automationToolOptions.some(opt => opt.label.toLowerCase() === currentSearchValue.trim().toLowerCase())
+                      ? `No tool found. Click to use "${currentSearchValue.trim()}"`
                       : "No tool found."}
                   </CommandEmpty>
                   <CommandList>
-                    {automationToolOptions.map((option) => (
+                    {automationToolOptions
+                      .filter(option => option.label.toLowerCase().includes(currentSearchValue.toLowerCase().trim()))
+                      .map((option) => (
                       <CommandItem
                         key={option.value}
-                        value={option.value} // Store value
+                        value={option.label} // Value for cmdk filtering/selection
                         onSelect={() => {
                           form.setValue(fieldName, option.value, { shouldValidate: true });
+                          setCurrentSearchValue(option.label);
                           setPopoverOpen(false);
                         }}
                         className="text-xs"
@@ -370,27 +408,24 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
                         <Check
                           className={cn(
                             "mr-2 h-4 w-4",
-                            field.value === option.value
-                              ? "opacity-100"
-                              : "opacity-0"
+                            field.value === option.value ? "opacity-100" : "opacity-0"
                           )}
                         />
-                        {option.label} 
+                        {option.label}
                       </CommandItem>
                     ))}
-                    {/* Show option to add custom tool if typed text is not in predefined list */}
-                    {field.value && !automationToolOptions.some(opt => opt.label.toLowerCase() === field.value?.toLowerCase() || opt.value.toLowerCase() === field.value?.toLowerCase()) && (
+                    {currentSearchValue.trim() && !automationToolOptions.some(opt => opt.label.toLowerCase() === currentSearchValue.trim().toLowerCase()) && (
                       <CommandItem
-                        key={field.value} // Use current typed value as key
-                        value={field.value} // Use current typed value
+                        key={currentSearchValue.trim()}
+                        value={currentSearchValue.trim()}
                         onSelect={() => {
-                          form.setValue(fieldName, field.value, { shouldValidate: true }); // Set the custom value
+                          form.setValue(fieldName, currentSearchValue.trim(), { shouldValidate: true });
                           setPopoverOpen(false);
                         }}
                         className="text-xs"
                       >
                         <PlusCircle className="mr-2 h-4 w-4" />
-                        Use custom tool: "{field.value}"
+                        Use custom tool: "{currentSearchValue.trim()}"
                       </CommandItem>
                     )}
                   </CommandList>
@@ -399,10 +434,10 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
             </Popover>
             <FormMessage />
           </FormItem>
-        )
-      }}
-    />
-  );
+        )}
+      />
+    );
+  };
 
 
   return (
@@ -484,8 +519,15 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
               <p className="text-xs text-muted-foreground">
                 Provide project details to get an effort estimation.
               </p>
-              {renderToolCombobox("automationTool", comboboxOpen, setComboboxOpen, "Select a tool or type custom")}
-              
+              {renderToolCombobox(
+                "automationTool",
+                automationToolPopoverOpen,
+                setAutomationToolPopoverOpen,
+                "Select a tool or type custom",
+                automationToolSearch,
+                setAutomationToolSearch
+              )}
+
               <FormField
                 control={form.control}
                 name="complexityLow"
@@ -590,10 +632,10 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
                   </FormItem>
                 )}
               />
-              <Button 
-                type="button" 
-                variant="secondary" 
-                className="w-full" 
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-full"
                 onClick={handleGetEstimate}
                 disabled={isEstimatingEffort}
               >
@@ -620,28 +662,59 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
               <p className="text-xs text-muted-foreground">
                 Select 2 to 3 tools for a side-by-side comparison.
               </p>
-              {renderToolCombobox("toolToCompare1", comboboxCompare1Open, setComboboxCompare1Open, "Select Tool 1 or type custom")}
-              {renderToolCombobox("toolToCompare2", comboboxCompare2Open, setComboboxCompare2Open, "Select Tool 2 or type custom")}
-              {renderToolCombobox("toolToCompare3", comboboxCompare3Open, setComboboxCompare3Open, "Select Tool 3 or type custom")}
-              <Button 
-                type="button" 
-                className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" 
-                onClick={handleCompareTools}
-                disabled={isComparing || 
-                  (form.watch('toolToCompare1') ? 0 : 1) + 
-                  (form.watch('toolToCompare2') ? 0 : 1) + 
-                  (form.watch('toolToCompare3') ? 0 : 1) > 1 /* at least 2 tools must be selected */
-                }
-              >
-                {isComparing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Comparing...
-                  </>
-                ) : (
-                  'Compare Selected Tools'
-                )}
-              </Button>
+              {renderToolCombobox(
+                "toolToCompare1",
+                toolToCompare1PopoverOpen,
+                setToolToCompare1PopoverOpen,
+                "Select Tool 1 or type custom",
+                toolToCompare1Search,
+                setToolToCompare1Search
+              )}
+              {renderToolCombobox(
+                "toolToCompare2",
+                toolToCompare2PopoverOpen,
+                setToolToCompare2PopoverOpen,
+                "Select Tool 2 or type custom",
+                toolToCompare2Search,
+                setToolToCompare2Search
+              )}
+              {renderToolCombobox(
+                "toolToCompare3",
+                toolToCompare3PopoverOpen,
+                setToolToCompare3PopoverOpen,
+                "Select Tool 3 or type custom",
+                toolToCompare3Search,
+                setToolToCompare3Search
+              )}
+              <div className="space-y-2">
+                <Button
+                  type="button"
+                  className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
+                  onClick={handleCompareTools}
+                  disabled={isComparing ||
+                    (form.watch('toolToCompare1') ? 0 : 1) +
+                    (form.watch('toolToCompare2') ? 0 : 1) +
+                    (form.watch('toolToCompare3') ? 0 : 1) > 1 
+                  }
+                >
+                  {isComparing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Comparing...
+                    </>
+                  ) : (
+                    'Compare Selected Tools'
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleResetCompareTools}
+                >
+                  <XCircle className="mr-2 h-4 w-4" /> Reset Selections
+                </Button>
+              </div>
             </AccordionContent>
           </AccordionItem>
 
@@ -650,3 +723,5 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
     </Form>
   );
 }
+
+    
