@@ -95,7 +95,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
   const handleGetEstimate = async () => {
     const formData = form.getValues();
     const effortInput: EstimateEffortInput = {
-      automationTool: formData.automationTool || 'None',
+      automationTool: formData.automationTool || 'None', // Ensure a string is passed
       complexityLow: formData.complexityLow,
       complexityMedium: formData.complexityMedium,
       complexityHigh: formData.complexityHigh,
@@ -128,6 +128,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
             </div>
           </div>
         ),
+        // duration: 15000, // Removed to keep toast open until manually closed
       });
     } catch (e: any) {
       toast({
