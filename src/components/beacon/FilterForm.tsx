@@ -95,7 +95,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
   const handleGetEstimate = async () => {
     const formData = form.getValues();
     const effortInput: EstimateEffortInput = {
-      automationTool: formData.automationTool || 'None', // Ensure a string is passed
+      automationTool: formData.automationTool || 'None', 
       complexityLow: formData.complexityLow,
       complexityMedium: formData.complexityMedium,
       complexityHigh: formData.complexityHigh,
@@ -128,7 +128,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
             </div>
           </div>
         ),
-        // duration: 15000, // Removed to keep toast open until manually closed
       });
     } catch (e: any) {
       toast({
@@ -210,7 +209,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="p-1">
-        <Accordion type="multiple" defaultValue={['filter-tools', 'ai-estimator']} className="w-full">
+        <Accordion type="multiple" className="w-full">
           <AccordionItem value="filter-tools">
             <AccordionTrigger>
               <div className="flex items-center text-base font-semibold text-primary hover:no-underline">
