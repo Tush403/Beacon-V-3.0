@@ -83,6 +83,34 @@ const defaultFormValues: FilterFormValues = {
   qaTeamSize: undefined,
 };
 
+const automationToolOptions = [
+  { value: "selenium", label: "Selenium" },
+  { value: "cypress", label: "Cypress" },
+  { value: "playwright", label: "Playwright" },
+  { value: "appium", label: "Appium" },
+  { value: "katalon_studio", label: "Katalon Studio" },
+  { value: "testcomplete", label: "TestComplete" },
+  { value: "ranorex", label: "Ranorex" },
+  { value: "postman", label: "Postman" },
+  { value: "restassured", label: "Rest Assured" },
+  { value: "jmeter", label: "JMeter" },
+  { value: "soapui", label: "SoapUI" },
+  { value: "puppeteer", label: "Puppeteer" },
+  { value: "webdriverio", label: "WebdriverIO" },
+  { value: "robot_framework", label: "Robot Framework" },
+  { value: "testcafe", label: "TestCafe" },
+  { value: "mabl", label: "Mabl" },
+  { value: "testim", label: "Testim" },
+  { value: "accelq", label: "ACCELQ" },
+  { value: "tricentis_tosca", label: "Tricentis Tosca" },
+  { value: "eggplant", label: "Eggplant (by Keysight)" },
+  { value: "lambdatest", label: "LambdaTest" },
+  { value: "browserstack_automate", label: "BrowserStack Automate" },
+  { value: "percy", label: "Percy (Visual Testing)" },
+  { value: "kobiton", label: "Kobiton" },
+  { value: "perfecto", label: "Perfecto" },
+];
+
 export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormProps) {
   const form = useForm<FilterFormValues>({
     resolver: zodResolver(filterSchema),
@@ -231,7 +259,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                       </FormLabel>
                       <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value?.toString() ?? ""}
+                          value={field.value?.toString() ?? ""}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -290,15 +318,25 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                 name="automationTool"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Automation Tool</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="text" 
-                        placeholder="Enter Tool Name" 
-                        {...field} 
-                        value={field.value || ''} 
-                      />
-                    </FormControl>
+                    <FormLabel>Automation Tool (Optional)</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a tool for estimation" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {automationToolOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -430,4 +468,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
     </Form>
   );
 }
+    
+
     
