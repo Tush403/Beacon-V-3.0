@@ -38,7 +38,7 @@ const prompt = ai.definePrompt({
   - Project Description: {{#if projectDescription}}{{projectDescription}}{{else}}No additional project description provided.{{/if}}
 
   Considerations:
-  - Test case counts are primary drivers. Assign nominal days per complexity (e.g., Low: 0.25-0.5 days, Medium: 0.5-1 day, High: 1-2 days, Highly Complex: 2-4 days).
+  - Test case counts are primary drivers. Assign nominal days per complexity (e.g., Low: 0.05-0.1 days, Medium: 0.1-0.15 days, High: 0.15-0.25 days, Highly Complex: 0.25-0.4 days).
   - If a specific automation tool is mentioned, and it's known for rapid development (e.g., codeless tools), adjust estimates slightly downwards. If it's known for complexity (e.g., requiring extensive setup), adjust slightly upwards. If 'None' or 'Undecided', assume a generic scripting tool.
   - Using a standard framework generally speeds up development and maintenance.
   - CI/CD integration might add some initial setup effort but is not the primary driver for test creation effort itself.
