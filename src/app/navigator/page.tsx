@@ -1,14 +1,14 @@
 
 'use client';
 
-import { useState, useEffect, Fragment } from 'react'; // Added Fragment
-import Link from 'next/link'; // Added Link
-import React from 'react'; // Added React import
+import { useState, useEffect, Fragment } from 'react';
+import Link from 'next/link';
+import React from 'react';
 import { FilterForm } from '@/components/beacon/FilterForm';
 import { RecommendationsDisplay } from '@/components/beacon/RecommendationsDisplay';
 import { ROIChart } from '@/components/beacon/ROIChart';
 import { TrendAnalysisCard } from '@/components/beacon/TrendAnalysisCard';
-import { ToolComparisonTable } from '@/components/beacon/ToolComparisonTable'; // Import new component
+import { ToolComparisonTable } from '@/components/beacon/ToolComparisonTable';
 import { recommendToolsAction, generateToolAnalysisAction, compareToolsAction } from '../actions';
 import { useToast } from '@/hooks/use-toast';
 import type { FilterCriteria, ToolRecommendationItem, ToolAnalysisItem, GenerateToolAnalysisInput, CompareToolsOutput, CompareToolsInput } from '@/types';
@@ -28,12 +28,12 @@ export default function NavigatorPage() {
   const [toolAnalyses, setToolAnalyses] = useState<Record<string, ToolAnalysisItem | null>>({});
   const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState<Record<string, boolean>>({});
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); // Error for recommendations
   
   const [comparisonData, setComparisonData] = useState<CompareToolsOutput | null>(null);
   const [comparedToolNames, setComparedToolNames] = useState<string[]>([]);
   const [isComparingTools, setIsComparingTools] = useState(false);
-  const [comparisonError, setComparisonError] = useState<string | null>(null);
+  const [comparisonError, setComparisonError] = useState<string | null>(null); // Error for comparison
 
   const { toast } = useToast();
 
@@ -65,6 +65,7 @@ export default function NavigatorPage() {
     setError(null);
     setRecommendations([]); 
     setToolAnalyses({}); 
+    // Do not reset comparison data here, user might want to see it with new filter context or no recs
     try {
       const result = await recommendToolsAction(data);
       setRecommendations(result.recommendations);
@@ -85,15 +86,15 @@ export default function NavigatorPage() {
     if (toolAnalyses[toolName]) return; 
 
     setIsLoadingAnalysis((prev) => ({ ...prev, [toolName]: true }));
-    setError(null);
+    // setError(null); // This error is for recommendations, not individual analysis
     try {
       const analysisInput: GenerateToolAnalysisInput = { toolName };
       const analysisResult = await generateToolAnalysisAction(analysisInput);
       setToolAnalyses((prev) => ({ ...prev, [toolName]: analysisResult }));
     } catch (e: any) {
-      setError(e.message || `An unknown error occurred while fetching analysis for ${toolName}.`);
+      // setError(e.message || `An unknown error occurred while fetching analysis for ${toolName}.`); // Avoid overriding main rec error
       toast({
-        title: 'Error',
+        title: 'Analysis Error',
         description: e.message || `Failed to get analysis for ${toolName}.`,
         variant: 'destructive',
       });
@@ -107,7 +108,7 @@ export default function NavigatorPage() {
     setIsComparingTools(true);
     setComparisonError(null);
     setComparisonData(null);
-    setComparedToolNames(toolDisplayNames); // Store for table header consistency
+    setComparedToolNames(toolDisplayNames);
 
     try {
       const input: CompareToolsInput = { toolNames: toolDisplayNames };
@@ -131,6 +132,31 @@ export default function NavigatorPage() {
      // handleFilterSubmit(initialFilterValues); 
   }, []);
 
+  const recommendationsExist = recommendations.length > 0;
+  const comparisonIsActive = isComparingTools || !!comparisonData || !!comparisonError;
+
+  const ComparisonRenderBlock = () => (
+    <>
+      {isComparingTools && (
+        <div className="text-center py-10">
+          <Loader2 className="h-12 w-12 mx-auto mb-4 animate-spin text-primary" />
+          <h3 className="text-xl font-semibold text-muted-foreground">AI is comparing tools...</h3>
+          <p className="text-muted-foreground">This may take a moment.</p>
+        </div>
+      )}
+      {comparisonError && !isComparingTools && (
+        <div className="mt-8 text-center py-10 bg-destructive/10 rounded-lg border border-destructive text-destructive">
+          <AlertTriangle className="h-12 w-12 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold mb-2">Comparison Failed</h3>
+          <p>{comparisonError}</p>
+        </div>
+      )}
+      {comparisonData && !isComparingTools && !comparisonError && (
+        <ToolComparisonTable data={comparisonData} toolNames={comparedToolNames} />
+      )}
+    </>
+  );
+
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex flex-1">
@@ -146,20 +172,25 @@ export default function NavigatorPage() {
           </SidebarContent>
         </Sidebar>
         <SidebarInset>
-          <div className="flex flex-col flex-1 h-full"> {/* Wrapper for content + footer */}
-            <div className="flex-grow p-4 md:p-8 space-y-10 overflow-y-auto"> {/* Main content area */}
-              <RecommendationsDisplay
-                recommendations={recommendations}
-                toolAnalyses={toolAnalyses}
-                projectEfforts={{}} 
-                docLinks={{}}
-                onGetAnalysis={handleGetAnalysis}
-                isLoadingRecommendations={isLoadingRecommendations}
-                isLoadingAnalysis={isLoadingAnalysis}
-                error={error}
-              />
+          <div className="flex flex-col flex-1 h-full">
+            <div className="flex-grow p-4 md:p-8 space-y-10 overflow-y-auto">
+              
+              {!recommendationsExist && comparisonIsActive ? (
+                <ComparisonRenderBlock />
+              ) : (
+                <RecommendationsDisplay
+                  recommendations={recommendations}
+                  toolAnalyses={toolAnalyses}
+                  projectEfforts={{}} 
+                  docLinks={{}}
+                  onGetAnalysis={handleGetAnalysis}
+                  isLoadingRecommendations={isLoadingRecommendations}
+                  isLoadingAnalysis={isLoadingAnalysis}
+                  error={error} // This is the error for recommendations
+                />
+              )}
 
-              {recommendations.length > 0 && (
+              {recommendationsExist && (
                 <>
                   <Separator className="my-12" />
                    <div className="space-y-8"> 
@@ -169,31 +200,14 @@ export default function NavigatorPage() {
                 </>
               )}
 
-              {/* Tool Comparison Section */}
-              {(isComparingTools || comparisonData || comparisonError) && <Separator className="my-12" />}
-              
-              {isComparingTools && (
-                <div className="text-center py-10">
-                  <Loader2 className="h-12 w-12 mx-auto mb-4 animate-spin text-primary" />
-                  <h3 className="text-xl font-semibold text-muted-foreground">AI is comparing tools...</h3>
-                  <p className="text-muted-foreground">This may take a moment.</p>
-                </div>
-              )}
-
-              {comparisonError && !isComparingTools && (
-                <div className="mt-8 text-center py-10 bg-destructive/10 rounded-lg border border-destructive text-destructive">
-                  <AlertTriangle className="h-12 w-12 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">Comparison Failed</h3>
-                  <p>{comparisonError}</p>
-                </div>
-              )}
-
-              {comparisonData && !isComparingTools && !comparisonError && (
-                <ToolComparisonTable data={comparisonData} toolNames={comparedToolNames} />
+              {recommendationsExist && comparisonIsActive && (
+                <>
+                  <Separator className="my-12" />
+                  <ComparisonRenderBlock />
+                </>
               )}
 
             </div>
-            {/* Footer moved here */}
             <footer className="p-4 text-sm text-muted-foreground border-t border-border">
               <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-y-2">
                 <p className="text-center sm:text-left">Copyright © {year} TAO Digital Solutions Inc. All rights reserved.</p>
