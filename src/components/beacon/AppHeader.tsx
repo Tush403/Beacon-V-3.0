@@ -4,22 +4,14 @@
 import { useState, useEffect } from 'react';
 import { CogIcon, Mail, Moon, Search, Library, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { useRouter } from 'next/navigation'; // Import useRouter
+
+// Key for the main release notes acknowledgment, consistent with src/app/page.tsx
+const RELEASE_NOTES_ACKNOWLEDGED_KEY = 'release_notes_acknowledged_v2.0';
 
 export function AppHeader() {
   const [theme, setTheme] = useState('light'); // Default to light
-  const [isDocAckDialogOpen, setIsDocAckDialogOpen] = useState(false);
-  const DOC_ACK_KEY = 'documentation_acknowledged_v1.0';
-
+  const router = useRouter(); // Initialize router
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -52,23 +44,15 @@ export function AppHeader() {
 
   const handleDocButtonClick = () => {
     if (typeof window !== 'undefined') {
-      const isAcknowledged = localStorage.getItem(DOC_ACK_KEY);
-      if (isAcknowledged === 'true') {
+      const isReleaseNotesAcknowledged = localStorage.getItem(RELEASE_NOTES_ACKNOWLEDGED_KEY);
+      if (isReleaseNotesAcknowledged === 'true') {
         openDocumentation();
       } else {
-        setIsDocAckDialogOpen(true);
+        // Redirect to landing page to show ReleaseNotesDialog
+        router.push('/');
       }
     }
   };
-
-  const handleDocAcknowledge = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(DOC_ACK_KEY, 'true');
-    }
-    setIsDocAckDialogOpen(false);
-    openDocumentation();
-  };
-
 
   return (
     <>
@@ -105,27 +89,7 @@ export function AppHeader() {
           </div>
         </div>
       </header>
-
-      <AlertDialog open={isDocAckDialogOpen} onOpenChange={setIsDocAckDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Important Updates & Documentation Access</AlertDialogTitle>
-            <AlertDialogDescription>
-              Beacon has recently been updated with new features and platform enhancements, 
-              including our migration to Firebase Studio and refined AI capabilities. 
-              Please ensure you are familiar with these changes.
-              <br /><br />
-              By clicking "Acknowledge & Proceed", you also confirm that you are aware of and have access 
-              to the necessary documentation resources for Beacon. If you need assistance, 
-              please contact your administrator or refer to internal knowledge bases.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setIsDocAckDialogOpen(false)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDocAcknowledge}>Acknowledge & Proceed</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* AlertDialog for specific documentation acknowledgment has been removed */}
     </>
   );
 }
