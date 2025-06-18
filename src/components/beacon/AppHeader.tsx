@@ -4,14 +4,14 @@
 import { useState, useEffect } from 'react';
 import { CogIcon, Mail, Moon, Search, Library, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { ReleaseNotesDialog } from '@/components/beacon/ReleaseNotesDialog'; // Import ReleaseNotesDialog
 
 // Key for the main release notes acknowledgment, consistent with src/app/page.tsx
 const RELEASE_NOTES_ACKNOWLEDGED_KEY = 'release_notes_acknowledged_v2.0';
 
 export function AppHeader() {
   const [theme, setTheme] = useState('light'); // Default to light
-  const router = useRouter(); // Initialize router
+  const [showReleaseNotesDialog, setShowReleaseNotesDialog] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -48,10 +48,17 @@ export function AppHeader() {
       if (isReleaseNotesAcknowledged === 'true') {
         openDocumentation();
       } else {
-        // Redirect to landing page to show ReleaseNotesDialog
-        router.push('/');
+        setShowReleaseNotesDialog(true); // Open ReleaseNotesDialog directly
       }
     }
+  };
+
+  const handleAcknowledgeAndOpenDocs = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(RELEASE_NOTES_ACKNOWLEDGED_KEY, 'true');
+    }
+    setShowReleaseNotesDialog(false);
+    openDocumentation(); // Open docs after acknowledging
   };
 
   return (
@@ -89,7 +96,11 @@ export function AppHeader() {
           </div>
         </div>
       </header>
-      {/* AlertDialog for specific documentation acknowledgment has been removed */}
+      <ReleaseNotesDialog
+        isOpen={showReleaseNotesDialog}
+        onOpenChange={setShowReleaseNotesDialog}
+        onAcknowledge={handleAcknowledgeAndOpenDocs}
+      />
     </>
   );
 }
