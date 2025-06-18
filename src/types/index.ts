@@ -112,7 +112,7 @@ export type ComparisonCriterion = z.infer<typeof ComparisonCriterionSchema>;
 
 export const CompareToolsOutputSchema = z.object({
   comparisonTable: z.array(ComparisonCriterionSchema).describe("An array of criteria, where each criterion contains a mapping of tool names to their respective comparison details for that criterion."),
-  toolOverviews: z.record(z.string(), z.string().optional()).optional().describe("Optional: A brief 1-2 sentence overview for each compared tool."),
+  toolOverviews: z.record(z.string(), z.string()).optional().describe("Optional: A brief 1-2 sentence overview for each compared tool. For each tool name key present in this object, the value must be a non-empty string overview."),
 });
 export type CompareToolsOutput = z.infer<typeof CompareToolsOutputSchema>;
 
