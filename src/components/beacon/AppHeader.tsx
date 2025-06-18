@@ -14,6 +14,7 @@ export function AppHeader() {
   const [showReleaseNotesDialog, setShowReleaseNotesDialog] = useState(false);
 
   useEffect(() => {
+    // Client-side only effect for theme
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (savedTheme) {
@@ -24,6 +25,7 @@ export function AppHeader() {
   }, []);
 
   useEffect(() => {
+    // Client-side only effect for applying theme
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
@@ -39,7 +41,9 @@ export function AppHeader() {
 
   const openDocumentation = () => {
     // Placeholder for actual documentation link
-    window.open('https://example.com/main-documentation', '_blank');
+    if (typeof window !== 'undefined') {
+      window.open('https://example.com/main-documentation', '_blank');
+    }
   };
 
   const handleDocButtonClick = () => {
