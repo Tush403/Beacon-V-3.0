@@ -31,11 +31,24 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Loader2, RotateCcw, Settings2, Filter } from 'lucide-react';
+import {
+  Command,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Loader2, RotateCcw, Settings2, Filter, ChevronsUpDown, Check, PlusCircle } from 'lucide-react';
 import type { FilterCriteria, EstimateEffortInput } from '@/types'; 
-import { useState } from 'react'; 
+import { useState, useEffect } from 'react'; 
 import { estimateEffortAction } from '@/app/actions'; 
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 
 const filterSchema = z.object({
@@ -139,6 +152,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
 
   const { toast } = useToast();
   const [isEstimatingEffort, setIsEstimatingEffort] = useState(false);
+  const [comboboxOpen, setComboboxOpen] = useState(false);
 
   const handleGetEstimate = async () => {
     const formData = form.getValues();
@@ -258,7 +272,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="p-1">
-        <Accordion type="multiple" className="w-full">
+        <Accordion type="multiple" className="w-full" defaultValue={['filter-tools']}>
           <AccordionItem value="filter-tools">
             <AccordionTrigger>
               <div className="flex items-center text-base font-semibold text-primary hover:no-underline">
@@ -337,30 +351,93 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
               <FormField
                 control={form.control}
                 name="automationTool"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Automation Tool (Optional)</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value} // ensure value is correctly bound
-                      defaultValue={field.value} // can be removed if value is controlled
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a tool for estimation" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {automationToolOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const searchTerm = field.value || "";
+                  const isCustomTool = searchTerm && !automationToolOptions.some(opt => opt.value.toLowerCase() === searchTerm.toLowerCase());
+                  
+                  return (
+                    <FormItem>
+                      <FormLabel>Automation Tool (Optional)</FormLabel>
+                      <Popover open={comboboxOpen} onOpenChange={setComboboxOpen}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "w-full justify-between text-xs", // Ensure text-xs for consistency
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? automationToolOptions.find(
+                                    (option) => option.value === field.value
+                                  )?.label || field.value // Display custom value if not in list
+                                : "Select a tool or type custom"}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                          <Command
+                            value={field.value || ""}
+                            onValueChange={(currentValue) => {
+                              field.onChange(currentValue);
+                            }}
+                          >
+                            <CommandInput
+                              placeholder="Search tool or type custom..."
+                              className="text-xs" // Ensure text-xs for consistency
+                            />
+                            <CommandEmpty>
+                              {searchTerm && !automationToolOptions.some(opt => opt.value.toLowerCase() === searchTerm.toLowerCase())
+                                ? `Press Enter or click to use "${searchTerm}"`
+                                : "No tool found."}
+                            </CommandEmpty>
+                            <CommandList>
+                              {automationToolOptions.map((option) => (
+                                <CommandItem
+                                  key={option.value}
+                                  value={option.value}
+                                  onSelect={() => {
+                                    form.setValue("automationTool", option.value, { shouldValidate: true });
+                                    setComboboxOpen(false);
+                                  }}
+                                  className="text-xs" // Ensure text-xs for consistency
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      field.value === option.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  {option.label}
+                                </CommandItem>
+                              ))}
+                              {isCustomTool && (
+                                <CommandItem
+                                  key={searchTerm}
+                                  value={searchTerm}
+                                  onSelect={() => {
+                                    form.setValue("automationTool", searchTerm, { shouldValidate: true });
+                                    setComboboxOpen(false);
+                                  }}
+                                  className="text-xs" // Ensure text-xs for consistency
+                                >
+                                  <PlusCircle className="mr-2 h-4 w-4" />
+                                  Use custom tool: "{searchTerm}"
+                                </CommandItem>
+                              )}
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )
+                }}
               />
               <FormField
                 control={form.control}
@@ -489,6 +566,3 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
     </Form>
   );
 }
-    
-
-    
