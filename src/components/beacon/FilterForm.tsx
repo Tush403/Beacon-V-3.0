@@ -80,6 +80,8 @@ interface FilterFormProps {
   onSubmit: (data: FilterFormValues) => void;
   isLoading: boolean;
   defaultValues?: Partial<FilterCriteria>;
+  onCompareSubmit: (toolDisplayNames: string[]) => Promise<void>;
+  isComparing: boolean;
 }
 
 const defaultFormValues: FilterFormValues = {
@@ -151,7 +153,7 @@ const automationToolOptions = [
 ];
 
 
-export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormProps) {
+export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit, isComparing }: FilterFormProps) {
   const form = useForm<FilterFormValues>({
     resolver: zodResolver(filterSchema),
     defaultValues: { ...defaultFormValues, ...defaultValues },
@@ -167,7 +169,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
   const handleGetEstimate = async () => {
     const formData = form.getValues();
     const effortInput: EstimateEffortInput = {
-      automationTool: formData.automationTool || 'None', 
+      automationTool: formData.automationTool ? (automationToolOptions.find(opt => opt.value === formData.automationTool)?.label || formData.automationTool) : 'None', 
       complexityLow: formData.complexityLow,
       complexityMedium: formData.complexityMedium,
       complexityHigh: formData.complexityHigh,
@@ -215,8 +217,9 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
 
   const handleCompareTools = () => {
     const formData = form.getValues();
-    const toolsToCompare = [formData.toolToCompare1, formData.toolToCompare2, formData.toolToCompare3].filter(Boolean);
-    if (toolsToCompare.length < 2) {
+    const toolValues = [formData.toolToCompare1, formData.toolToCompare2, formData.toolToCompare3].filter(Boolean) as string[];
+    
+    if (toolValues.length < 2) {
       toast({
         title: "Select More Tools",
         description: "Please select at least two tools to compare.",
@@ -224,12 +227,13 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
       });
       return;
     }
-    console.log("Comparing tools:", toolsToCompare);
-    // Placeholder for actual comparison logic
-    toast({
-      title: "Comparison Initiated",
-      description: `Comparing: ${toolsToCompare.join(', ')}. Display functionality coming soon.`,
+
+    const toolDisplayNames = toolValues.map(value => {
+      const option = automationToolOptions.find(opt => opt.value === value);
+      return option ? option.label : value; // Use label if found, otherwise the value itself (for custom tools)
     });
+
+    onCompareSubmit(toolDisplayNames);
   };
 
   const filterOptions = {
@@ -304,6 +308,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
       name={fieldName}
       render={({ field }) => {
         const searchTerm = field.value || "";
+        // Check if the current input value is a custom tool by seeing if it's not one of the predefined `value` fields
         const isCustomTool = searchTerm && !automationToolOptions.some(opt => opt.value.toLowerCase() === searchTerm.toLowerCase());
         
         return (
@@ -321,9 +326,9 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                     )}
                   >
                     {field.value
-                      ? automationToolOptions.find(
+                      ? automationToolOptions.find( // Find by value
                           (option) => option.value === field.value
-                        )?.label || field.value
+                        )?.label || field.value // Display label or value if custom
                       : placeholder}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
@@ -331,25 +336,31 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
               </PopoverTrigger>
               <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
                 <Command
-                  value={field.value || ""}
-                  onValueChange={(currentValue) => {
-                    field.onChange(currentValue);
+                  filter={(value, search) => {
+                    const option = automationToolOptions.find(opt => opt.value === value);
+                    if (option && option.label.toLowerCase().includes(search.toLowerCase())) return 1;
+                    if (value.toLowerCase().includes(search.toLowerCase())) return 1; // Also match custom typed values
+                    return 0;
                   }}
                 >
                   <CommandInput
                     placeholder="Search tool or type custom..."
                     className="text-xs"
+                    value={field.value || ""} // Controlled input for search
+                    onValueChange={(search) => { // Update field value as user types for custom tool entry
+                       field.onChange(search);
+                    }}
                   />
                   <CommandEmpty>
-                    {searchTerm && !automationToolOptions.some(opt => opt.value.toLowerCase() === searchTerm.toLowerCase())
-                      ? `Press Enter or click to use "${searchTerm}"`
+                    {field.value && !automationToolOptions.some(opt => opt.value.toLowerCase() === field.value?.toLowerCase()) 
+                      ? `Press Enter or click to use "${field.value}"`
                       : "No tool found."}
                   </CommandEmpty>
                   <CommandList>
                     {automationToolOptions.map((option) => (
                       <CommandItem
                         key={option.value}
-                        value={option.value}
+                        value={option.value} // Store value
                         onSelect={() => {
                           form.setValue(fieldName, option.value, { shouldValidate: true });
                           setPopoverOpen(false);
@@ -364,21 +375,22 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                               : "opacity-0"
                           )}
                         />
-                        {option.label}
+                        {option.label} 
                       </CommandItem>
                     ))}
-                    {isCustomTool && (
+                    {/* Show option to add custom tool if typed text is not in predefined list */}
+                    {field.value && !automationToolOptions.some(opt => opt.label.toLowerCase() === field.value?.toLowerCase() || opt.value.toLowerCase() === field.value?.toLowerCase()) && (
                       <CommandItem
-                        key={searchTerm}
-                        value={searchTerm}
+                        key={field.value} // Use current typed value as key
+                        value={field.value} // Use current typed value
                         onSelect={() => {
-                          form.setValue(fieldName, searchTerm, { shouldValidate: true });
+                          form.setValue(fieldName, field.value, { shouldValidate: true }); // Set the custom value
                           setPopoverOpen(false);
                         }}
                         className="text-xs"
                       >
                         <PlusCircle className="mr-2 h-4 w-4" />
-                        Use custom tool: "{searchTerm}"
+                        Use custom tool: "{field.value}"
                       </CommandItem>
                     )}
                   </CommandList>
@@ -606,7 +618,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
             </AccordionTrigger>
             <AccordionContent className="px-2 pt-4 pb-4 space-y-4">
               <p className="text-xs text-muted-foreground">
-                Select up to 3 tools for a side-by-side comparison.
+                Select 2 to 3 tools for a side-by-side comparison.
               </p>
               {renderToolCombobox("toolToCompare1", comboboxCompare1Open, setComboboxCompare1Open, "Select Tool 1 or type custom")}
               {renderToolCombobox("toolToCompare2", comboboxCompare2Open, setComboboxCompare2Open, "Select Tool 2 or type custom")}
@@ -615,8 +627,20 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                 type="button" 
                 className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" 
                 onClick={handleCompareTools}
+                disabled={isComparing || 
+                  (form.watch('toolToCompare1') ? 0 : 1) + 
+                  (form.watch('toolToCompare2') ? 0 : 1) + 
+                  (form.watch('toolToCompare3') ? 0 : 1) > 1 /* at least 2 tools must be selected */
+                }
               >
-                Compare Selected Tools
+                {isComparing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Comparing...
+                  </>
+                ) : (
+                  'Compare Selected Tools'
+                )}
               </Button>
             </AccordionContent>
           </AccordionItem>
@@ -626,4 +650,3 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
     </Form>
   );
 }
-

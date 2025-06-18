@@ -8,9 +8,10 @@ import { FilterForm } from '@/components/beacon/FilterForm';
 import { RecommendationsDisplay } from '@/components/beacon/RecommendationsDisplay';
 import { ROIChart } from '@/components/beacon/ROIChart';
 import { TrendAnalysisCard } from '@/components/beacon/TrendAnalysisCard';
-import { recommendToolsAction, generateToolAnalysisAction } from '../actions';
+import { ToolComparisonTable } from '@/components/beacon/ToolComparisonTable'; // Import new component
+import { recommendToolsAction, generateToolAnalysisAction, compareToolsAction } from '../actions';
 import { useToast } from '@/hooks/use-toast';
-import type { FilterCriteria, ToolRecommendationItem, ToolAnalysisItem, GenerateToolAnalysisInput } from '@/types';
+import type { FilterCriteria, ToolRecommendationItem, ToolAnalysisItem, GenerateToolAnalysisInput, CompareToolsOutput, CompareToolsInput } from '@/types';
 import { Separator } from '@/components/ui/separator';
 import { 
   SidebarProvider, 
@@ -19,6 +20,7 @@ import {
   SidebarInset,
 } from '@/components/ui/sidebar';
 import { BackToTopButton } from '@/components/beacon/BackToTopButton';
+import { AlertTriangle, Loader2 } from 'lucide-react';
 
 export default function NavigatorPage() {
   const [filters, setFilters] = useState<FilterCriteria | null>(null);
@@ -27,6 +29,12 @@ export default function NavigatorPage() {
   const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
+  
+  const [comparisonData, setComparisonData] = useState<CompareToolsOutput | null>(null);
+  const [comparedToolNames, setComparedToolNames] = useState<string[]>([]);
+  const [isComparingTools, setIsComparingTools] = useState(false);
+  const [comparisonError, setComparisonError] = useState<string | null>(null);
+
   const { toast } = useToast();
 
   const [year, setYear] = useState(new Date().getFullYear());
@@ -94,6 +102,29 @@ export default function NavigatorPage() {
       setIsLoadingAnalysis((prev) => ({ ...prev, [toolName]: false }));
     }
   };
+
+  const handleCompareRequest = async (toolDisplayNames: string[]) => {
+    setIsComparingTools(true);
+    setComparisonError(null);
+    setComparisonData(null);
+    setComparedToolNames(toolDisplayNames); // Store for table header consistency
+
+    try {
+      const input: CompareToolsInput = { toolNames: toolDisplayNames };
+      const result = await compareToolsAction(input);
+      setComparisonData(result);
+    } catch (e: any) {
+      const msg = e.message || 'An unknown error occurred while comparing tools.';
+      setComparisonError(msg);
+      toast({
+        title: 'Comparison Error',
+        description: msg,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsComparingTools(false);
+    }
+  };
   
   useEffect(() => {
      // To auto-load on page init with default filters:
@@ -109,6 +140,8 @@ export default function NavigatorPage() {
               onSubmit={handleFilterSubmit} 
               isLoading={isLoadingRecommendations}
               defaultValues={initialFilterValues}
+              onCompareSubmit={handleCompareRequest}
+              isComparing={isComparingTools}
             />
           </SidebarContent>
         </Sidebar>
@@ -135,6 +168,30 @@ export default function NavigatorPage() {
                   </div>
                 </>
               )}
+
+              {/* Tool Comparison Section */}
+              {(isComparingTools || comparisonData || comparisonError) && <Separator className="my-12" />}
+              
+              {isComparingTools && (
+                <div className="text-center py-10">
+                  <Loader2 className="h-12 w-12 mx-auto mb-4 animate-spin text-primary" />
+                  <h3 className="text-xl font-semibold text-muted-foreground">AI is comparing tools...</h3>
+                  <p className="text-muted-foreground">This may take a moment.</p>
+                </div>
+              )}
+
+              {comparisonError && !isComparingTools && (
+                <div className="mt-8 text-center py-10 bg-destructive/10 rounded-lg border border-destructive text-destructive">
+                  <AlertTriangle className="h-12 w-12 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">Comparison Failed</h3>
+                  <p>{comparisonError}</p>
+                </div>
+              )}
+
+              {comparisonData && !isComparingTools && !comparisonError && (
+                <ToolComparisonTable data={comparisonData} toolNames={comparedToolNames} />
+              )}
+
             </div>
             {/* Footer moved here */}
             <footer className="p-4 text-sm text-muted-foreground border-t border-border">
@@ -158,4 +215,3 @@ export default function NavigatorPage() {
     </SidebarProvider>
   );
 }
-

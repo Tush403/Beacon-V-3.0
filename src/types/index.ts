@@ -97,3 +97,22 @@ export const GenerateToolAnalysisOutputSchema = z.object({
 });
 export type GenerateToolAnalysisOutput = z.infer<typeof GenerateToolAnalysisOutputSchema>;
 
+// Schemas for Tool Comparison
+export const CompareToolsInputSchema = z.object({
+  toolNames: z.array(z.string()).min(2).max(3).describe('An array of 2 to 3 tool names to compare.'),
+});
+export type CompareToolsInput = z.infer<typeof CompareToolsInputSchema>;
+
+export const ComparisonCriterionSchema = z.object({
+  criterionName: z.string().describe("The name of the comparison criterion (e.g., 'Ease of Use', 'Key Features', 'Primary Use Case', 'Strengths', 'Weaknesses', 'Pricing Model', 'Community Support', 'Best For')."),
+  // toolName -> comparison text for this criterion for this tool
+  toolValues: z.record(z.string(), z.string().describe("The comparison details for this tool regarding this specific criterion. The text should be concise and suitable for a table cell.")),
+});
+export type ComparisonCriterion = z.infer<typeof ComparisonCriterionSchema>;
+
+export const CompareToolsOutputSchema = z.object({
+  comparisonTable: z.array(ComparisonCriterionSchema).describe("An array of criteria, where each criterion contains a mapping of tool names to their respective comparison details for that criterion."),
+  toolOverviews: z.record(z.string(), z.string().optional()).optional().describe("Optional: A brief 1-2 sentence overview for each compared tool."),
+});
+export type CompareToolsOutput = z.infer<typeof CompareToolsOutputSchema>;
+

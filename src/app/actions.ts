@@ -4,7 +4,7 @@
 import { recommendTools as genkitRecommendTools, RecommendToolsInput, RecommendToolsOutput } from '@/ai/flows/recommend-tools';
 import { generateToolAnalysis as genkitGenerateToolAnalysis, GenerateToolAnalysisOutput, GenerateToolAnalysisInput } from '@/ai/flows/generate-tool-analysis'; // Updated import
 import { estimateEffort as genkitEstimateEffort, EstimateEffortInput, EstimateEffortOutput } from '@/ai/flows/estimate-effort-flow';
-// type GenerateToolAnalysisInput is now also imported from the flow itself
+import { compareTools as genkitCompareTools, CompareToolsInput, CompareToolsOutput } from '@/ai/flows/compare-tools-flow';
 
 
 export async function recommendToolsAction(filters: RecommendToolsInput): Promise<RecommendToolsOutput> {
@@ -67,5 +67,18 @@ export async function estimateEffortAction(input: EstimateEffortInput): Promise<
   } catch (error) {
     console.error('Error estimating effort:', error);
     throw new Error(`Failed to get effort estimation. ${error instanceof Error ? error.message : ''}`);
+  }
+}
+
+export async function compareToolsAction(input: CompareToolsInput): Promise<CompareToolsOutput> {
+  try {
+    const result = await genkitCompareTools(input);
+    if (!result || !result.comparisonTable || result.comparisonTable.length === 0) {
+      throw new Error('AI tool comparison came back empty or malformed.');
+    }
+    return result;
+  } catch (error) {
+    console.error('Error comparing tools:', error);
+    throw new Error(`Failed to get tool comparison. ${error instanceof Error ? error.message : ''}`);
   }
 }
