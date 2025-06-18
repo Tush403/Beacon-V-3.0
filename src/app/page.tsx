@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CookieConsent } from '@/components/beacon/CookieConsent';
 import { ReleaseNotesDialog } from '@/components/beacon/ReleaseNotesDialog';
+import { Separator } from '@/components/ui/separator';
 
 const LandingHeader = () => (
   <header className="py-6 px-4 md:px-8">
@@ -29,8 +30,19 @@ const LandingFooter = () => {
   }, []);
 
   return (
-    <footer className="py-6 text-center">
-      <p className="text-sm text-muted-foreground">© {year} TAO Digital. All rights reserved.</p>
+    <footer className="py-6 px-4 md:px-8 border-t border-border">
+      <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center text-sm text-muted-foreground">
+        <p className="mb-2 sm:mb-0 text-center sm:text-left">Copyright © {year} TAO Digital Solutions Inc. All rights reserved.</p>
+        <div className="flex items-center gap-x-3 sm:gap-x-4">
+          <Link href="https://www.taodigitalsolutions.com/privacy" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+            Privacy Policy
+          </Link>
+          <Separator orientation="vertical" className="h-4 bg-border hidden sm:block" />
+          <Link href="https://www.taodigitalsolutions.com/terms-conditions" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+            Terms & Conditions
+          </Link>
+        </div>
+      </div>
     </footer>
   );
 };
