@@ -43,7 +43,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Loader2, RotateCcw, Settings2, Filter, ChevronsUpDown, Check, PlusCircle, ListCompare } from 'lucide-react';
+import { Loader2, RotateCcw, Settings2, Filter, ChevronsUpDown, Check, PlusCircle, GitCompare } from 'lucide-react';
 import type { FilterCriteria, EstimateEffortInput } from '@/types'; 
 import { useState, useEffect } from 'react'; 
 import { estimateEffortAction } from '@/app/actions'; 
@@ -600,7 +600,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
           <AccordionItem value="compare-tools">
             <AccordionTrigger>
               <div className="flex items-center text-base font-semibold text-primary hover:no-underline">
-                <ListCompare className="mr-2 h-5 w-5" />
+                <GitCompare className="mr-2 h-5 w-5" />
                 Compare Tools
               </div>
             </AccordionTrigger>
