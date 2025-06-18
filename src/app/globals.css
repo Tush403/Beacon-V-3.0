@@ -22,8 +22,8 @@
     --muted: 0 0% 96.1%;
     --muted-foreground: 231 33% 40%;
 
-    --accent: 290 50% 50%; /* Muted accent for light theme */
-    --accent-foreground: 0 0% 100%;
+    --accent: 160 70% 40%; /* New: Rich Teal for light theme */
+    --accent-foreground: 0 0% 100%; /* White text for new accent */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -69,30 +69,30 @@
     --muted: 231 30% 22%;
     --muted-foreground: 0 0% 65%; /* Lighter muted text */
 
-    --accent: 290 50% 65%; /* #C776D4 */
-    --accent-foreground: 0 0% 100%; /* White text on accent */
+    --accent: 160 60% 60%; /* New: Lighter Teal for dark theme */
+    --accent-foreground: 231 33% 10%; /* Dark text for new accent */
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 231 30% 28%; /* Subtle borders */
     --input: 231 30% 25%;
-    --ring: 290 50% 65%; /* Accent color for focus rings */
+    --ring: 160 60% 60%; /* New: Accent color for focus rings in dark mode */
     
     --chart-1: 232 32% 39%; /* Primary */
-    --chart-2: 290 50% 65%; /* Accent */
+    --chart-2: 160 60% 60%; /* New Accent */
     --chart-3: 200 50% 50%; /* A contrasting blue/cyan */
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
 
     --sidebar-background: 231 33% 10%; /* Darker sidebar */
     --sidebar-foreground: 0 0% 85%;
-    --sidebar-primary: 290 50% 65%; /* Accent for active items */
-    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-primary: 160 60% 60%; /* New Accent for active sidebar items */
+    --sidebar-primary-foreground: 231 33% 10%;
     --sidebar-accent: 231 33% 20%; /* Hover bg */
     --sidebar-accent-foreground: 0 0% 95%;
     --sidebar-border: 231 33% 20%;
-    --sidebar-ring: 290 50% 65%;
+    --sidebar-ring: 160 60% 60%;
   }
 }
 
