@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { CogIcon, Mail, Moon, Search, Library, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ReleaseNotesDialog } from '@/components/beacon/ReleaseNotesDialog'; // Import ReleaseNotesDialog
+import { ReleaseNotesDialog } from '@/components/beacon/ReleaseNotesDialog'; 
 
 // Key for the main release notes acknowledgment, consistent with src/app/page.tsx
 const RELEASE_NOTES_ACKNOWLEDGED_KEY = 'release_notes_acknowledged_v2.0';
@@ -39,30 +39,18 @@ export function AppHeader() {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
-  const openDocumentation = () => {
-    // Placeholder for actual documentation link
-    if (typeof window !== 'undefined') {
-      window.open('https://example.com/main-documentation', '_blank');
-    }
-  };
-
   const handleDocButtonClick = () => {
-    if (typeof window !== 'undefined') {
-      const isReleaseNotesAcknowledged = localStorage.getItem(RELEASE_NOTES_ACKNOWLEDGED_KEY);
-      if (isReleaseNotesAcknowledged === 'true') {
-        openDocumentation();
-      } else {
-        setShowReleaseNotesDialog(true); // Open ReleaseNotesDialog directly
-      }
-    }
+    // Always show the ReleaseNotesDialog when the documentation button is clicked
+    setShowReleaseNotesDialog(true);
   };
 
-  const handleAcknowledgeAndOpenDocs = () => {
+  const handleAcknowledgeReleaseNotes = () => {
+    // This function is called when "Acknowledge & Continue" is clicked in the ReleaseNotesDialog
     if (typeof window !== 'undefined') {
       localStorage.setItem(RELEASE_NOTES_ACKNOWLEDGED_KEY, 'true');
     }
     setShowReleaseNotesDialog(false);
-    openDocumentation(); // Open docs after acknowledging
+    // No longer opens an external document link
   };
 
   return (
@@ -103,7 +91,7 @@ export function AppHeader() {
       <ReleaseNotesDialog
         isOpen={showReleaseNotesDialog}
         onOpenChange={setShowReleaseNotesDialog}
-        onAcknowledge={handleAcknowledgeAndOpenDocs}
+        onAcknowledge={handleAcknowledgeReleaseNotes} // Use the updated handler
       />
     </>
   );
