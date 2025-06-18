@@ -99,17 +99,37 @@ const automationToolOptions = [
   { value: "webdriverio", label: "WebdriverIO" },
   { value: "robot_framework", label: "Robot Framework" },
   { value: "testcafe", label: "TestCafe" },
-  { value: "mabl", label: "Mabl" },
-  { value: "testim", label: "Testim" },
-  { value: "accelq", label: "ACCELQ" },
+  { value: "mabl", label: "Mabl (AI)" },
+  { value: "testim", label: "Testim (AI)" },
+  { value: "accelq", label: "ACCELQ (AI, Codeless)" },
   { value: "tricentis_tosca", label: "Tricentis Tosca" },
   { value: "eggplant", label: "Eggplant (by Keysight)" },
-  { value: "lambdatest", label: "LambdaTest" },
-  { value: "browserstack_automate", label: "BrowserStack Automate" },
-  { value: "percy", label: "Percy (Visual Testing)" },
-  { value: "kobiton", label: "Kobiton" },
-  { value: "perfecto", label: "Perfecto" },
+  { value: "lambdatest", label: "LambdaTest (Cloud Platform)" },
+  { value: "browserstack_automate", label: "BrowserStack Automate (Cloud Platform)" },
+  { value: "percy", label: "Percy (Visual Testing, AI)" },
+  { value: "kobiton", label: "Kobiton (Mobile Cloud)" },
+  { value: "perfecto", label: "Perfecto (Mobile & Web Cloud)" },
+  { value: "functionize", label: "Functionize (AI)" },
+  { value: "applitools", label: "Applitools (Visual AI)" },
+  { value: "saucelabs", label: "Sauce Labs (Cloud Platform)" },
+  { value: "testsigma", label: "TestSigma (AI, Low-code)" },
+  { value: "leapwork", label: "Leapwork (Codeless)" },
+  { value: "gauge", label: "Gauge (by ThoughtWorks)" },
+  { value: "karate_dsl", label: "Karate DSL (API/UI)" },
+  { value: "cucumber", label: "Cucumber (BDD)" },
+  { value: "specflow", label: "SpecFlow (BDD for .NET)" },
+  { value: "k6", label: "Grafana k6 (Performance)" },
+  { value: "gatling", label: "Gatling (Performance)" },
+  { value: "sahi_pro", label: "Sahi Pro (Web Automation)" },
+  { value: "uft_one", label: "Micro Focus UFT One" },
+  { value: "reflect_run", label: "Reflect (Codeless, AI)" },
+  { value: "ghost_inspector", label: "Ghost Inspector (Codeless, UI Monitoring)" },
+  { value: "detox", label: "Detox (Mobile E2E for React Native)" },
+  { value: "espresso", label: "Espresso (Android UI Testing)" },
+  { value: "xcuitest", label: "XCUITest (iOS UI Testing)" },
+  { value: "newman", label: "Newman (Postman CLI)" },
 ];
+
 
 export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormProps) {
   const form = useForm<FilterFormValues>({
@@ -131,6 +151,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
       useStandardFramework: formData.useStandardFramework || false,
       cicdPipelineIntegrated: formData.cicdPipelineIntegrated || false,
       qaTeamSize: formData.qaTeamSize,
+      projectDescription: formData.automationTool ? `Effort estimation considering ${automationToolOptions.find(opt => opt.value === formData.automationTool)?.label || formData.automationTool}.` : undefined,
     };
 
     setIsEstimatingEffort(true);
@@ -321,8 +342,8 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                     <FormLabel>Automation Tool (Optional)</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      value={field.value}
-                      defaultValue={field.value}
+                      value={field.value} // ensure value is correctly bound
+                      defaultValue={field.value} // can be removed if value is controlled
                     >
                       <FormControl>
                         <SelectTrigger>
