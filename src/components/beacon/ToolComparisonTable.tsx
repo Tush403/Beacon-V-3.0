@@ -92,10 +92,11 @@ export function ToolComparisonTable({ data, toolNames }: ToolComparisonTableProp
                 </TableRow>
               ))}
             </TableBody>
+            <TableCaption className="mt-4 text-xs">AI-generated comparison. Information may require validation for critical decisions.</TableCaption>
           </Table>
         </div>
-        <TableCaption className="mt-4 text-xs">AI-generated comparison. Information may require validation for critical decisions.</TableCaption>
       </CardContent>
     </Card>
   );
 }
+
