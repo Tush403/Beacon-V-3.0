@@ -47,7 +47,7 @@ const filterSchema = z.object({
   pricingModel: z.string().min(1, 'Please select an option').default('any'),
   reportingAnalytics: z.string().min(1, 'Please select an option').default('any'),
 
-  automationTool: z.string().optional(), // Removed .default('none')
+  automationTool: z.string().optional(), 
   complexityLow: z.coerce.number().min(0, 'Must be zero or positive').optional(),
   complexityMedium: z.coerce.number().min(0, 'Must be zero or positive').optional(),
   complexityHigh: z.coerce.number().min(0, 'Must be zero or positive').optional(),
@@ -73,7 +73,7 @@ const defaultFormValues: FilterFormValues = {
   codingLanguage: 'any',
   pricingModel: 'any',
   reportingAnalytics: 'any',
-  automationTool: undefined, // Changed from 'none'
+  automationTool: undefined, 
   complexityLow: undefined,
   complexityMedium: undefined,
   complexityHigh: undefined,
@@ -217,7 +217,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                 Filter Tools
               </div>
             </AccordionTrigger>
-            <AccordionContent className="pt-4 space-y-4">
+            <AccordionContent className="px-2 pt-4 pb-4 space-y-4">
               {(Object.keys(filterOptions) as Array<keyof typeof filterOptions>)
               .map((key) => (
                 <FormField
@@ -281,7 +281,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                 AI Effort Estimator
               </div>
             </AccordionTrigger>
-            <AccordionContent className="pt-4 space-y-4">
+            <AccordionContent className="px-2 pt-4 pb-4 space-y-4">
               <p className="text-xs text-muted-foreground">
                 Provide project details to get an effort estimation.
               </p>
