@@ -139,7 +139,7 @@ export default function NavigatorPage() {
             {/* Footer moved here */}
             <footer className="p-4 text-sm text-muted-foreground border-t border-border">
               <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-y-2">
-                <p className="text-center sm:text-left">© {year} Beacon: AI Test Tool Navigator.</p>
+                <p className="text-center sm:text-left">Copyright © {year} TAO Digital Solutions Inc. All rights reserved.</p>
                 <div className="flex items-center gap-x-3 sm:gap-x-4">
                   <Link href="https://www.taodigitalsolutions.com/privacy" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
                     Privacy Policy
