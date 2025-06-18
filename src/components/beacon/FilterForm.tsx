@@ -47,7 +47,7 @@ const filterSchema = z.object({
   pricingModel: z.string().min(1, 'Please select an option').default('any'),
   reportingAnalytics: z.string().min(1, 'Please select an option').default('any'),
 
-  automationTool: z.string().optional().default('none'),
+  automationTool: z.string().optional(), // Removed .default('none')
   complexityLow: z.coerce.number().min(0, 'Must be zero or positive').optional(),
   complexityMedium: z.coerce.number().min(0, 'Must be zero or positive').optional(),
   complexityHigh: z.coerce.number().min(0, 'Must be zero or positive').optional(),
@@ -73,7 +73,7 @@ const defaultFormValues: FilterFormValues = {
   codingLanguage: 'any',
   pricingModel: 'any',
   reportingAnalytics: 'any',
-  automationTool: 'none',
+  automationTool: undefined, // Changed from 'none'
   complexityLow: undefined,
   complexityMedium: undefined,
   complexityHigh: undefined,
@@ -294,7 +294,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                     <FormControl>
                       <Input 
                         type="text" 
-                        placeholder="Enter tool name, or 'None'" 
+                        placeholder="Enter Tool Name" 
                         {...field} 
                         value={field.value || ''} 
                       />

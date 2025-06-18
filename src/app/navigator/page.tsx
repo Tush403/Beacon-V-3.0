@@ -36,7 +36,7 @@ export default function NavigatorPage() {
     pricingModel: 'any',
     reportingAnalytics: 'any',
     // AI Effort Estimator defaults
-    automationTool: 'none',
+    automationTool: undefined, // Changed from 'none'
     complexityLow: undefined,
     complexityMedium: undefined,
     complexityHigh: undefined,
