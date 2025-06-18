@@ -35,16 +35,27 @@ const LandingFooter = () => {
   );
 };
 
+const RELEASE_NOTES_ACKNOWLEDGED_KEY = 'release_notes_acknowledged_v2.0';
 
 export default function LandingPage() {
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
   const router = useRouter();
 
   const handleGetStartedClick = () => {
-    setShowReleaseNotes(true);
+    if (typeof window !== 'undefined') {
+      const alreadyAcknowledged = localStorage.getItem(RELEASE_NOTES_ACKNOWLEDGED_KEY);
+      if (alreadyAcknowledged === 'true') {
+        router.push('/navigator');
+      } else {
+        setShowReleaseNotes(true);
+      }
+    }
   };
 
   const handleAcknowledgeReleaseNotes = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(RELEASE_NOTES_ACKNOWLEDGED_KEY, 'true');
+    }
     setShowReleaseNotes(false);
     router.push('/navigator');
   };
@@ -61,8 +72,8 @@ export default function LandingPage() {
           engine demystifies tool selection, providing data-driven recommendations to optimize your
           QA processes, accelerate delivery, and drive innovation at scale.
         </p>
-        <Button 
-          size="lg" 
+        <Button
+          size="lg"
           className="bg-accent hover:bg-accent/90 text-accent-foreground px-10 py-6 text-lg rounded-lg shadow-lg transform transition-transform hover:scale-105"
           onClick={handleGetStartedClick}
         >
@@ -71,12 +82,11 @@ export default function LandingPage() {
       </main>
       <LandingFooter />
       <CookieConsent />
-      <ReleaseNotesDialog 
-        isOpen={showReleaseNotes} 
+      <ReleaseNotesDialog
+        isOpen={showReleaseNotes}
         onOpenChange={setShowReleaseNotes}
-        onAcknowledge={handleAcknowledgeReleaseNotes} 
+        onAcknowledge={handleAcknowledgeReleaseNotes}
       />
     </div>
   );
 }
-
