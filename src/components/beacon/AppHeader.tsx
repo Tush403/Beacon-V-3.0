@@ -4,17 +4,18 @@
 import { useState, useEffect } from 'react';
 import { CogIcon, Mail, Moon, Search, Library, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ReleaseNotesDialog } from '@/components/beacon/ReleaseNotesDialog'; 
+import { ReleaseNotesDialog } from '@/components/beacon/ReleaseNotesDialog';
+import { ToolSearchDialog } from '@/components/beacon/ToolSearchDialog';
 
-// Key for the main release notes acknowledgment, consistent with src/app/page.tsx
 const RELEASE_NOTES_ACKNOWLEDGED_KEY = 'release_notes_acknowledged_v2.0';
 
 export function AppHeader() {
-  const [theme, setTheme] = useState('light'); // Default to light
+  const [theme, setTheme] = useState('light');
   const [showReleaseNotesDialog, setShowReleaseNotesDialog] = useState(false);
+  const [isSearchDialogOpen, setSearchDialogOpen] = useState(false);
+
 
   useEffect(() => {
-    // Client-side only effect for theme
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (savedTheme) {
@@ -25,7 +26,6 @@ export function AppHeader() {
   }, []);
 
   useEffect(() => {
-    // Client-side only effect for applying theme
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
@@ -40,17 +40,14 @@ export function AppHeader() {
   };
 
   const handleDocButtonClick = () => {
-    // Always show the ReleaseNotesDialog when the documentation button is clicked
     setShowReleaseNotesDialog(true);
   };
 
   const handleAcknowledgeReleaseNotes = () => {
-    // This function is called when "Acknowledge & Continue" is clicked in the ReleaseNotesDialog
     if (typeof window !== 'undefined') {
       localStorage.setItem(RELEASE_NOTES_ACKNOWLEDGED_KEY, 'true');
     }
     setShowReleaseNotesDialog(false);
-    // No longer opens an external document link
   };
 
   return (
@@ -78,7 +75,7 @@ export function AppHeader() {
               <Button variant="ghost" size="icon" aria-label="Toggle Theme" onClick={toggleTheme}>
                 {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
               </Button>
-              <Button variant="ghost" size="icon" aria-label="Search">
+              <Button variant="ghost" size="icon" aria-label="Search Tool Information" onClick={() => setSearchDialogOpen(true)}>
                 <Search className="h-5 w-5" />
               </Button>
               <Button variant="ghost" size="icon" aria-label="Documentation" onClick={handleDocButtonClick}>
@@ -91,7 +88,11 @@ export function AppHeader() {
       <ReleaseNotesDialog
         isOpen={showReleaseNotesDialog}
         onOpenChange={setShowReleaseNotesDialog}
-        onAcknowledge={handleAcknowledgeReleaseNotes} // Use the updated handler
+        onAcknowledge={handleAcknowledgeReleaseNotes}
+      />
+      <ToolSearchDialog
+        isOpen={isSearchDialogOpen}
+        onOpenChange={setSearchDialogOpen}
       />
     </>
   );

@@ -2,25 +2,22 @@
 'use server';
 
 import { recommendTools as genkitRecommendTools, RecommendToolsInput, RecommendToolsOutput } from '@/ai/flows/recommend-tools';
-import { generateToolAnalysis as genkitGenerateToolAnalysis, GenerateToolAnalysisOutput } from '@/ai/flows/generate-tool-analysis';
+import { generateToolAnalysis as genkitGenerateToolAnalysis, GenerateToolAnalysisOutput, GenerateToolAnalysisInput } from '@/ai/flows/generate-tool-analysis'; // Updated import
 import { estimateEffort as genkitEstimateEffort, EstimateEffortInput, EstimateEffortOutput } from '@/ai/flows/estimate-effort-flow';
-import type { GenerateToolAnalysisInput } from '@/types';
+// type GenerateToolAnalysisInput is now also imported from the flow itself
 
 
 export async function recommendToolsAction(filters: RecommendToolsInput): Promise<RecommendToolsOutput> {
   try {
-    // Input 'filters' should now directly match RecommendToolsInput schema which expects strings
     const result = await genkitRecommendTools(filters);
     if (!result || !result.recommendations) {
       throw new Error('AI recommendations came back empty.');
     }
-    // Simulate varying scores for better UI testing if all scores are identical
     if (result.recommendations.length > 0 && result.recommendations.every(r => r.score === result.recommendations[0].score)) {
       result.recommendations = result.recommendations.map((r, i) => ({
         ...r,
         score: Math.max(0, Math.min(100, (r.score || 80) - i * 5 + (i === 0 ? 0 : i === 1 ? -5 : -10))) 
       }));
-       // Ensure scores are different and within bounds
       if (result.recommendations.length > 1 && result.recommendations[0].score === result.recommendations[1].score) {
         result.recommendations[0].score = Math.min(100, result.recommendations[0].score + 5);
         result.recommendations[1].score = Math.max(0, result.recommendations[1].score -5);
@@ -43,6 +40,7 @@ export async function generateToolAnalysisAction(input: GenerateToolAnalysisInpu
      if (!result || !result.strengths || !result.weaknesses) {
       console.warn('AI analysis came back empty or failed, providing mock data for:', input.toolName);
       return {
+        toolName: input.toolName, // Include toolName in mock response
         strengths: `Mock Strength: ${input.toolName} is highly adaptable and supports various plugins. It has a strong community and performs well under load.`,
         weaknesses: `Mock Weakness: ${input.toolName} can have a steep learning curve for beginners and may require significant setup for complex projects. Documentation could be improved.`
       };
@@ -50,7 +48,9 @@ export async function generateToolAnalysisAction(input: GenerateToolAnalysisInpu
     return result;
   } catch (error) {
     console.error('Error generating tool analysis:', error);
+    // Ensure the error fallback also adheres to the GenerateToolAnalysisOutput structure
     return {
+        toolName: input.toolName, // Include toolName in error fallback
         strengths: `Mock Strength (Error Fallback): ${input.toolName} is known for its extensive documentation and ease of integration. It is praised for cross-platform compatibility.`,
         weaknesses: `Mock Weakness (Error Fallback): ${input.toolName} might be resource-intensive for very large test suites on limited hardware. Some advanced features require paid licenses.`
       };

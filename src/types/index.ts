@@ -6,6 +6,7 @@ export type ToolRecommendationItem = RecommendToolsOutput['recommendations'][0];
 
 // Make sure this matches GenerateToolAnalysisOutput from its flow
 export interface ToolAnalysisItem {
+  toolName?: string; // Optional: AI can return it, or we use searchTerm
   strengths: string;
   weaknesses: string;
 }
@@ -87,3 +88,12 @@ export const EstimateEffortOutputSchema = z.object({
   confidenceScore: z.number().min(0).max(100).optional().describe('A score (0-100) indicating the confidence in this estimate.'),
 });
 export type EstimateEffortOutput = z.infer<typeof EstimateEffortOutputSchema>;
+
+// Output schema for generateToolAnalysisFlow - ensure it matches the flow
+export const GenerateToolAnalysisOutputSchema = z.object({
+  toolName: z.string().optional().describe('The name of the tool that was analyzed. May be returned by AI if it differs from input or for confirmation.'),
+  strengths: z.string().describe('The strengths of the tool.'),
+  weaknesses: z.string().describe('The weaknesses of the tool.'),
+});
+export type GenerateToolAnalysisOutput = z.infer<typeof GenerateToolAnalysisOutputSchema>;
+
