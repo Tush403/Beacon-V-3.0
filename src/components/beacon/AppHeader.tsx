@@ -109,9 +109,13 @@ export function AppHeader() {
       <AlertDialog open={isDocAckDialogOpen} onOpenChange={setIsDocAckDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Documentation Access Confirmation</AlertDialogTitle>
+            <AlertDialogTitle>Important Updates & Documentation Access</AlertDialogTitle>
             <AlertDialogDescription>
-              By clicking "Acknowledge & Proceed", you confirm that you are aware of and have access 
+              Beacon has recently been updated with new features and platform enhancements, 
+              including our migration to Firebase Studio and refined AI capabilities. 
+              Please ensure you are familiar with these changes.
+              <br /><br />
+              By clicking "Acknowledge & Proceed", you also confirm that you are aware of and have access 
               to the necessary documentation resources for Beacon. If you need assistance, 
               please contact your administrator or refer to internal knowledge bases.
             </AlertDialogDescription>
