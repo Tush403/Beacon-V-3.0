@@ -3,6 +3,7 @@
 
 import { useState, useEffect, Fragment } from 'react'; // Added Fragment
 import Link from 'next/link'; // Added Link
+import React from 'react'; // Added React import
 import { FilterForm } from '@/components/beacon/FilterForm';
 import { RecommendationsDisplay } from '@/components/beacon/RecommendationsDisplay';
 import { ROIChart } from '@/components/beacon/ROIChart';
@@ -28,8 +29,8 @@ export default function NavigatorPage() {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const [year, setYear] = React.useState(new Date().getFullYear());
-  React.useEffect(() => {
+  const [year, setYear] = useState(new Date().getFullYear());
+  useEffect(() => {
     setYear(new Date().getFullYear());
   }, []);
 
@@ -157,3 +158,4 @@ export default function NavigatorPage() {
     </SidebarProvider>
   );
 }
+
