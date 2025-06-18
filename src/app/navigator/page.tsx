@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, Fragment } from 'react';
@@ -35,6 +34,8 @@ export default function NavigatorPage() {
   const [isComparingTools, setIsComparingTools] = useState(false);
   const [comparisonError, setComparisonError] = useState<string | null>(null); // Error for comparison
 
+  const [hasInteracted, setHasInteracted] = useState(false); // New state
+
   const { toast } = useToast();
 
   const [year, setYear] = useState(new Date().getFullYear());
@@ -61,6 +62,7 @@ export default function NavigatorPage() {
   };
 
   const handleFilterSubmit = async (data: FilterCriteria) => {
+    setHasInteracted(true); // Set interaction flag
     setIsLoadingRecommendations(true);
     setError(null);
     setRecommendations([]); 
@@ -86,13 +88,11 @@ export default function NavigatorPage() {
     if (toolAnalyses[toolName]) return; 
 
     setIsLoadingAnalysis((prev) => ({ ...prev, [toolName]: true }));
-    // setError(null); // This error is for recommendations, not individual analysis
     try {
       const analysisInput: GenerateToolAnalysisInput = { toolName };
       const analysisResult = await generateToolAnalysisAction(analysisInput);
       setToolAnalyses((prev) => ({ ...prev, [toolName]: analysisResult }));
     } catch (e: any) {
-      // setError(e.message || `An unknown error occurred while fetching analysis for ${toolName}.`); // Avoid overriding main rec error
       toast({
         title: 'Analysis Error',
         description: e.message || `Failed to get analysis for ${toolName}.`,
@@ -105,6 +105,7 @@ export default function NavigatorPage() {
   };
 
   const handleCompareRequest = async (toolDisplayNames: string[]) => {
+    setHasInteracted(true); // Also consider comparison as an interaction
     setIsComparingTools(true);
     setComparisonError(null);
     setComparisonData(null);
@@ -186,7 +187,8 @@ export default function NavigatorPage() {
                   onGetAnalysis={handleGetAnalysis}
                   isLoadingRecommendations={isLoadingRecommendations}
                   isLoadingAnalysis={isLoadingAnalysis}
-                  error={error} // This is the error for recommendations
+                  error={error}
+                  hasInteracted={hasInteracted} 
                 />
               )}
 

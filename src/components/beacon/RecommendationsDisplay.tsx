@@ -3,9 +3,9 @@
 
 import { ToolCard } from './ToolCard';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'; // Added Card imports
+import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from '@/components/ui/card';
 import type { ToolRecommendationItem, ToolAnalysisItem, ProjectEffort, DocumentationLink } from '@/types';
-import { Lightbulb, AlertTriangle } from 'lucide-react';
+import { Lightbulb, AlertTriangle, Compass } from 'lucide-react';
 
 interface RecommendationsDisplayProps {
   recommendations: ToolRecommendationItem[];
@@ -16,6 +16,7 @@ interface RecommendationsDisplayProps {
   isLoadingRecommendations: boolean;
   isLoadingAnalysis: Record<string, boolean>;
   error?: string | null;
+  hasInteracted: boolean; // New prop
 }
 
 const mockEfforts: Record<string, ProjectEffort> = {
@@ -44,6 +45,7 @@ export function RecommendationsDisplay({
   isLoadingAnalysis,
   onGetAnalysis,
   error,
+  hasInteracted, // Use the new prop
 }: RecommendationsDisplayProps) {
   if (isLoadingRecommendations) {
     return (
@@ -84,13 +86,64 @@ export function RecommendationsDisplay({
     );
   }
 
-  if (recommendations.length === 0) {
+  if (!hasInteracted && recommendations.length === 0) {
     return (
-      <div className="mt-8 text-center py-8"> {/* Removed bg-card, rounded-lg and reduced py */}
-        <Lightbulb className="h-10 w-10 mx-auto mb-3 text-muted-foreground" /> {/* Reduced icon size and mb */}
-        <h3 className="text-lg font-semibold text-muted-foreground">No recommendations yet.</h3> {/* Reduced text size */}
-        <p className="text-sm text-muted-foreground">Adjust your filters and try again to get AI-powered tool suggestions.</p> {/* Reduced text size */}
+      <Card className="mt-8 shadow-md">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-xl font-headline">
+            <Compass className="h-6 w-6 text-primary" />
+            Navigate Your Test Automation Journey
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-base text-muted-foreground">
+            Welcome to Beacon, your AI-powered guide to selecting the perfect test automation tools.
+          </p>
+          <div>
+            <p className="text-sm text-foreground font-medium">
+              To get started:
+            </p>
+            <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 my-2 ml-4">
+              <li>Explore the <span className="font-semibold text-primary">Filter Tools</span> section in the sidebar.</li>
+              <li>Define your project's specific requirements (application type, test type, OS, etc.).</li>
+              <li>Click <span className="font-semibold text-primary">"Get AI Recommendations"</span>.</li>
+            </ul>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Beacon will then analyze your criteria and present the top 3 AI-recommended tools, complete with detailed analysis and insights.
+          </p>
+        </CardContent>
+        <CardFooter>
+          <p className="text-xs text-muted-foreground">Let's find the best tools for your success!</p>
+        </CardFooter>
+      </Card>
+    );
+  }
+
+  if (hasInteracted && recommendations.length === 0) {
+    return (
+      <div className="mt-8 text-center py-8">
+        <Lightbulb className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
+        <h3 className="text-lg font-semibold text-muted-foreground">No Results Found</h3>
+        <p className="text-sm text-muted-foreground">
+          We couldn't find any tools matching your current filter criteria.
+          <br />
+          Please adjust your selections in the sidebar and try again.
+        </p>
       </div>
+    );
+  }
+
+
+  if (recommendations.length === 0) {
+    // This case should ideally not be hit if the above logic is correct,
+    // but as a fallback, it ensures something is shown.
+    return (
+        <div className="mt-8 text-center py-8">
+            <Lightbulb className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
+            <h3 className="text-lg font-semibold text-muted-foreground">Ready to Discover?</h3>
+            <p className="text-sm text-muted-foreground">Use the filters to find your ideal test automation tools.</p>
+        </div>
     );
   }
 
