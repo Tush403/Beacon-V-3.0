@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link'; // Import Link
 import { CogIcon, Mail, Moon, Search, Library, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ReleaseNotesDialog } from '@/components/beacon/ReleaseNotesDialog';
@@ -69,8 +70,10 @@ export function AppHeader() {
               Beacon
             </h2>
             <div className="flex items-center gap-1 sm:gap-2">
-              <Button variant="ghost" size="icon" aria-label="Mail">
-                <Mail className="h-5 w-5" />
+              <Button variant="ghost" size="icon" aria-label="Contact Us" asChild>
+                <Link href="https://www.taodigitalsolutions.com/contact-us-lead-generation-form" target="_blank" rel="noopener noreferrer">
+                  <Mail className="h-5 w-5" />
+                </Link>
               </Button>
               <Button variant="ghost" size="icon" aria-label="Toggle Theme" onClick={toggleTheme}>
                 {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
