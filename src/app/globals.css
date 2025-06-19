@@ -22,7 +22,7 @@
     --muted: 0 0% 96.1%;
     --muted-foreground: 231 33% 40%;
 
-    --accent: 160 70% 40%; /* New: Rich Teal for light theme */
+    --accent: 270 70% 55%; /* New: Vibrant Purple for light theme */
     --accent-foreground: 0 0% 100%; /* White text for new accent */
 
     --destructive: 0 84.2% 60.2%;
@@ -33,7 +33,7 @@
     --ring: 232 32% 60%; /* Lighter primary for ring */
 
     --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
+    --chart-2: 173 58% 39%; /* Kept distinct, original teal for contrast if needed, or could be new accent */
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
@@ -69,30 +69,30 @@
     --muted: 231 30% 22%;
     --muted-foreground: 0 0% 65%; /* Lighter muted text */
 
-    --accent: 160 60% 60%; /* New: Lighter Teal for dark theme */
-    --accent-foreground: 231 33% 10%; /* Dark text for new accent */
+    --accent: 270 60% 70%; /* New: Lighter Purple for dark theme */
+    --accent-foreground: 270 60% 10%; /* Dark purple text for new accent */
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 231 30% 28%; /* Subtle borders */
     --input: 231 30% 25%;
-    --ring: 160 60% 60%; /* New: Accent color for focus rings in dark mode */
+    --ring: 270 60% 70%; /* New: Accent color for focus rings in dark mode */
     
     --chart-1: 232 32% 39%; /* Primary */
-    --chart-2: 160 60% 60%; /* New Accent */
+    --chart-2: 270 60% 70%; /* New Accent Purple */
     --chart-3: 200 50% 50%; /* A contrasting blue/cyan */
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
 
     --sidebar-background: 231 33% 10%; /* Darker sidebar */
     --sidebar-foreground: 0 0% 85%;
-    --sidebar-primary: 160 60% 60%; /* New Accent for active sidebar items */
-    --sidebar-primary-foreground: 231 33% 10%;
+    --sidebar-primary: 270 60% 70%; /* New Accent Purple for active sidebar items */
+    --sidebar-primary-foreground: 270 60% 10%; /* Matching accent foreground */
     --sidebar-accent: 231 33% 20%; /* Hover bg */
     --sidebar-accent-foreground: 0 0% 95%;
     --sidebar-border: 231 33% 20%;
-    --sidebar-ring: 160 60% 60%;
+    --sidebar-ring: 270 60% 70%; /* New Accent Purple */
   }
 }
 
