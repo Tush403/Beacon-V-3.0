@@ -502,7 +502,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
       </Button>
       <Button
         type="button"
-        variant="secondary"
+        variant="outline"
         onClick={handleResetAllFilters}
         className="w-full"
       >
@@ -733,7 +733,8 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
               />
               <Button
                 type="button"
-                className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
+                variant="secondary"
+                className="w-full"
                 onClick={handleGetEstimate}
                 disabled={isEstimatingEffort}
               >
