@@ -498,7 +498,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
                 </Button>
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="secondary"
                   onClick={handleResetToolFilters}
                   className="w-full"
                 >
