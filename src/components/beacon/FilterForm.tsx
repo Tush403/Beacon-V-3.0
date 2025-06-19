@@ -487,8 +487,8 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
       />
     );
   };
-
-  const GlobalActionButtons = () => (
+  
+  const RecommendationActionButtons = () => (
     <div className="space-y-3 pt-6 border-t mt-4">
       <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading}>
         {isLoading ? (
@@ -557,7 +557,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
                   )}
                 />
               ))}
-              <GlobalActionButtons />
+              <RecommendationActionButtons />
             </AccordionContent>
           </AccordionItem>
 
@@ -602,7 +602,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
                   )}
                 />
               ))}
-              <GlobalActionButtons />
+              <RecommendationActionButtons />
             </AccordionContent>
           </AccordionItem>
 
