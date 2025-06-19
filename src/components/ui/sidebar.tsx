@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -10,7 +11,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { Sheet, SheetContent } from "@/components/ui/sheet"
+import { Sheet, SheetContent as SheetContentPrimitive } from "@/components/ui/sheet" // Renamed to avoid conflict
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Tooltip,
@@ -18,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { ScrollArea } from "@/components/ui/scroll-area" // Added import
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -195,7 +197,7 @@ const Sidebar = React.forwardRef<
     if (isMobile) {
       return (
         <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
-          <SheetContent
+          <SheetContentPrimitive
             data-sidebar="sidebar"
             data-mobile="true"
             className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
@@ -207,7 +209,7 @@ const Sidebar = React.forwardRef<
             side={side}
           >
             <div className="flex h-full w-full flex-col">{children}</div>
-          </SheetContent>
+          </SheetContentPrimitive>
         </Sheet>
       )
     }
@@ -396,22 +398,29 @@ const SidebarSeparator = React.forwardRef<
 SidebarSeparator.displayName = "SidebarSeparator"
 
 const SidebarContent = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div">
->(({ className, ...props }, ref) => {
+  React.ElementRef<typeof ScrollArea>,
+  React.ComponentPropsWithoutRef<typeof ScrollArea>
+>(({ className, children, ...props }, ref) => {
   return (
-    <div
+    <ScrollArea
       ref={ref}
       data-sidebar="content"
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
+        // Ensures ScrollArea takes up available space within the flex container (Sidebar)
+        "min-h-0 flex-1",
+        // Hides content visually if in icon-only collapsed mode, ScrollArea handles actual overflow
+        "group-data-[collapsible=icon]:overflow-hidden", 
         className
       )}
       {...props}
-    />
+    >
+      {/* Children (e.g., FilterForm) are passed here and will be rendered inside ScrollAreaViewport */}
+      {children}
+    </ScrollArea>
   )
 })
 SidebarContent.displayName = "SidebarContent"
+
 
 const SidebarGroup = React.forwardRef<
   HTMLDivElement,
