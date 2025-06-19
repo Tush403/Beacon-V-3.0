@@ -43,7 +43,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Loader2, RotateCcw, Settings2, Filter, ChevronsUpDown, Check, PlusCircle, GitCompare, XCircle } from 'lucide-react';
+import { Loader2, RotateCcw, Settings2, Filter, ChevronsUpDown, Check, PlusCircle, GitCompare, XCircle, SlidersHorizontal } from 'lucide-react';
 import type { FilterCriteria, EstimateEffortInput } from '@/types';
 import { useState, useEffect } from 'react';
 import { estimateEffortAction } from '@/app/actions';
@@ -59,6 +59,12 @@ const filterSchema = z.object({
   codingLanguage: z.string().min(1, 'Please select an option').default('any'),
   pricingModel: z.string().min(1, 'Please select an option').default('any'),
   reportingAnalytics: z.string().min(1, 'Please select an option').default('any'),
+
+  // Advanced Filters
+  applicationSubCategory: z.string().optional().default('any'),
+  integrationCapabilities: z.string().optional().default('any'),
+  teamSizeSuitability: z.string().optional().default('any'),
+  keyFeatureFocus: z.string().optional().default('any'),
 
   automationTool: z.string().optional(),
   complexityLow: z.coerce.number().min(0, 'Must be zero or positive').optional(),
@@ -92,6 +98,12 @@ const defaultFormValues: FilterFormValues = {
   codingLanguage: 'any',
   pricingModel: 'any',
   reportingAnalytics: 'any',
+
+  applicationSubCategory: 'any',
+  integrationCapabilities: 'any',
+  teamSizeSuitability: 'any',
+  keyFeatureFocus: 'any',
+
   automationTool: undefined,
   complexityLow: undefined,
   complexityMedium: undefined,
@@ -162,13 +174,11 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
   const { toast } = useToast();
   const [isEstimatingEffort, setIsEstimatingEffort] = useState(false);
 
-  // State for combobox popover visibility
   const [automationToolPopoverOpen, setAutomationToolPopoverOpen] = useState(false);
   const [toolToCompare1PopoverOpen, setToolToCompare1PopoverOpen] = useState(false);
   const [toolToCompare2PopoverOpen, setToolToCompare2PopoverOpen] = useState(false);
   const [toolToCompare3PopoverOpen, setToolToCompare3PopoverOpen] = useState(false);
 
-  // State for combobox search input values
   const [automationToolSearch, setAutomationToolSearch] = useState('');
   const [toolToCompare1Search, setToolToCompare1Search] = useState('');
   const [toolToCompare2Search, setToolToCompare2Search] = useState('');
@@ -252,7 +262,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
     setToolToCompare1Search('');
     setToolToCompare2Search('');
     setToolToCompare3Search('');
-    // Optionally, close popovers if they are open
     setToolToCompare1PopoverOpen(false);
     setToolToCompare2PopoverOpen(false);
     setToolToCompare3PopoverOpen(false);
@@ -314,16 +323,60 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
     ],
   };
 
-  const handleResetToolFilters = () => {
-    const toolFilterDefaults = (Object.keys(defaultFormValues) as Array<keyof FilterFormValues>)
-      .reduce((acc, key) => {
-        if (!['automationTool', 'complexityLow', 'complexityMedium', 'complexityHigh', 'complexityHighlyComplex', 'useStandardFramework', 'cicdPipelineIntegrated', 'qaTeamSize', 'toolToCompare1', 'toolToCompare2', 'toolToCompare3'].includes(key)) {
-          acc[key as keyof FilterFormValues] = defaultFormValues[key as keyof FilterFormValues];
-        }
-        return acc;
-      }, {} as Partial<FilterFormValues>);
-    form.reset({...form.getValues(), ...toolFilterDefaults});
+  const advancedFilterOptions = {
+    applicationSubCategory: [
+        { value: 'any', label: 'Any Sub-Category' },
+        { value: 'e-commerce', label: 'E-commerce' },
+        { value: 'healthcare', label: 'Healthcare' },
+        { value: 'fintech', label: 'Fintech' },
+        { value: 'saas', label: 'SaaS' },
+        { value: 'gaming', label: 'Gaming' },
+        { value: 'media-entertainment', label: 'Media/Entertainment' },
+        { value: 'social-media', label: 'Social Media' },
+        { value: 'education', label: 'Education' },
+        { value: 'travel-hospitality', label: 'Travel/Hospitality' },
+        { value: 'other-specific', label: 'Other Specific Industry' },
+    ],
+    integrationCapabilities: [
+        { value: 'any', label: 'Any Integrations' },
+        { value: 'jira', label: 'Jira' },
+        { value: 'jenkins-ci-cd', label: 'Jenkins / General CI/CD' },
+        { value: 'slack-teams', label: 'Slack / Teams' },
+        { value: 'git', label: 'Version Control (Git)' },
+        { value: 'test-management', label: 'Test Management Tools (e.g., TestRail, Zephyr)' },
+        { value: 'bi-tools', label: 'BI Tools (e.g., Tableau, PowerBI)' },
+    ],
+    teamSizeSuitability: [
+        { value: 'any', label: 'Any Team Size' },
+        { value: 'individual', label: 'Individual Developer' },
+        { value: 'small-team', label: 'Small Team (2-10)' },
+        { value: 'medium-team', label: 'Medium Team (11-50)' },
+        { value: 'large-team', label: 'Large Team (51-200)' },
+        { value: 'enterprise', label: 'Enterprise (>200)' },
+    ],
+    keyFeatureFocus: [
+        { value: 'any', label: 'Any Key Feature' },
+        { value: 'visual-regression', label: 'Visual Regression Testing' },
+        { value: 'bdd-support', label: 'BDD Support (Cucumber, SpecFlow)' },
+        { value: 'ai-scripting', label: 'AI-assisted Scripting/Maintenance' },
+        { value: 'cross-platform-cloud', label: 'Cross-browser/Device Cloud Execution' },
+        { value: 'api-mocking', label: 'API Mocking/Service Virtualization' },
+        { value: 'security-focus', label: 'Security Testing Features (SAST/DAST)' },
+        { value: 'performance-focus', label: 'Performance/Load Testing Focus' },
+        { value: 'accessibility-focus', label: 'Accessibility Testing Features' },
+    ],
   };
+
+
+  const handleResetAllFilters = () => {
+    form.reset(defaultFormValues); // Reset all form fields to their default values
+    // Also reset combobox search terms if they are managed separately and not part of form values
+    setAutomationToolSearch('');
+    // Note: Resetting compare tools might be better handled by its own reset button,
+    // but if it's intended to reset all, include them here.
+    // handleResetCompareTools(); // Call this if you want compare tools also reset
+  };
+
 
   const renderToolCombobox = (
     fieldName: "automationTool" | "toolToCompare1" | "toolToCompare2" | "toolToCompare3",
@@ -335,7 +388,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
   ) => {
     const currentFieldValue = form.watch(fieldName);
 
-    // Effect to initialize or update search text when popover opens or field value changes
     useEffect(() => {
       if (popoverOpen) {
         const selectedOption = automationToolOptions.find(opt => opt.value === currentFieldValue);
@@ -352,10 +404,10 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
             <FormLabel>{fieldName.startsWith("toolToCompare") ? `Tool ${fieldName.slice(-1)}` : "Automation Tool (Optional)"}</FormLabel>
             <Popover open={popoverOpen} onOpenChange={(isOpen) => {
               setPopoverOpen(isOpen);
-              if (!isOpen) { // When closing, ensure search reflects current value if nothing typed
+              if (!isOpen) { 
                 const selectedOption = automationToolOptions.find(opt => opt.value === field.value);
                 setCurrentSearchValue(selectedOption ? selectedOption.label : field.value || '');
-              } else { // When opening
+              } else { 
                  const selectedOption = automationToolOptions.find(opt => opt.value === field.value);
                  setCurrentSearchValue(selectedOption ? selectedOption.label : field.value || '');
               }
@@ -397,7 +449,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
                       .map((option) => (
                       <CommandItem
                         key={option.value}
-                        value={option.label} // Value for cmdk filtering/selection
+                        value={option.label} 
                         onSelect={() => {
                           form.setValue(fieldName, option.value, { shouldValidate: true });
                           setCurrentSearchValue(option.label);
@@ -485,28 +537,53 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
                   )}
                 />
               ))}
-              <div className="space-y-3 pt-4">
-                <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Getting Recommendations...
-                    </>
-                  ) : (
-                    'Get AI Recommendations'
-                  )}
-                </Button>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={handleResetToolFilters}
-                  className="w-full"
-                >
-                  <RotateCcw className="mr-2 h-4 w-4" /> Reset Tool Filters
-                </Button>
-              </div>
             </AccordionContent>
           </AccordionItem>
+
+          <AccordionItem value="advanced-filters">
+            <AccordionTrigger>
+              <div className="flex items-center text-base font-semibold text-primary hover:no-underline">
+                <SlidersHorizontal className="mr-2 h-5 w-5" />
+                Advanced Filters
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="px-2 pt-4 pb-4 space-y-4">
+              {(Object.keys(advancedFilterOptions) as Array<keyof typeof advancedFilterOptions>)
+              .map((key) => (
+                <FormField
+                  key={key}
+                  control={form.control}
+                  name={key as keyof FilterFormValues}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}
+                      </FormLabel>
+                      <Select
+                          onValueChange={field.onChange}
+                          value={field.value?.toString() ?? ""}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder={advancedFilterOptions[key as keyof typeof advancedFilterOptions].find(opt => opt.value === defaultFormValues[key as keyof FilterFormValues])?.label || "Select an option"} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {advancedFilterOptions[key as keyof typeof advancedFilterOptions].map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ))}
+            </AccordionContent>
+          </AccordionItem>
+
 
           <AccordionItem value="ai-estimator">
             <AccordionTrigger>
@@ -717,11 +794,29 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
               </div>
             </AccordionContent>
           </AccordionItem>
-
         </Accordion>
+
+        <div className="space-y-3 pt-6">
+          <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Getting Recommendations...
+              </>
+            ) : (
+              'Get AI Recommendations'
+            )}
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleResetAllFilters}
+            className="w-full"
+          >
+            <RotateCcw className="mr-2 h-4 w-4" /> Reset All Filters
+          </Button>
+        </div>
       </form>
     </Form>
   );
 }
-
-    

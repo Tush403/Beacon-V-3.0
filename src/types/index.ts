@@ -43,6 +43,12 @@ export const RecommendToolsInputSchema = z.object({
   pricingModel: z.string().describe('The preferred pricing model for the tool (e.g., "Open Source", "Subscription", "Perpetual License", "Any Model").'),
   reportingAnalytics: z.string().describe('The required level of reporting and analytics capabilities (e.g., "Basic Reporting", "Advanced Analytics", "Dashboard Integration", "Any Analytics").'),
   
+  // Advanced Filters
+  applicationSubCategory: z.string().optional().describe('Specific sub-category or industry for the application under test (e.g., "E-commerce", "Healthcare", "Fintech", "Any").'),
+  integrationCapabilities: z.string().optional().describe('Key integration capabilities required (e.g., "Jira", "Jenkins/CI-CD", "Test Management Tools", "Any").'),
+  teamSizeSuitability: z.string().optional().describe('The size of the team that will be using the tool (e.g., "Small Team (2-10)", "Enterprise (>200)", "Any").'),
+  keyFeatureFocus: z.string().optional().describe('A specific key feature or testing focus area (e.g., "Visual Regression Testing", "BDD Support", "AI-assisted Scripting", "Any").'),
+
   // AI Effort Estimator Fields (also part of RecommendToolsInput as they are on the same form)
   automationTool: z.string().optional().describe('Selected automation tool for effort estimation.'),
   complexityLow: z.number().optional().describe('Number of low complexity test cases.'),
@@ -103,9 +109,32 @@ export const CompareToolsInputSchema = z.object({
 });
 export type CompareToolsInput = z.infer<typeof CompareToolsInputSchema>;
 
+// Internal Zod schemas for what the AI will generate for comparison (array-based for toolValues)
+const AIToolValueSchema = z.object({
+  toolName: z.string().describe("The exact tool name."),
+  value: z.string().describe("The comparison text for this tool for this specific criterion."),
+});
+
+const AIComparisonCriterionSchema = z.object({
+  criterionName: z.string().describe("The name of the comparison criterion (e.g., 'Ease of Use', 'Key Features')."),
+  toolValues: z.array(AIToolValueSchema).describe("An array of objects, each providing the comparison text for a specific tool under this criterion."),
+});
+
+const AIToolOverviewSchema = z.object({
+    toolName: z.string().describe("The exact tool name."),
+    overview: z.string().describe("The 1-2 sentence overview for this tool."),
+});
+
+// This is what the AI *generates*
+const AICompareToolsOutputSchema = z.object({
+  comparisonTable: z.array(AIComparisonCriterionSchema).describe("An array of criteria, where each criterion contains an array of tool-specific comparison details."),
+  toolOverviews: z.array(AIToolOverviewSchema).optional().describe("Optional: An array of objects, each containing a tool name and its overview."),
+});
+
+
+// This is what the *application* uses (Record-based for toolValues and toolOverviews)
 export const ComparisonCriterionSchema = z.object({
   criterionName: z.string().describe("The name of the comparison criterion (e.g., 'Ease of Use', 'Key Features', 'Primary Use Case', 'Strengths', 'Weaknesses', 'Pricing Model', 'Community Support', 'Best For')."),
-  // toolName -> comparison text for this criterion for this tool
   toolValues: z.record(z.string(), z.string().describe("The comparison details for this tool regarding this specific criterion. The text should be concise and suitable for a table cell.")),
 });
 export type ComparisonCriterion = z.infer<typeof ComparisonCriterionSchema>;
@@ -115,4 +144,6 @@ export const CompareToolsOutputSchema = z.object({
   toolOverviews: z.record(z.string(), z.string()).optional().describe("Optional: A brief 1-2 sentence overview for each compared tool. For each tool name key present in this object, the value must be a non-empty string overview."),
 });
 export type CompareToolsOutput = z.infer<typeof CompareToolsOutputSchema>;
+
+export type { AICompareToolsOutput }; // Export internal AI type if needed by flow
 

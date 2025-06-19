@@ -5,7 +5,7 @@
  * @fileOverview AI-powered tool recommendation flow.
  *
  * This file defines a Genkit flow that recommends the top 3 test automation tools
- * based on user-provided filter criteria.
+ * based on user-provided filter criteria, including advanced options.
  *
  * @module src/ai/flows/recommend-tools
  *
@@ -52,8 +52,13 @@ const recommendToolsPrompt = ai.definePrompt({
   Pricing Model: {{{pricingModel}}}
   Reporting & Analytics Capabilities: {{{reportingAnalytics}}}
 
-  If a criterion is set to 'all', 'any', or a generic placeholder like 'All Applications', consider it as not a strong preference or applicable to all options for that category.
-  Focus on tools that best match the specified criteria.
+  {{#if applicationSubCategory}}Advanced - Application Sub-Category: {{{applicationSubCategory}}}{{/if}}
+  {{#if integrationCapabilities}}Advanced - Integration Capabilities: {{{integrationCapabilities}}}{{/if}}
+  {{#if teamSizeSuitability}}Advanced - Team Size Suitability: {{{teamSizeSuitability}}}{{/if}}
+  {{#if keyFeatureFocus}}Advanced - Key Feature Focus: {{{keyFeatureFocus}}}{{/if}}
+
+  If a criterion is set to 'all', 'any', a generic placeholder like 'All Applications', or is not provided, consider it as not a strong preference or applicable to all options for that category.
+  Focus on tools that best match the specified criteria. If advanced criteria are provided, give them significant weight.
 
   Format your response as a JSON object with a "recommendations" array.
   Each entry in the array should include "toolName", "score", and "justification" fields.
