@@ -534,26 +534,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
                   )}
                 />
               ))}
-              <div className="space-y-3 pt-4 border-t mt-4">
-                <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Getting Recommendations...
-                    </>
-                  ) : (
-                    'Get AI Recommendations'
-                  )}
-                </Button>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={handleResetAllFilters}
-                  className="w-full"
-                >
-                  <RotateCcw className="mr-2 h-4 w-4" /> Reset All Filters
-                </Button>
-              </div>
             </AccordionContent>
           </AccordionItem>
 
@@ -812,7 +792,29 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+
+        <div className="space-y-3 pt-6 border-t mt-4">
+          <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Getting Recommendations...
+              </>
+            ) : (
+              'Get AI Recommendations'
+            )}
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleResetAllFilters}
+            className="w-full"
+          >
+            <RotateCcw className="mr-2 h-4 w-4" /> Reset All Filters
+          </Button>
+        </div>
       </form>
     </Form>
   );
 }
+
