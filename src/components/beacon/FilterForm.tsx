@@ -416,13 +416,15 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
                     role="combobox"
                     aria-expanded={popoverOpen}
                     className={cn(
-                      "w-full justify-between text-xs",
+                      "w-full justify-between items-center text-xs h-9 px-2 py-2 font-normal",
                       !field.value && "text-muted-foreground"
                     )}
                   >
-                    {field.value
-                      ? automationToolOptions.find(option => option.value === field.value)?.label || field.value
-                      : placeholder}
+                    <span className="line-clamp-1 text-left">
+                      {field.value
+                        ? automationToolOptions.find(option => option.value === field.value)?.label || String(field.value)
+                        : placeholder}
+                    </span>
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </FormControl>
@@ -602,7 +604,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
                   )}
                 />
               ))}
-              <RecommendationActionButtons />
+               <RecommendationActionButtons />
             </AccordionContent>
           </AccordionItem>
 
