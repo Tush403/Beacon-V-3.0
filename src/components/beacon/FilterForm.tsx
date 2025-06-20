@@ -492,7 +492,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
   
   const RecommendationActionButtons = () => (
     <div className="space-y-3 pt-6 border-t mt-4">
-      <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading}>
+      <Button type="submit" className="w-full" variant="primary" disabled={isLoading}>
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -735,7 +735,8 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
               />
               <Button
                 type="button"
-                className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
+                variant="primary"
+                className="w-full"
                 onClick={handleGetEstimate}
                 disabled={isEstimatingEffort}
               >
@@ -789,7 +790,8 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
               <div className="space-y-2">
                 <Button
                   type="button"
-                  className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
+                  variant="accent"
+                  className="w-full"
                   onClick={handleCompareTools}
                   disabled={isComparing ||
                     (form.watch('toolToCompare1') ? 0 : 1) +
