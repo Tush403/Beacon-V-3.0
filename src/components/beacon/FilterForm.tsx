@@ -425,7 +425,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
                         ? automationToolOptions.find(option => option.value === field.value)?.label || String(field.value)
                         : placeholder}
                     </span>
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    {/* ChevronsUpDown icon removed here */}
                   </Button>
                 </FormControl>
               </PopoverTrigger>
