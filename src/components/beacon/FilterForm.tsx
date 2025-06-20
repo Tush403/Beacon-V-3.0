@@ -492,7 +492,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
   
   const RecommendationActionButtons = () => (
     <div className="space-y-3 pt-6 border-t mt-4">
-      <Button type="submit" className="w-full" variant="primary" disabled={isLoading}>
+      <Button type="submit" className="w-full" variant="accent" disabled={isLoading}>
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -735,7 +735,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
               />
               <Button
                 type="button"
-                variant="primary"
+                variant="accent"
                 className="w-full"
                 onClick={handleGetEstimate}
                 disabled={isEstimatingEffort}
