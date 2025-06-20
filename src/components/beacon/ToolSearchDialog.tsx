@@ -71,8 +71,8 @@ export function ToolSearchDialog({ isOpen, onOpenChange }: ToolSearchDialogProps
     <Dialog open={isOpen} onOpenChange={handleCloseDialog}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <SearchIcon className="h-6 w-6 text-primary" />
+          <DialogTitle className="flex items-center gap-2 text-foreground">
+            <SearchIcon className="h-6 w-6 text-foreground" />
             Search Tool Information
           </DialogTitle>
           <DialogDescription>
@@ -117,7 +117,7 @@ export function ToolSearchDialog({ isOpen, onOpenChange }: ToolSearchDialogProps
             <div className="mt-6 space-y-4 pt-4 border-t">
               <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-accent" />
-                AI Analysis for: <span className="text-primary">{analysisResult.toolName || searchTerm}</span>
+                AI Analysis for: <span className="text-accent">{analysisResult.toolName || searchTerm}</span>
               </h3>
               <div>
                 <h4 className="font-medium text-primary">Strengths:</h4>

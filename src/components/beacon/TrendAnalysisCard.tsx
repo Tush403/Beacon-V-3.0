@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,8 +34,8 @@ export function TrendAnalysisCard() {
   return (
     <Card className="shadow-lg h-full">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-xl font-headline">
-          <Zap className="h-6 w-6 text-primary" />
+        <CardTitle className="flex items-center gap-2 text-xl font-headline text-foreground">
+          <Zap className="h-6 w-6 text-foreground" />
           Testing Trends Overview
         </CardTitle>
         <CardDescription>Insights into popular and emerging trends in test automation.</CardDescription>
@@ -42,7 +43,7 @@ export function TrendAnalysisCard() {
       <CardContent className="space-y-6">
         {mockTrends.map((trend) => (
           <div key={trend.category} className="p-4 border border-border rounded-lg bg-card/50">
-            <h3 className="text-lg font-semibold text-primary flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
               {trend.icon && <trend.icon className="h-5 w-5 text-accent" />}
               {trend.category}
             </h3>

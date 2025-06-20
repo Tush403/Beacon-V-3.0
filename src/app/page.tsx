@@ -13,7 +13,7 @@ import { Separator } from '@/components/ui/separator';
 const LandingHeader = () => (
   <header className="py-6 px-4 md:px-8">
     <div className="container mx-auto flex items-center">
-      <CogIcon className="h-10 w-10 text-primary mr-3" />
+      <CogIcon className="h-10 w-10 text-foreground mr-3" />
       <div>
         <h1 className="text-2xl font-bold text-foreground">TAO DIGITAL</h1>
         <p className="text-sm text-muted-foreground">Transformation Made Simple</p>
@@ -76,7 +76,7 @@ export default function LandingPage() {
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <LandingHeader />
       <main className="flex-grow flex flex-col items-center justify-center text-center px-4 py-10">
-        <h2 className="text-4xl md:text-5xl font-bold text-primary mb-6">
+        <h2 className="text-4xl md:text-5xl font-bold text-accent mb-6">
           Welcome to TAO's Beacon
         </h2>
         <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mb-10 leading-relaxed">

@@ -74,7 +74,7 @@ export function AppHeader() {
           <div className="container mx-auto py-3 px-4 md:px-8 flex items-center justify-between">
             {/* Left Side: TAO Digital Branding */}
             <div className="flex items-center gap-3">
-              <CogIcon className="h-9 w-9 text-primary" />
+              <CogIcon className="h-9 w-9 text-foreground" />
               <div>
                 <h1 className="text-lg font-bold text-foreground sm:text-xl">TAO DIGITAL</h1>
                 <p className="text-xs text-muted-foreground hidden sm:block">Transformation Made Simple</p>
@@ -83,7 +83,7 @@ export function AppHeader() {
 
             {/* Right Side: Beacon Branding & Icons */}
             <div className="flex items-center gap-3 sm:gap-4">
-              <h2 className="text-lg md:text-xl font-headline font-semibold text-primary">
+              <h2 className="text-lg md:text-xl font-headline font-semibold text-accent">
                 Beacon
               </h2>
               <div className="flex items-center gap-1 sm:gap-2">

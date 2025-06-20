@@ -50,8 +50,8 @@ export function ROIChart({ recommendedTools }: ROIChartProps) {
     return (
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl font-headline">
-            <TrendingUp className="h-6 w-6 text-primary" />
+          <CardTitle className="flex items-center gap-2 text-xl font-headline text-foreground">
+            <TrendingUp className="h-6 w-6 text-foreground" />
             ROI Projection Comparison
           </CardTitle>
           <CardDescription>Projected Return on Investment (ROI) for the selected tools over 6 months.</CardDescription>
@@ -66,8 +66,8 @@ export function ROIChart({ recommendedTools }: ROIChartProps) {
   return (
     <Card className="shadow-lg">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-xl font-headline">
-          <TrendingUp className="h-6 w-6 text-primary" />
+        <CardTitle className="flex items-center gap-2 text-xl font-headline text-foreground">
+          <TrendingUp className="h-6 w-6 text-foreground" />
           ROI Projection Comparison
         </CardTitle>
         <CardDescription>Projected Return on Investment (ROI) for the selected tools over 6 months. (Simulated Data)</CardDescription>

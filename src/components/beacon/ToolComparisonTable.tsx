@@ -25,8 +25,8 @@ export function ToolComparisonTable({ data, toolNames }: ToolComparisonTableProp
     return (
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl font-headline">
-            <GitCompare className="h-6 w-6 text-primary" />
+          <CardTitle className="flex items-center gap-2 text-xl font-headline text-foreground">
+            <GitCompare className="h-6 w-6 text-foreground" />
             Tool Comparison
           </CardTitle>
           <CardDescription>No comparison data available.</CardDescription>
@@ -44,8 +44,8 @@ export function ToolComparisonTable({ data, toolNames }: ToolComparisonTableProp
   return (
     <Card className="shadow-lg w-full">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-2xl font-headline">
-          <GitCompare className="h-7 w-7 text-primary" />
+        <CardTitle className="flex items-center gap-2 text-2xl font-headline text-foreground">
+          <GitCompare className="h-7 w-7 text-foreground" />
           AI-Powered Tool Comparison
         </CardTitle>
         <CardDescription>
@@ -55,8 +55,8 @@ export function ToolComparisonTable({ data, toolNames }: ToolComparisonTableProp
       <CardContent>
         {toolOverviews && Object.keys(toolOverviews).length > 0 && (
           <div className="mb-6 space-y-4">
-            <h3 className="text-lg font-semibold text-primary flex items-center gap-2">
-                <Info className="h-5 w-5" />
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                <Info className="h-5 w-5 text-foreground" />
                 Tool Overviews
             </h3>
             {uniqueToolNames.map(toolName => (
@@ -83,7 +83,7 @@ export function ToolComparisonTable({ data, toolNames }: ToolComparisonTableProp
             <TableBody>
               {comparisonTable.map((criterion) => (
                 <TableRow key={criterion.criterionName}>
-                  <TableCell className="font-medium text-primary align-top">{criterion.criterionName}</TableCell>
+                  <TableCell className="font-medium text-foreground align-top">{criterion.criterionName}</TableCell>
                   {uniqueToolNames.map((toolName) => (
                     <TableCell key={toolName} className="text-sm text-muted-foreground align-top whitespace-pre-line">
                       {criterion.toolValues[toolName] || 'N/A'}

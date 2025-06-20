@@ -44,7 +44,7 @@ export function CookieConsent() {
       <Card className="max-w-2xl mx-auto shadow-2xl">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Cookie className="h-6 w-6 text-primary" />
+            <Cookie className="h-6 w-6 text-foreground" />
             Cookie Consent
           </CardTitle>
           <CardDescription>

@@ -520,7 +520,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
         <Accordion type="multiple" className="w-full" defaultValue={['filter-tools']}>
           <AccordionItem value="filter-tools">
             <AccordionTrigger>
-              <div className="flex items-center text-base font-semibold text-primary hover:no-underline">
+              <div className="flex items-center text-base font-semibold text-foreground hover:no-underline">
                 <Filter className="mr-2 h-5 w-5" />
                 Filter Tools
               </div>
@@ -565,7 +565,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
 
           <AccordionItem value="advanced-filters">
             <AccordionTrigger>
-              <div className="flex items-center text-base font-semibold text-primary hover:no-underline">
+              <div className="flex items-center text-base font-semibold text-foreground hover:no-underline">
                 <SlidersHorizontal className="mr-2 h-5 w-5" />
                 Advanced Filters
               </div>
@@ -611,7 +611,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
 
           <AccordionItem value="ai-estimator">
             <AccordionTrigger>
-              <div className="flex items-center text-base font-semibold text-primary hover:no-underline">
+              <div className="flex items-center text-base font-semibold text-foreground hover:no-underline">
                 <Settings2 className="mr-2 h-5 w-5" />
                 AI Effort Estimator
               </div>
@@ -753,7 +753,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
 
           <AccordionItem value="compare-tools">
             <AccordionTrigger>
-              <div className="flex items-center text-base font-semibold text-primary hover:no-underline">
+              <div className="flex items-center text-base font-semibold text-foreground hover:no-underline">
                 <GitCompare className="mr-2 h-5 w-5" />
                 Compare Tools
               </div>

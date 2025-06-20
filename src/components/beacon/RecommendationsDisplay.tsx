@@ -50,8 +50,8 @@ export function RecommendationsDisplay({
   if (isLoadingRecommendations) {
     return (
       <div className="mt-8">
-        <h2 className="text-2xl font-headline font-semibold mb-6 text-center flex items-center justify-center gap-2">
-          <Lightbulb className="h-7 w-7 text-primary animate-pulse" />
+        <h2 className="text-2xl font-headline font-semibold mb-6 text-center flex items-center justify-center gap-2 text-foreground">
+          <Lightbulb className="h-7 w-7 text-foreground animate-pulse" />
           Fetching AI Recommendations...
         </h2>
         <div className="grid md:grid-cols-3 gap-6">
@@ -90,8 +90,8 @@ export function RecommendationsDisplay({
     return (
       <Card className="mt-8 shadow-md">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl font-headline">
-            <Compass className="h-6 w-6 text-primary" />
+          <CardTitle className="flex items-center gap-2 text-xl font-headline text-foreground">
+            <Compass className="h-6 w-6 text-foreground" />
             Navigate Your Test Automation Journey
           </CardTitle>
         </CardHeader>
@@ -104,9 +104,9 @@ export function RecommendationsDisplay({
               To get started:
             </p>
             <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 my-2 ml-4">
-              <li>Explore the <span className="font-semibold text-primary">Filter Tools</span> section in the sidebar.</li>
+              <li>Explore the <span className="font-semibold text-accent">Filter Tools</span> section in the sidebar.</li>
               <li>Define your project's specific requirements (application type, test type, OS, etc.).</li>
-              <li>Click <span className="font-semibold text-primary">"Get AI Recommendations"</span>.</li>
+              <li>Click <span className="font-semibold text-accent">"Get AI Recommendations"</span>.</li>
             </ul>
           </div>
           <p className="text-sm text-muted-foreground">
@@ -152,8 +152,8 @@ export function RecommendationsDisplay({
 
   return (
     <div className="mt-10">
-      <h2 className="text-3xl font-headline font-semibold mb-8 text-center flex items-center justify-center gap-3">
-        <Lightbulb className="h-8 w-8 text-primary" />
+      <h2 className="text-3xl font-headline font-semibold mb-8 text-center flex items-center justify-center gap-3 text-foreground">
+        <Lightbulb className="h-8 w-8 text-foreground" />
         Top 3 AI-Recommended Tools
       </h2>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">

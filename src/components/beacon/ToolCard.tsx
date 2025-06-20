@@ -48,7 +48,7 @@ export function ToolCard({
       <CardHeader className="pb-4">
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-2xl font-headline text-primary">{tool.toolName}</CardTitle>
+            <CardTitle className="text-2xl font-headline text-foreground">{tool.toolName}</CardTitle>
             <CardDescription className="text-sm">AI Justification: {tool.justification}</CardDescription>
           </div>
           <Badge variant={rank === 1 ? "default" : "secondary"} className={`text-lg px-3 py-1 ${rank === 1 ? 'bg-accent text-accent-foreground' : 'bg-primary text-primary-foreground'}`}>
@@ -58,7 +58,7 @@ export function ToolCard({
         <div className="mt-2">
           <div className="flex justify-between items-center mb-1">
             <span className="text-sm font-medium text-muted-foreground">Suitability Score</span>
-            <span className="text-lg font-bold text-primary">{tool.score}%</span>
+            <span className="text-lg font-bold text-accent">{tool.score}%</span>
           </div>
           <Progress value={tool.score} aria-label={`Suitability score: ${tool.score}%`} className="w-full h-3 [&>div]:bg-gradient-to-r [&>div]:from-secondary [&>div]:to-primary" />
         </div>
