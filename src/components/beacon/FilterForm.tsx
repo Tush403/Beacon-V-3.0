@@ -43,7 +43,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Loader2, RotateCcw, Settings2, Filter, Check, PlusCircle, SlidersHorizontal } from 'lucide-react';
-import type { FilterCriteria, EstimateEffortInput } from '@/types';
+import type { FilterCriteria, EstimateEffortInput, EstimateEffortOutput } from '@/types';
 import { useState, useEffect } from 'react';
 import { estimateEffortAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
@@ -82,6 +82,7 @@ interface FilterFormProps {
   onSubmit: (data: FilterFormValues) => void;
   isLoading: boolean;
   defaultValues?: Partial<FilterCriteria>;
+  onEstimateSuccess: (result: EstimateEffortOutput) => void;
 }
 
 const defaultFormValues: FilterFormValues = {
@@ -108,7 +109,7 @@ const defaultFormValues: FilterFormValues = {
   qaTeamSize: undefined,
 };
 
-export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormProps) {
+export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimateSuccess }: FilterFormProps) {
   const form = useForm<FilterFormValues>({
     resolver: zodResolver(filterSchema),
     defaultValues: { ...defaultFormValues, ...defaultValues },
@@ -138,27 +139,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
     setIsEstimatingEffort(true);
     try {
       const result = await estimateEffortAction(effortInput);
-      toast({
-        title: "AI Effort Estimation Result",
-        description: (
-          <div className="text-sm space-y-1.5">
-            <p>
-              <span className="font-semibold text-foreground">Estimated Effort: </span>
-              {result.estimatedEffortDaysMin} - {result.estimatedEffortDaysMax} person-days
-            </p>
-            {result.confidenceScore !== undefined && (
-               <p>
-                 <span className="font-semibold text-foreground">Confidence: </span>
-                 {result.confidenceScore}%
-               </p>
-            )}
-            <div>
-              <span className="font-semibold text-foreground">Explanation:</span>
-              <p className="text-muted-foreground whitespace-pre-line text-xs mt-1">{result.explanation}</p>
-            </div>
-          </div>
-        ),
-      });
+      onEstimateSuccess(result);
     } catch (e: any) {
       toast({
         title: 'Estimation Error',
@@ -638,6 +619,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                 onClick={handleGetEstimate}
                 disabled={isEstimatingEffort}
               >
+                {isEstimatingEffort && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isEstimatingEffort ? 'Estimating...' : 'Get Estimate'}
               </Button>
             </AccordionContent>

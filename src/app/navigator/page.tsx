@@ -23,6 +23,7 @@ import { AlertTriangle, Loader2 } from 'lucide-react';
 import { automationToolOptions } from '@/lib/tool-options';
 import { GlobalLoader } from '@/components/beacon/GlobalLoader';
 import { cn } from '@/lib/utils';
+import { EffortEstimationDialog } from '@/components/beacon/EffortEstimationDialog';
 
 export default function NavigatorPage() {
   const [filters, setFilters] = useState<FilterCriteria | null>(null);
@@ -38,6 +39,9 @@ export default function NavigatorPage() {
   const [loadingState, setLoadingState] = useState<'idle' | 'loading' | 'finished'>('idle');
 
   const { toast } = useToast();
+
+  const [effortEstimationResult, setEffortEstimationResult] = useState<EstimateEffortOutput | null>(null);
+  const [isEffortDialogOpen, setIsEffortDialogOpen] = useState(false);
 
   const [year, setYear] = useState(new Date().getFullYear());
   useEffect(() => {
@@ -154,6 +158,11 @@ export default function NavigatorPage() {
     }
   };
 
+  const handleEstimateSuccess = (result: EstimateEffortOutput) => {
+    setEffortEstimationResult(result);
+    setIsEffortDialogOpen(true);
+  };
+
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState<Record<string, boolean>>({});
   
   useEffect(() => {
@@ -174,6 +183,7 @@ export default function NavigatorPage() {
               onSubmit={handleFilterSubmit} 
               isLoading={isLoading}
               defaultValues={initialFilterValues}
+              onEstimateSuccess={handleEstimateSuccess}
             />
           </SidebarContent>
         </Sidebar>
@@ -189,7 +199,7 @@ export default function NavigatorPage() {
                 toolAnalyses={toolAnalyses}
                 docLinks={{}}
                 onGetAnalysis={handleGetAnalysis}
-                isLoadingRecommendations={false} // Controlled by page-level opacity
+                isLoadingRecommendations={false}
                 isLoadingAnalysis={isLoadingAnalysis}
                 error={error}
                 hasInteracted={hasInteracted} 
@@ -241,6 +251,11 @@ export default function NavigatorPage() {
         </SidebarInset>
       </div>
       <BackToTopButton />
+      <EffortEstimationDialog 
+        isOpen={isEffortDialogOpen}
+        onOpenChange={setIsEffortDialogOpen}
+        estimation={effortEstimationResult}
+      />
     </SidebarProvider>
   );
 }
