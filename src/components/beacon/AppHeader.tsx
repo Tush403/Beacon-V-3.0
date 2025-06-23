@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link'; // Import Link
 import { CogIcon, Mail, Moon, Search, Library, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,6 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useAnimationContext } from '@/contexts/AnimationContext';
 
 const RELEASE_NOTES_ACKNOWLEDGED_KEY = 'release_notes_acknowledged_v2.0';
 
@@ -21,6 +21,8 @@ export function AppHeader() {
   const [showReleaseNotesDialog, setShowReleaseNotesDialog] = useState(false);
   const [isSearchDialogOpen, setSearchDialogOpen] = useState(false);
   const [showUpdateIndicator, setShowUpdateIndicator] = useState(false);
+  const logoRef = useRef<SVGSVGElement>(null);
+  const { setLogoPosition } = useAnimationContext();
 
   useEffect(() => {
     // Theme initialization
@@ -40,6 +42,31 @@ export function AppHeader() {
       }
     }
   }, []);
+
+  useEffect(() => {
+    // This effect updates the logo's position in the context whenever the window is resized.
+    const updatePosition = () => {
+      if (logoRef.current) {
+        const rect = logoRef.current.getBoundingClientRect();
+        setLogoPosition({
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+        });
+      }
+    };
+
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    // Also update on scroll, as sticky header might change position relative to viewport
+    document.addEventListener('scroll', updatePosition); 
+    
+    return () => {
+        window.removeEventListener('resize', updatePosition);
+        document.removeEventListener('scroll', updatePosition);
+    }
+  }, [setLogoPosition]);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -74,7 +101,7 @@ export function AppHeader() {
           <div className="container mx-auto py-3 px-4 md:px-8 flex items-center justify-between">
             {/* Left Side: TAO Digital Branding */}
             <div className="flex items-center gap-3">
-              <CogIcon className="h-9 w-9 text-foreground" />
+              <CogIcon ref={logoRef} className="h-9 w-9 text-foreground" />
               <div>
                 <h1 className="text-lg font-bold text-foreground sm:text-xl">TAO DIGITAL</h1>
                 <p className="text-xs text-muted-foreground hidden sm:block">Transformation Made Simple</p>

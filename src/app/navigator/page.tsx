@@ -22,22 +22,20 @@ import { BackToTopButton } from '@/components/beacon/BackToTopButton';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { automationToolOptions } from '@/lib/tool-options';
 import { GlobalLoader } from '@/components/beacon/GlobalLoader';
+import { cn } from '@/lib/utils';
 
 export default function NavigatorPage() {
   const [filters, setFilters] = useState<FilterCriteria | null>(null);
   const [recommendations, setRecommendations] = useState<ToolRecommendationItem[]>([]);
   const [toolAnalyses, setToolAnalyses] = useState<Record<string, ToolAnalysisItem | null>>({});
-  const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
-  const [isLoadingAnalysis, setIsLoadingAnalysis] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
   
   const [comparisonData, setComparisonData] = useState<CompareToolsOutput | null>(null);
   const [comparedToolNames, setComparedToolNames] = useState<string[]>([]);
-  const [isComparingTools, setIsComparingTools] = useState(false);
   const [comparisonError, setComparisonError] = useState<string | null>(null);
 
   const [hasInteracted, setHasInteracted] = useState(false);
-  const [isPageLoading, setIsPageLoading] = useState(false);
+  const [loadingState, setLoadingState] = useState<'idle' | 'loading' | 'finished'>('idle');
 
   const { toast } = useToast();
 
@@ -47,12 +45,12 @@ export default function NavigatorPage() {
   }, []);
 
   useEffect(() => {
-    if (isLoadingRecommendations || isComparingTools) {
-      setIsPageLoading(true);
-    } else {
-      setIsPageLoading(false);
+    // This effect resets the animation state after it has finished, so it can run again.
+    if (loadingState === 'finished') {
+        const timer = setTimeout(() => setLoadingState('idle'), 1000); // Animation duration + buffer
+        return () => clearTimeout(timer);
     }
-  }, [isLoadingRecommendations, isComparingTools]);
+  }, [loadingState]);
 
   const initialFilterValues: FilterCriteria = {
     applicationUnderTest: 'all',
@@ -78,11 +76,10 @@ export default function NavigatorPage() {
 
   const handleFilterSubmit = async (data: FilterCriteria) => {
     setHasInteracted(true);
-    setIsLoadingRecommendations(true);
+    setLoadingState('loading');
     setError(null);
     setRecommendations([]); 
     setToolAnalyses({});
-    // Clear comparison from previous search
     setComparisonData(null);
     setComparisonError(null);
     
@@ -91,9 +88,12 @@ export default function NavigatorPage() {
       setRecommendations(result.recommendations);
       setFilters(data); 
 
-      // Automatically trigger comparison for new recommendations
       if (result.recommendations.length > 0) {
-        await handleCompareRequest(result.recommendations.map(r => r.toolName));
+        const toolNames = result.recommendations.map(r => r.toolName);
+        setComparedToolNames(toolNames);
+        const comparisonInput: CompareToolsInput = { toolNames };
+        const comparisonResult = await compareToolsAction(comparisonInput);
+        setComparisonData(comparisonResult);
       }
     } catch (e: any) {
       setError(e.message || 'An unknown error occurred while fetching recommendations.');
@@ -103,7 +103,7 @@ export default function NavigatorPage() {
         variant: 'destructive',
       });
     } finally {
-      setIsLoadingRecommendations(false);
+      setLoadingState('finished');
     }
   };
 
@@ -126,15 +126,19 @@ export default function NavigatorPage() {
       setIsLoadingAnalysis((prev) => ({ ...prev, [toolName]: false }));
     }
   };
-
-  const handleCompareRequest = async (toolDisplayNames: string[]) => {
-    setIsComparingTools(true);
+  
+  const handleComparisonToolChange = async (indexToChange: number, newToolValue: string) => {
+    const newToolLabel = automationToolOptions.find(opt => opt.value === newToolValue)?.label || newToolValue;
+    const newToolNames = [...comparedToolNames];
+    newToolNames[indexToChange] = newToolLabel;
+  
+    setLoadingState('loading');
     setComparisonError(null);
     setComparisonData(null);
-    setComparedToolNames(toolDisplayNames);
+    setComparedToolNames(newToolNames);
 
     try {
-      const input: CompareToolsInput = { toolNames: toolDisplayNames };
+      const input: CompareToolsInput = { toolNames: newToolNames };
       const result = await compareToolsAction(input);
       setComparisonData(result);
     } catch (e: any) {
@@ -146,21 +150,11 @@ export default function NavigatorPage() {
         variant: 'destructive',
       });
     } finally {
-      setIsComparingTools(false);
+      setLoadingState('finished');
     }
   };
-  
-  const handleComparisonToolChange = async (indexToChange: number, newToolValue: string) => {
-    // Find the label for the given value
-    const newToolLabel = automationToolOptions.find(opt => opt.value === newToolValue)?.label || newToolValue;
-  
-    // Create the new list of tool names for comparison
-    const newToolNames = [...comparedToolNames];
-    newToolNames[indexToChange] = newToolLabel;
-  
-    // Call the comparison function
-    await handleCompareRequest(newToolNames);
-  };
+
+  const [isLoadingAnalysis, setIsLoadingAnalysis] = useState<Record<string, boolean>>({});
   
   useEffect(() => {
      // To auto-load on page init with default filters:
@@ -168,36 +162,40 @@ export default function NavigatorPage() {
   }, []);
 
   const recommendationsExist = recommendations.length > 0;
+  const isLoading = loadingState === 'loading';
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <GlobalLoader isLoading={isPageLoading} />
+      <GlobalLoader loadingState={loadingState} />
       <div className="flex flex-1">
         <Sidebar className="h-auto border-r" collapsible="icon">
           <SidebarContent className="md:mt-16 px-4 pb-4">
             <FilterForm 
               onSubmit={handleFilterSubmit} 
-              isLoading={isPageLoading}
+              isLoading={isLoading}
               defaultValues={initialFilterValues}
             />
           </SidebarContent>
         </Sidebar>
         <SidebarInset>
           <div className="flex flex-col flex-1 h-full">
-            <div className="flex-grow p-4 md:p-8 space-y-10 overflow-y-auto">
+            <div className={cn(
+              "flex-grow p-4 md:p-8 space-y-10 overflow-y-auto transition-opacity duration-500",
+              isLoading ? "opacity-0" : "opacity-100 delay-300"
+            )}>
               
               <RecommendationsDisplay
                 recommendations={recommendations}
                 toolAnalyses={toolAnalyses}
                 docLinks={{}}
                 onGetAnalysis={handleGetAnalysis}
-                isLoadingRecommendations={isPageLoading}
+                isLoadingRecommendations={false} // Controlled by page-level opacity
                 isLoadingAnalysis={isLoadingAnalysis}
                 error={error}
                 hasInteracted={hasInteracted} 
               />
 
-              {!isPageLoading && (
+              {!isLoading && (
                 <>
                   {comparisonError && (
                     <div className="mt-8 text-center py-10 bg-destructive/10 rounded-lg border border-destructive text-destructive">
