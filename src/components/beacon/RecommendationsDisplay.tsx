@@ -4,29 +4,22 @@
 import { ToolCard } from './ToolCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from '@/components/ui/card';
-import type { ToolRecommendationItem, ToolAnalysisItem, ProjectEffort, DocumentationLink } from '@/types';
+import type { ToolRecommendationItem, ToolAnalysisItem, DocumentationLink, EstimateEffortOutput } from '@/types';
 import { Lightbulb, AlertTriangle, Compass } from 'lucide-react';
 
 interface RecommendationsDisplayProps {
   recommendations: ToolRecommendationItem[];
   toolAnalyses: Record<string, ToolAnalysisItem | null>;
-  projectEfforts: Record<string, ProjectEffort | null>;
+  projectEfforts: Record<string, EstimateEffortOutput | null>;
   docLinks: Record<string, DocumentationLink | null>;
   onGetAnalysis: (toolName: string) => void;
+  onGetEffort: (toolName: string) => void;
   isLoadingRecommendations: boolean;
   isLoadingAnalysis: Record<string, boolean>;
+  isLoadingEffort: Record<string, boolean>;
   error?: string | null;
   hasInteracted: boolean; // New prop
 }
-
-const mockEfforts: Record<string, ProjectEffort> = {
-  'Tool A': { toolName: 'Tool A', effortDaysMin: 10, effortDaysMax: 15, assumptions: ['Medium project complexity', 'Team has prior experience'] },
-  'Tool B': { toolName: 'Tool B', effortDaysMin: 12, effortDaysMax: 20, assumptions: ['High project complexity', 'Requires new skill acquisition'] },
-  'Tool C': { toolName: 'Tool C', effortDaysMin: 8, effortDaysMax: 12, assumptions: ['Low project complexity', 'Utilizes low-code features'] },
-  'DefaultTool1': { toolName: 'DefaultTool1', effortDaysMin: 10, effortDaysMax: 15, assumptions: ['Medium project complexity', 'Team has prior experience'] },
-  'DefaultTool2': { toolName: 'DefaultTool2', effortDaysMin: 12, effortDaysMax: 20, assumptions: ['High project complexity', 'Requires new skill acquisition'] },
-  'DefaultTool3': { toolName: 'DefaultTool3', effortDaysMin: 8, effortDaysMax: 12, assumptions: ['Low project complexity', 'Utilizes low-code features'] },
-};
 
 const mockDocLinks: Record<string, DocumentationLink> = {
   'Tool A': { toolName: 'Tool A', url: 'https://example.com/tool-a.pdf', label: 'Visit Official Website' },
@@ -41,9 +34,12 @@ const mockDocLinks: Record<string, DocumentationLink> = {
 export function RecommendationsDisplay({
   recommendations,
   toolAnalyses,
+  projectEfforts,
   isLoadingRecommendations,
   isLoadingAnalysis,
+  isLoadingEffort,
   onGetAnalysis,
+  onGetEffort,
   error,
   hasInteracted, // Use the new prop
 }: RecommendationsDisplayProps) {
@@ -162,10 +158,12 @@ export function RecommendationsDisplay({
             key={tool.toolName}
             tool={tool}
             analysis={toolAnalyses[tool.toolName]}
-            effort={mockEfforts[tool.toolName] || mockEfforts[`DefaultTool${index + 1}`]}
+            effort={projectEfforts[tool.toolName]}
             docLink={mockDocLinks[tool.toolName] || mockDocLinks[`DefaultTool${index + 1}`]}
             onGetAnalysis={onGetAnalysis}
+            onGetEffort={onGetEffort}
             isAnalysisLoading={!!isLoadingAnalysis[tool.toolName]}
+            isEffortLoading={!!isLoadingEffort[tool.toolName]}
             rank={index + 1}
           />
         ))}

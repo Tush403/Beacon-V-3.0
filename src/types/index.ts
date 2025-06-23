@@ -12,13 +12,6 @@ export interface ToolAnalysisItem {
 }
 
 
-export interface ProjectEffort {
-  toolName: string;
-  effortDaysMin: number;
-  effortDaysMax: number;
-  assumptions: string[];
-}
-
 export interface Trend {
   category: string;
   description: string;
@@ -146,4 +139,3 @@ export const CompareToolsOutputSchema = z.object({
 export type CompareToolsOutput = z.infer<typeof CompareToolsOutputSchema>;
 
 export type { AICompareToolsOutput }; // Export internal AI type if needed by flow
-

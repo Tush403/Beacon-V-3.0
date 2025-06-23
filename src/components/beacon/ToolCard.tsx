@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Loader2, Sparkles, FileText, ExternalLink, Clock, TrendingUp, AlertCircle } from 'lucide-react';
-import type { ToolRecommendationItem, ToolAnalysisItem, ProjectEffort, DocumentationLink } from '@/types';
+import type { ToolRecommendationItem, ToolAnalysisItem, DocumentationLink, EstimateEffortOutput } from '@/types';
 import { Progress } from '@/components/ui/progress';
 import {
   Accordion,
@@ -25,10 +25,12 @@ import {
 interface ToolCardProps {
   tool: ToolRecommendationItem;
   analysis?: ToolAnalysisItem | null;
-  effort?: ProjectEffort | null;
+  effort?: EstimateEffortOutput | null;
   docLink?: DocumentationLink | null;
   onGetAnalysis: (toolName: string) => void;
+  onGetEffort: (toolName: string) => void;
   isAnalysisLoading: boolean;
+  isEffortLoading: boolean;
   rank: number;
 }
 
@@ -38,7 +40,9 @@ export function ToolCard({
   effort,
   docLink,
   onGetAnalysis,
+  onGetEffort,
   isAnalysisLoading,
+  isEffortLoading,
   rank
 }: ToolCardProps) {
   const cardBorderColor = rank === 1 ? "border-accent" : rank === 2 ? "border-primary" : "border-border";
@@ -107,25 +111,51 @@ export function ToolCard({
             </AccordionContent>
           </AccordionItem>
 
-          {effort && (
           <AccordionItem value="effort">
-            <AccordionTrigger className="hover:no-underline">
+            <AccordionTrigger
+              className="hover:no-underline"
+              onClick={() => {
+                if (!effort && !isEffortLoading) {
+                  onGetEffort(tool.toolName);
+                }
+              }}
+              disabled={isEffortLoading && !effort}
+            >
                 <div className="flex items-center gap-2">
                     <Clock className="h-5 w-5 text-accent" />
                     Estimated Effort
+                    {isEffortLoading && !effort && <Loader2 className="h-4 w-4 animate-spin ml-2" />}
                 </div>
             </AccordionTrigger>
             <AccordionContent className="pt-2 text-sm">
-                <p className="text-muted-foreground">
-                    <span className="font-semibold text-primary">{effort.effortDaysMin} - {effort.effortDaysMax} person-days</span>
-                </p>
-                <h5 className="font-medium mt-2">Assumptions:</h5>
-                <ul className="list-disc list-inside text-xs text-muted-foreground">
-                    {effort.assumptions.map((assumption, i) => <li key={i}>{assumption}</li>)}
-                </ul>
+              {isEffortLoading && !effort ? (
+                 <div className="space-y-2 mt-2">
+                  <div className="h-4 bg-muted rounded w-3/4 animate-pulse"></div>
+                  <div className="h-4 bg-muted rounded w-full animate-pulse"></div>
+                  <div className="h-4 bg-muted rounded w-5/6 animate-pulse"></div>
+                </div>
+              ) : effort ? (
+                <div className="space-y-3">
+                   <div>
+                    <p className="text-muted-foreground">
+                        <span className="font-semibold text-primary">{effort.estimatedEffortDaysMin} - {effort.estimatedEffortDaysMax} person-days</span>
+                    </p>
+                    {effort.confidenceScore !== undefined && (
+                        <p className="text-xs text-muted-foreground mt-1">Confidence: {effort.confidenceScore}%</p>
+                    )}
+                   </div>
+                   <div>
+                    <h5 className="font-medium mt-2">AI-Generated Explanation:</h5>
+                    <p className="text-xs text-muted-foreground whitespace-pre-line">{effort.explanation}</p>
+                   </div>
+                </div>
+              ) : (
+                <div className="flex items-center text-muted-foreground text-sm">
+                  <AlertCircle className="h-4 w-4 mr-2"/> Click to load estimation.
+                </div>
+              )}
             </AccordionContent>
           </AccordionItem>
-          )}
         </Accordion>
       </CardContent>
       <CardFooter className="pt-4 mt-auto border-t">
