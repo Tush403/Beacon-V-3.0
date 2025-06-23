@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -91,9 +90,9 @@ export function ToolSearchDialog({ isOpen, onOpenChange }: ToolSearchDialogProps
             />
             <Button onClick={handleSearch} disabled={isLoading || !searchTerm.trim()} className="bg-primary hover:bg-primary/90 text-primary-foreground px-3">
               {isLoading ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <SearchIcon className="h-5 w-5" />
+                <SearchIcon className="h-4 w-4" />
               )}
               <span className="sr-only">Search</span>
             </Button>
