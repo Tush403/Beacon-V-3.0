@@ -64,7 +64,7 @@ If "ZeTA Automation" is one of the tools, use the following information as the p
 
 If "Functionize" is one of the tools, use the following as the primary source of truth for its comparison points:
 - Tool Overview: An AI-powered testing platform for web applications that automates test creation and maintenance.
-- Initial Setup Time: Very fast; cloud-based with no local setup required.
+- Initial Setup Time: <1 day; cloud-based with no local setup.
 - Maintenance Overhead: Very Low; AI-powered self-healing adapts to UI changes.
 - Test Creation Speed: Very High; uses natural language and visual tools.
 - Script Reusability: Moderate; promotes reusable test steps and flows.
@@ -75,7 +75,7 @@ If "Functionize" is one of the tools, use the following as the primary source of
 - Total Cost of Ownership: High; enterprise-level subscription-based SaaS model.
 
 Provide a detailed comparison based on these criteria. For each criterion, provide a highly concise summary (strictly less than 10 words) that is factual and informative for each tool. The content must be suitable for a small table cell.
-- Initial Setup Time: Describe the typical time and complexity to get the tool running for a new project.
+- Initial Setup Time: Estimate the typical time in days or hours (e.g., "1-2 days", "< 1 day") to get the tool running for a new project.
 - Maintenance Overhead: Assess the effort required to maintain tests, handle updates, and manage flakiness.
 - Test Creation Speed: How quickly can new tests be authored? Consider scripting vs. low-code/codeless approaches.
 - Script Reusability: Evaluate the tool's support for creating reusable components, functions, or modules.
