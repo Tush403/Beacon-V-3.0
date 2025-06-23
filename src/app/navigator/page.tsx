@@ -189,7 +189,7 @@ export default function NavigatorPage() {
     <SidebarProvider defaultOpen={true}>
       <GlobalLoader loadingState={loadingState} />
       <div className="flex flex-1">
-        <Sidebar className="h-auto border-r" collapsible="icon">
+        <Sidebar className="border-r" collapsible="icon">
           <SidebarContent className="md:mt-16 px-4 pb-4">
             <FilterForm 
               onSubmit={handleFilterSubmit} 
