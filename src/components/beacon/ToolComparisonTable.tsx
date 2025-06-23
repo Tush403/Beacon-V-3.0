@@ -13,9 +13,8 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { GitCompare, Info, Link as LinkIcon, Download } from 'lucide-react';
+import { Info, Download, Star } from 'lucide-react';
 import type { CompareToolsOutput, ToolRecommendationItem } from '@/types';
-import { Fragment } from 'react';
 
 interface ToolComparisonTableProps {
   data: CompareToolsOutput;
@@ -31,7 +30,7 @@ export function ToolComparisonTable({ data, toolNames, recommendations, allTools
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl font-headline text-foreground">
-            <GitCompare className="h-6 w-6 text-foreground" />
+            <Star className="h-6 w-6 text-primary" />
             Tool Comparison
           </CardTitle>
           <CardDescription>No comparison data available.</CardDescription>
@@ -57,11 +56,11 @@ export function ToolComparisonTable({ data, toolNames, recommendations, allTools
       <CardHeader className="flex flex-row items-start justify-between">
         <div>
             <CardTitle className="flex items-center gap-2 text-2xl font-headline text-foreground">
-                <GitCompare className="h-7 w-7 text-foreground" />
+                <Star className="h-7 w-7 text-primary" />
                 Tool Comparison Table
             </CardTitle>
             <CardDescription className="mt-1">
-                Compare tools side-by-side. Use the dropdowns to customize your comparison.
+                Compare tools side-by-side. The first tool is based on your filters. Click tool names to see more details.
             </CardDescription>
         </div>
         <Button variant="outline">
@@ -86,55 +85,53 @@ export function ToolComparisonTable({ data, toolNames, recommendations, allTools
             ))}
           </div>
         )}
-
-        <Table className="border">
-          <TableHeader className="bg-muted/50">
-            <TableRow>
-              <TableHead className="min-w-[180px] font-semibold text-foreground border-r">Parameters</TableHead>
-              {uniqueToolNames.map((toolName, index) => {
-                const score = getToolScore(toolName);
-                return (
-                  <TableHead key={`${toolName}-${index}`} className="min-w-[250px] p-2 align-top text-foreground font-semibold border-r last:border-r-0">
-                      <div className="flex items-center gap-2 mb-1">
-                          <LinkIcon className="h-4 w-4 text-muted-foreground shrink-0"/>
-                          <Select 
-                              value={getToolValueByName(toolName)}
-                              onValueChange={(newValue) => onToolChange(index, newValue)}
-                          >
-                              <SelectTrigger className="text-base font-bold text-accent border-0 shadow-none focus:ring-0 !bg-transparent p-0 h-auto">
-                                  <SelectValue placeholder="Select a tool" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                  {allTools.map(tool => (
-                                      <SelectItem key={tool.value} value={tool.value}>
-                                          {tool.label}
-                                      </SelectItem>
-                                  ))}
-                              </SelectContent>
-                          </Select>
-                      </div>
-                      {score && (
-                          <p className="text-xs text-muted-foreground font-normal ml-6">Score: {score}/10</p>
-                      )}
-                  </TableHead>
-                )
-              })}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {comparisonTable.map((criterion) => (
-              <TableRow key={criterion.criterionName} className="border-t">
-                <TableCell className="font-medium text-foreground align-top border-r">{criterion.criterionName}</TableCell>
-                {uniqueToolNames.map((toolName, index) => (
-                  <TableCell key={`${toolName}-${index}`} className="text-sm text-muted-foreground align-top whitespace-pre-line border-r last:border-r-0">
-                    {criterion.toolValues[toolName] || 'N/A'}
-                  </TableCell>
-                ))}
+        <div className="border rounded-lg overflow-hidden">
+          <Table>
+            <TableCaption className="mt-4 text-xs">AI-generated comparison. Information may require validation for critical decisions.</TableCaption>
+            <TableHeader className="bg-muted/50">
+              <TableRow>
+                <TableHead className="min-w-[180px] p-3 font-semibold text-primary border-r">Parameters</TableHead>
+                {uniqueToolNames.map((toolName, index) => {
+                  const score = getToolScore(toolName);
+                  return (
+                    <TableHead key={`${toolName}-${index}`} className="min-w-[250px] p-2 align-top text-foreground font-semibold border-r last:border-r-0">
+                        <Select 
+                            value={getToolValueByName(toolName)}
+                            onValueChange={(newValue) => onToolChange(index, newValue)}
+                        >
+                            <SelectTrigger className="font-bold text-accent">
+                                <SelectValue placeholder="Select a tool" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {allTools.map(tool => (
+                                    <SelectItem key={tool.value} value={tool.value}>
+                                        {tool.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        {score && (
+                            <p className="text-xs text-muted-foreground font-normal mt-1 text-center">Score: {score}/10</p>
+                        )}
+                    </TableHead>
+                  )
+                })}
               </TableRow>
-            ))}
-          </TableBody>
-          <TableCaption className="mt-4 text-xs">AI-generated comparison. Information may require validation for critical decisions.</TableCaption>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {comparisonTable.map((criterion) => (
+                <TableRow key={criterion.criterionName} className="border-t">
+                  <TableCell className="font-medium text-foreground align-top border-r p-3">{criterion.criterionName}</TableCell>
+                  {uniqueToolNames.map((toolName, index) => (
+                    <TableCell key={`${toolName}-${index}`} className="text-sm text-muted-foreground align-top whitespace-pre-line border-r last:border-r-0 p-3">
+                      {criterion.toolValues[toolName] || 'N/A'}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );
