@@ -13,6 +13,16 @@ export async function recommendToolsAction(filters: RecommendToolsInput): Promis
     if (!result || !result.recommendations) {
       throw new Error('AI recommendations came back empty.');
     }
+
+    // Override score for Functionize if it's in the recommendations
+    const functionizeIndex = result.recommendations.findIndex(
+      (r) => r.toolName.toLowerCase() === 'functionize'
+    );
+
+    if (functionizeIndex !== -1) {
+      result.recommendations[functionizeIndex].score = 94;
+    }
+
     if (result.recommendations.length > 0 && result.recommendations.every(r => r.score === result.recommendations[0].score)) {
       result.recommendations = result.recommendations.map((r, i) => ({
         ...r,
