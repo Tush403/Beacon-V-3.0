@@ -23,7 +23,6 @@ import { AlertTriangle, Loader2 } from 'lucide-react';
 import { automationToolOptions } from '@/lib/tool-options';
 import { GlobalLoader } from '@/components/beacon/GlobalLoader';
 import { cn } from '@/lib/utils';
-import { EffortEstimationDialog } from '@/components/beacon/EffortEstimationDialog';
 
 export default function NavigatorPage() {
   const [filters, setFilters] = useState<FilterCriteria | null>(null);
@@ -41,7 +40,6 @@ export default function NavigatorPage() {
   const { toast } = useToast();
 
   const [effortEstimationResult, setEffortEstimationResult] = useState<EstimateEffortOutput | null>(null);
-  const [isEffortDialogOpen, setIsEffortDialogOpen] = useState(false);
 
   const [year, setYear] = useState(new Date().getFullYear());
   useEffect(() => {
@@ -160,10 +158,10 @@ export default function NavigatorPage() {
   
   const handleEstimateSubmit = async (input: EstimateEffortInput) => {
     setLoadingState('loading');
+    setEffortEstimationResult(null);
     try {
       const result = await estimateEffortAction(input);
       setEffortEstimationResult(result);
-      setIsEffortDialogOpen(true);
     } catch (e: any) {
       toast({
         title: 'Estimation Error',
@@ -196,6 +194,8 @@ export default function NavigatorPage() {
               isLoading={isLoading}
               defaultValues={initialFilterValues}
               onEstimate={handleEstimateSubmit}
+              estimationResult={effortEstimationResult}
+              onClearEstimation={() => setEffortEstimationResult(null)}
             />
           </SidebarContent>
         </Sidebar>
@@ -263,11 +263,6 @@ export default function NavigatorPage() {
         </SidebarInset>
       </div>
       <BackToTopButton />
-      <EffortEstimationDialog 
-        isOpen={isEffortDialogOpen}
-        onOpenChange={setIsEffortDialogOpen}
-        estimation={effortEstimationResult}
-      />
     </SidebarProvider>
   );
 }
