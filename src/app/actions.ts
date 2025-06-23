@@ -8,6 +8,29 @@ import { compareTools as genkitCompareTools, CompareToolsInput, CompareToolsOutp
 
 
 export async function recommendToolsAction(filters: RecommendToolsInput): Promise<RecommendToolsOutput> {
+  // Hardcode specific results for Web + UI testing
+  if (filters.applicationUnderTest === 'web' && filters.testType === 'ui') {
+    return {
+      recommendations: [
+        {
+          toolName: 'Functionize',
+          score: 90,
+          justification: 'Excellent for web UI testing with its AI-powered, low-code platform for rapid creation and maintenance.',
+        },
+        {
+          toolName: 'ZeTA Automation',
+          score: 85,
+          justification: 'Provides robust, reusable components for comprehensive web UI test automation across enterprise applications.',
+        },
+        {
+          toolName: 'Selenium',
+          score: 80,
+          justification: 'The industry standard for web browser automation, offering unparalleled flexibility and cross-browser support.',
+        },
+      ],
+    };
+  }
+
   try {
     const result = await genkitRecommendTools(filters);
     if (!result || !result.recommendations) {
