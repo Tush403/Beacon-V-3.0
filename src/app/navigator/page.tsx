@@ -208,7 +208,6 @@ export default function NavigatorPage() {
                     <ToolComparisonTable 
                       data={comparisonData} 
                       toolNames={comparedToolNames}
-                      recommendations={recommendations}
                       allTools={automationToolOptions}
                       onToolChange={handleComparisonToolChange}
                     />

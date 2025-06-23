@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -14,17 +13,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Info, Download, Star } from 'lucide-react';
-import type { CompareToolsOutput, ToolRecommendationItem } from '@/types';
+import type { CompareToolsOutput } from '@/types';
 
 interface ToolComparisonTableProps {
   data: CompareToolsOutput;
   toolNames: string[];
-  recommendations: ToolRecommendationItem[];
   allTools: { value: string; label: string; }[];
   onToolChange: (index: number, newToolValue: string) => void;
 }
 
-export function ToolComparisonTable({ data, toolNames, recommendations, allTools, onToolChange }: ToolComparisonTableProps) {
+export function ToolComparisonTable({ data, toolNames, allTools, onToolChange }: ToolComparisonTableProps) {
   if (!data || !data.comparisonTable || data.comparisonTable.length === 0) {
     return (
       <Card className="shadow-lg">
@@ -87,8 +85,6 @@ export function ToolComparisonTable({ data, toolNames, recommendations, allTools
               <TableRow>
                 <TableHead className="min-w-[180px] p-3 font-semibold text-primary border-r">Parameters</TableHead>
                 {uniqueToolNames.map((toolName, index) => {
-                  const recommendation = recommendations.find(r => r.toolName === toolName);
-                  const scoreText = recommendation ? `${(recommendation.score / 10).toFixed(1)}/10` : 'N/A';
                   return (
                     <TableHead key={`${toolName}-${index}`} className="min-w-[250px] p-2 align-top text-foreground font-semibold border-r last:border-r-0">
                         <Select 
@@ -106,7 +102,6 @@ export function ToolComparisonTable({ data, toolNames, recommendations, allTools
                                 ))}
                             </SelectContent>
                         </Select>
-                        <p className="text-xs text-muted-foreground font-normal mt-1 text-center">Score: {scoreText}</p>
                     </TableHead>
                   )
                 })}
