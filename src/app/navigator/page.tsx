@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/sidebar';
 import { BackToTopButton } from '@/components/beacon/BackToTopButton';
 import { AlertTriangle, Loader2 } from 'lucide-react';
+import { automationToolOptions } from '@/lib/tool-options';
 
 export default function NavigatorPage() {
   const [filters, setFilters] = useState<FilterCriteria | null>(null);
@@ -141,6 +142,18 @@ export default function NavigatorPage() {
     }
   };
   
+  const handleComparisonToolChange = async (indexToChange: number, newToolValue: string) => {
+    // Find the label for the given value
+    const newToolLabel = automationToolOptions.find(opt => opt.value === newToolValue)?.label || newToolValue;
+  
+    // Create the new list of tool names for comparison
+    const newToolNames = [...comparedToolNames];
+    newToolNames[indexToChange] = newToolLabel;
+  
+    // Call the comparison function
+    await handleCompareRequest(newToolNames);
+  };
+  
   useEffect(() => {
      // To auto-load on page init with default filters:
      // handleFilterSubmit(initialFilterValues); 
@@ -166,7 +179,13 @@ export default function NavigatorPage() {
         </div>
       )}
       {comparisonData && !isComparingTools && !comparisonError && (
-        <ToolComparisonTable data={comparisonData} toolNames={comparedToolNames} />
+        <ToolComparisonTable 
+          data={comparisonData} 
+          toolNames={comparedToolNames}
+          recommendations={recommendations}
+          allTools={automationToolOptions}
+          onToolChange={handleComparisonToolChange}
+        />
       )}
     </>
   );
