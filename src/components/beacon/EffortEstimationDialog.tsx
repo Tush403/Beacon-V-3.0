@@ -10,10 +10,9 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { BarChart, BrainCircuit, Info } from 'lucide-react';
 import type { EstimateEffortOutput } from '@/types';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface EffortEstimationDialogProps {
   isOpen: boolean;
@@ -41,16 +40,10 @@ export function EffortEstimationDialog({ isOpen, onOpenChange, estimation }: Eff
         
         <ScrollArea className="flex-grow">
           <div className="px-6 py-4 space-y-4">
-            <div className="flex justify-around items-center text-center p-4 bg-muted/50 rounded-lg">
+            <div className="flex justify-center items-center text-center p-4 bg-muted/50 rounded-lg">
               <div>
-                <p className="text-sm text-muted-foreground">Min Effort</p>
-                <p className="text-2xl font-bold text-primary">{estimation.estimatedEffortDaysMin}</p>
-                <p className="text-xs text-muted-foreground">Person-Days</p>
-              </div>
-              <Separator orientation="vertical" className="h-16" />
-              <div>
-                <p className="text-sm text-muted-foreground">Max Effort</p>
-                <p className="text-2xl font-bold text-primary">{estimation.estimatedEffortDaysMax}</p>
+                <p className="text-sm text-muted-foreground">Estimated Effort</p>
+                <p className="text-3xl font-bold text-primary">{estimation.estimatedEffortDays}</p>
                 <p className="text-xs text-muted-foreground">Person-Days</p>
               </div>
             </div>

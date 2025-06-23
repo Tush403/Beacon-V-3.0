@@ -81,10 +81,9 @@ export const EstimateEffortInputSchema = z.object({
 export type EstimateEffortInput = z.infer<typeof EstimateEffortInputSchema>;
 
 export const EstimateEffortOutputSchema = z.object({
-  estimatedEffortDaysMin: z.number().describe('The minimum estimated effort in person-days.'),
-  estimatedEffortDaysMax: z.number().describe('The maximum estimated effort in person-days.'),
+  estimatedEffortDays: z.number().describe('A precise estimated effort in person-days.'),
   explanation: z.string().describe('A brief explanation of how the estimate was derived, including key factors considered.'),
-  confidenceScore: z.number().min(0).max(100).optional().describe('A score (0-100) indicating the confidence in this estimate.'),
+  confidenceScore: z.number().min(90).max(100).describe('A score (90-100) indicating the confidence in this estimate.'),
 });
 export type EstimateEffortOutput = z.infer<typeof EstimateEffortOutputSchema>;
 
