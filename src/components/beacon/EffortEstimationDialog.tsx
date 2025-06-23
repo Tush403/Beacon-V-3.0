@@ -9,9 +9,8 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { BarChart, BrainCircuit, Info } from 'lucide-react';
+import { BarChart, Info } from 'lucide-react';
 import type { EstimateEffortOutput } from '@/types';
 
 interface EffortEstimationDialogProps {
@@ -40,39 +39,29 @@ export function EffortEstimationDialog({ isOpen, onOpenChange, estimation }: Eff
         
         <ScrollArea className="flex-grow">
           <div className="p-6">
-            <div className="mx-auto max-w-xs space-y-4">
+            <div className="mx-auto max-w-xs space-y-6">
               <div className="flex flex-col items-center text-center p-4 bg-muted/50 rounded-lg">
                 <p className="text-sm text-muted-foreground">Estimated Effort</p>
                 <p className="text-3xl font-bold text-primary">{estimation.estimatedEffortDays}</p>
                 <p className="text-xs text-muted-foreground">Days</p>
               </div>
 
-              {estimation.confidenceScore && (
-                <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-2">
-                        <BrainCircuit className="h-5 w-5 text-accent" />
-                        <span className="font-medium text-foreground">AI Confidence</span>
-                    </div>
-                    <Badge variant="secondary" className="text-base">{estimation.confidenceScore}%</Badge>
-                </div>
-              )}
-
               <div className="space-y-2">
                 <h4 className="font-semibold text-foreground flex items-center gap-2">
                     <Info className="h-5 w-5 text-foreground" />
                     Explanation
                 </h4>
-                <ScrollArea className="h-48 rounded-md border bg-muted/20 p-3">
-                  <p className="text-sm text-muted-foreground whitespace-pre-line">
+                <div className="rounded-md border bg-muted/20 p-3 text-sm text-muted-foreground">
+                  <p className="whitespace-pre-line">
                     {estimation.explanation}
                   </p>
-                </ScrollArea>
+                </div>
               </div>
             </div>
           </div>
         </ScrollArea>
         
-        <DialogFooter className="p-6 pt-4 border-t">
+        <DialogFooter className="p-6 pt-4 border-t bg-background">
           <Button onClick={() => onOpenChange(false)}>Close</Button>
         </DialogFooter>
       </DialogContent>
