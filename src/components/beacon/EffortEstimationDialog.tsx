@@ -39,35 +39,35 @@ export function EffortEstimationDialog({ isOpen, onOpenChange, estimation }: Eff
         </DialogHeader>
         
         <ScrollArea className="flex-grow">
-          <div className="px-6 py-4 space-y-6">
-            <div className="flex justify-center items-center text-center p-4 bg-muted/50 rounded-lg">
-              <div>
+          <div className="p-6">
+            <div className="mx-auto max-w-xs space-y-4">
+              <div className="flex flex-col items-center text-center p-4 bg-muted/50 rounded-lg">
                 <p className="text-sm text-muted-foreground">Estimated Effort</p>
                 <p className="text-3xl font-bold text-primary">{estimation.estimatedEffortDays}</p>
                 <p className="text-xs text-muted-foreground">Days</p>
               </div>
-            </div>
 
-            {estimation.confidenceScore && (
-              <div className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center gap-2">
-                      <BrainCircuit className="h-5 w-5 text-accent" />
-                      <span className="font-medium text-foreground">AI Confidence</span>
-                  </div>
-                  <Badge variant="secondary" className="text-base">{estimation.confidenceScore}%</Badge>
+              {estimation.confidenceScore && (
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center gap-2">
+                        <BrainCircuit className="h-5 w-5 text-accent" />
+                        <span className="font-medium text-foreground">AI Confidence</span>
+                    </div>
+                    <Badge variant="secondary" className="text-base">{estimation.confidenceScore}%</Badge>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <h4 className="font-semibold text-foreground flex items-center gap-2">
+                    <Info className="h-5 w-5 text-foreground" />
+                    Explanation
+                </h4>
+                <ScrollArea className="h-48 rounded-md border bg-muted/20 p-3">
+                  <p className="text-sm text-muted-foreground whitespace-pre-line">
+                    {estimation.explanation}
+                  </p>
+                </ScrollArea>
               </div>
-            )}
-
-            <div className="space-y-2">
-              <h4 className="font-semibold text-foreground flex items-center gap-2">
-                  <Info className="h-5 w-5 text-foreground" />
-                  Explanation
-              </h4>
-              <ScrollArea className="h-48 rounded-md border bg-muted/20 p-3">
-                <p className="text-sm text-muted-foreground whitespace-pre-line">
-                  {estimation.explanation}
-                </p>
-              </ScrollArea>
             </div>
           </div>
         </ScrollArea>
