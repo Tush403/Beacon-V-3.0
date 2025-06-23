@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, Fragment } from 'react';
@@ -26,18 +25,16 @@ export default function NavigatorPage() {
   const [filters, setFilters] = useState<FilterCriteria | null>(null);
   const [recommendations, setRecommendations] = useState<ToolRecommendationItem[]>([]);
   const [toolAnalyses, setToolAnalyses] = useState<Record<string, ToolAnalysisItem | null>>({});
-  const [projectEfforts, setProjectEfforts] = useState<Record<string, EstimateEffortOutput | null>>({});
   const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState<Record<string, boolean>>({});
-  const [isLoadingEffort, setIsLoadingEffort] = useState<Record<string, boolean>>({});
-  const [error, setError] = useState<string | null>(null); // Error for recommendations
+  const [error, setError] = useState<string | null>(null);
   
   const [comparisonData, setComparisonData] = useState<CompareToolsOutput | null>(null);
   const [comparedToolNames, setComparedToolNames] = useState<string[]>([]);
   const [isComparingTools, setIsComparingTools] = useState(false);
-  const [comparisonError, setComparisonError] = useState<string | null>(null); // Error for comparison
+  const [comparisonError, setComparisonError] = useState<string | null>(null);
 
-  const [hasInteracted, setHasInteracted] = useState(false); // New state
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   const { toast } = useToast();
 
@@ -54,6 +51,10 @@ export default function NavigatorPage() {
     codingLanguage: 'any',
     pricingModel: 'any',
     reportingAnalytics: 'any',
+    applicationSubCategory: 'any',
+    integrationCapabilities: 'any',
+    teamSizeSuitability: 'any',
+    keyFeatureFocus: 'any',
     automationTool: undefined,
     complexityLow: undefined,
     complexityMedium: undefined,
@@ -65,12 +66,11 @@ export default function NavigatorPage() {
   };
 
   const handleFilterSubmit = async (data: FilterCriteria) => {
-    setHasInteracted(true); // Set interaction flag
+    setHasInteracted(true);
     setIsLoadingRecommendations(true);
     setError(null);
     setRecommendations([]); 
     setToolAnalyses({});
-    setProjectEfforts({});
     // Do not reset comparison data here, user might want to see it with new filter context or no recs
     try {
       const result = await recommendToolsAction(data);
@@ -108,50 +108,8 @@ export default function NavigatorPage() {
     }
   };
 
-  const handleGetEffort = async (toolName: string) => {
-    // If no filters are set, we can't estimate.
-    if (projectEfforts[toolName] || !filters) return;
-
-    // Check if any complexity values are provided. If not, it's not useful to estimate.
-    const hasComplexity = filters.complexityLow || filters.complexityMedium || filters.complexityHigh || filters.complexityHighlyComplex;
-    if (!hasComplexity) {
-        toast({
-            title: "Missing Information",
-            description: "Please provide test case complexity counts in the 'AI Effort Estimator' section to get an estimate.",
-            variant: "default",
-        });
-        return;
-    }
-
-    setIsLoadingEffort((prev) => ({ ...prev, [toolName]: true }));
-    try {
-      const effortInput: EstimateEffortInput = {
-        automationTool: toolName,
-        complexityLow: filters.complexityLow,
-        complexityMedium: filters.complexityMedium,
-        complexityHigh: filters.complexityHigh,
-        complexityHighlyComplex: filters.complexityHighlyComplex,
-        useStandardFramework: filters.useStandardFramework,
-        cicdPipelineIntegrated: filters.cicdPipelineIntegrated,
-        qaTeamSize: filters.qaTeamSize,
-      };
-      const effortResult = await estimateEffortAction(effortInput);
-      setProjectEfforts((prev) => ({ ...prev, [toolName]: effortResult }));
-    } catch (e: any) {
-      toast({
-        title: 'Effort Estimation Error',
-        description: e.message || `Failed to get effort estimation for ${toolName}.`,
-        variant: 'destructive',
-      });
-      setProjectEfforts((prev) => ({ ...prev, [toolName]: null }));
-    } finally {
-      setIsLoadingEffort((prev) => ({ ...prev, [toolName]: false }));
-    }
-  };
-
-
   const handleCompareRequest = async (toolDisplayNames: string[]) => {
-    setHasInteracted(true); // Also consider comparison as an interaction
+    setHasInteracted(true);
     setIsComparingTools(true);
     setComparisonError(null);
     setComparisonData(null);
@@ -228,13 +186,10 @@ export default function NavigatorPage() {
                 <RecommendationsDisplay
                   recommendations={recommendations}
                   toolAnalyses={toolAnalyses}
-                  projectEfforts={projectEfforts} 
                   docLinks={{}}
                   onGetAnalysis={handleGetAnalysis}
-                  onGetEffort={handleGetEffort}
                   isLoadingRecommendations={isLoadingRecommendations}
                   isLoadingAnalysis={isLoadingAnalysis}
-                  isLoadingEffort={isLoadingEffort}
                   error={error}
                   hasInteracted={hasInteracted} 
                 />

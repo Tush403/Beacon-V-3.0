@@ -1,24 +1,20 @@
-
 'use client';
 
 import { ToolCard } from './ToolCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from '@/components/ui/card';
-import type { ToolRecommendationItem, ToolAnalysisItem, DocumentationLink, EstimateEffortOutput } from '@/types';
+import type { ToolRecommendationItem, ToolAnalysisItem, DocumentationLink } from '@/types';
 import { Lightbulb, AlertTriangle, Compass } from 'lucide-react';
 
 interface RecommendationsDisplayProps {
   recommendations: ToolRecommendationItem[];
   toolAnalyses: Record<string, ToolAnalysisItem | null>;
-  projectEfforts: Record<string, EstimateEffortOutput | null>;
   docLinks: Record<string, DocumentationLink | null>;
   onGetAnalysis: (toolName: string) => void;
-  onGetEffort: (toolName: string) => void;
   isLoadingRecommendations: boolean;
   isLoadingAnalysis: Record<string, boolean>;
-  isLoadingEffort: Record<string, boolean>;
   error?: string | null;
-  hasInteracted: boolean; // New prop
+  hasInteracted: boolean;
 }
 
 const mockDocLinks: Record<string, DocumentationLink> = {
@@ -34,14 +30,11 @@ const mockDocLinks: Record<string, DocumentationLink> = {
 export function RecommendationsDisplay({
   recommendations,
   toolAnalyses,
-  projectEfforts,
   isLoadingRecommendations,
   isLoadingAnalysis,
-  isLoadingEffort,
   onGetAnalysis,
-  onGetEffort,
   error,
-  hasInteracted, // Use the new prop
+  hasInteracted,
 }: RecommendationsDisplayProps) {
   if (isLoadingRecommendations) {
     return (
@@ -158,12 +151,9 @@ export function RecommendationsDisplay({
             key={tool.toolName}
             tool={tool}
             analysis={toolAnalyses[tool.toolName]}
-            effort={projectEfforts[tool.toolName]}
             docLink={mockDocLinks[tool.toolName] || mockDocLinks[`DefaultTool${index + 1}`]}
             onGetAnalysis={onGetAnalysis}
-            onGetEffort={onGetEffort}
             isAnalysisLoading={!!isLoadingAnalysis[tool.toolName]}
-            isEffortLoading={!!isLoadingEffort[tool.toolName]}
             rank={index + 1}
           />
         ))}
