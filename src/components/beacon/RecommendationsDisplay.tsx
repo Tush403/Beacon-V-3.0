@@ -148,7 +148,7 @@ export function RecommendationsDisplay({
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
         {sortedRecommendations.map((tool, index) => (
           <ToolCard
-            key={tool.toolName}
+            key={`${tool.toolName}-${index}`}
             tool={tool}
             analysis={toolAnalyses[tool.toolName]}
             docLink={mockDocLinks[tool.toolName] || mockDocLinks[`DefaultTool${index + 1}`]}
