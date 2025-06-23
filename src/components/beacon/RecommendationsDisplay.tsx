@@ -37,32 +37,7 @@ export function RecommendationsDisplay({
   hasInteracted,
 }: RecommendationsDisplayProps) {
   if (isLoadingRecommendations) {
-    return (
-      <div className="mt-8">
-        <h2 className="text-2xl font-headline font-semibold mb-6 text-center flex items-center justify-center gap-2 text-foreground">
-          <Lightbulb className="h-7 w-7 text-foreground animate-pulse" />
-          Fetching AI Recommendations...
-        </h2>
-        <div className="grid md:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} className="shadow-lg">
-              <CardHeader>
-                <Skeleton className="h-6 w-3/4" />
-                <Skeleton className="h-4 w-1/2 mt-1" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-4 w-full mb-2" />
-                <Skeleton className="h-4 w-5/6" />
-                <Skeleton className="h-10 w-full mt-4" />
-              </CardContent>
-              <CardFooter>
-                <Skeleton className="h-10 w-full" />
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
+    return null; // Return nothing while loading, the global loader will be visible
   }
 
   if (error) {

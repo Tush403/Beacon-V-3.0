@@ -1,4 +1,3 @@
-
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -396,20 +395,14 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
   const RecommendationActionButtons = () => (
     <div className="space-y-3 pt-6 border-t mt-4">
       <Button type="submit" className="w-full" variant="accent" disabled={isLoading}>
-        {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Getting Recommendations...
-          </>
-        ) : (
-          'Get AI Recommendations'
-        )}
+        Get AI Recommendations
       </Button>
       <Button
         type="button"
         variant="outline"
         onClick={handleResetAllFilters}
         className="w-full"
+        disabled={isLoading}
       >
         <RotateCcw className="mr-2 h-4 w-4" /> Reset All Filters
       </Button>
@@ -443,6 +436,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                       <Select
                           onValueChange={field.onChange}
                           value={field.value?.toString() ?? ""}
+                          disabled={isLoading}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -488,6 +482,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                       <Select
                           onValueChange={field.onChange}
                           value={field.value?.toString() ?? ""}
+                          disabled={isLoading}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -643,14 +638,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormPro
                 onClick={handleGetEstimate}
                 disabled={isEstimatingEffort}
               >
-                {isEstimatingEffort ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Estimating...
-                  </>
-                ) : (
-                  'Get Estimate'
-                )}
+                {isEstimatingEffort ? 'Estimating...' : 'Get Estimate'}
               </Button>
             </AccordionContent>
           </AccordionItem>

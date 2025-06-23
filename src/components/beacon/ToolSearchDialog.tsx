@@ -45,13 +45,6 @@ export function ToolSearchDialog({ isOpen, onOpenChange }: ToolSearchDialogProps
     } catch (e: any) {
       const errorMessage = e.message || `Failed to get analysis for ${searchTerm}.`;
       setError(errorMessage);
-      // Toast is good for transient errors, but direct display might be better for search result context
-      // For now, keeping error display within the dialog.
-      // toast({
-      //   title: 'Search Error',
-      //   description: errorMessage,
-      //   variant: 'destructive',
-      // });
     } finally {
       setIsLoading(false);
     }
@@ -89,21 +82,10 @@ export function ToolSearchDialog({ isOpen, onOpenChange }: ToolSearchDialogProps
               aria-label="Tool name for search"
             />
             <Button onClick={handleSearch} disabled={isLoading || !searchTerm.trim()} className="bg-primary hover:bg-primary/90 text-primary-foreground px-3">
-              {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <SearchIcon className="h-4 w-4" />
-              )}
+              <SearchIcon className="h-4 w-4" />
               <span className="sr-only">Search</span>
             </Button>
           </div>
-
-          {isLoading && (
-            <div className="text-center py-6">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-              <p className="mt-2 text-sm text-muted-foreground">Fetching AI insights for "{searchTerm}"...</p>
-            </div>
-          )}
 
           {error && !isLoading && (
             <div className="mt-4 p-3 bg-destructive/10 border border-destructive text-destructive rounded-md flex items-center gap-2 text-sm">

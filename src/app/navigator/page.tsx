@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, Fragment } from 'react';
@@ -22,6 +21,7 @@ import {
 import { BackToTopButton } from '@/components/beacon/BackToTopButton';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { automationToolOptions } from '@/lib/tool-options';
+import { GlobalLoader } from '@/components/beacon/GlobalLoader';
 
 export default function NavigatorPage() {
   const [filters, setFilters] = useState<FilterCriteria | null>(null);
@@ -37,6 +37,7 @@ export default function NavigatorPage() {
   const [comparisonError, setComparisonError] = useState<string | null>(null);
 
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(false);
 
   const { toast } = useToast();
 
@@ -44,6 +45,14 @@ export default function NavigatorPage() {
   useEffect(() => {
     setYear(new Date().getFullYear());
   }, []);
+
+  useEffect(() => {
+    if (isLoadingRecommendations || isComparingTools) {
+      setIsPageLoading(true);
+    } else {
+      setIsPageLoading(false);
+    }
+  }, [isLoadingRecommendations, isComparingTools]);
 
   const initialFilterValues: FilterCriteria = {
     applicationUnderTest: 'all',
@@ -119,7 +128,6 @@ export default function NavigatorPage() {
   };
 
   const handleCompareRequest = async (toolDisplayNames: string[]) => {
-    setHasInteracted(true);
     setIsComparingTools(true);
     setComparisonError(null);
     setComparisonData(null);
@@ -160,44 +168,16 @@ export default function NavigatorPage() {
   }, []);
 
   const recommendationsExist = recommendations.length > 0;
-  const comparisonIsActive = isComparingTools || !!comparisonData || !!comparisonError;
-
-  const ComparisonRenderBlock = () => (
-    <>
-      {isComparingTools && (
-        <div className="text-center py-10">
-          <Loader2 className="h-12 w-12 mx-auto mb-4 animate-spin text-primary" />
-          <h3 className="text-xl font-semibold text-muted-foreground">AI is comparing tools...</h3>
-          <p className="text-muted-foreground">This may take a moment.</p>
-        </div>
-      )}
-      {comparisonError && !isComparingTools && (
-        <div className="mt-8 text-center py-10 bg-destructive/10 rounded-lg border border-destructive text-destructive">
-          <AlertTriangle className="h-12 w-12 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold mb-2">Comparison Failed</h3>
-          <p>{comparisonError}</p>
-        </div>
-      )}
-      {comparisonData && !isComparingTools && !comparisonError && (
-        <ToolComparisonTable 
-          data={comparisonData} 
-          toolNames={comparedToolNames}
-          recommendations={recommendations}
-          allTools={automationToolOptions}
-          onToolChange={handleComparisonToolChange}
-        />
-      )}
-    </>
-  );
 
   return (
     <SidebarProvider defaultOpen={true}>
+      <GlobalLoader isLoading={isPageLoading} />
       <div className="flex flex-1">
         <Sidebar className="h-auto border-r" collapsible="icon">
           <SidebarContent className="md:mt-16 px-4 pb-4">
             <FilterForm 
               onSubmit={handleFilterSubmit} 
-              isLoading={isLoadingRecommendations}
+              isLoading={isPageLoading}
               defaultValues={initialFilterValues}
             />
           </SidebarContent>
@@ -211,19 +191,38 @@ export default function NavigatorPage() {
                 toolAnalyses={toolAnalyses}
                 docLinks={{}}
                 onGetAnalysis={handleGetAnalysis}
-                isLoadingRecommendations={isLoadingRecommendations}
+                isLoadingRecommendations={isPageLoading}
                 isLoadingAnalysis={isLoadingAnalysis}
                 error={error}
                 hasInteracted={hasInteracted} 
               />
 
-              {comparisonIsActive && <ComparisonRenderBlock />}
-              
-              {recommendationsExist && (
-                <div className="space-y-8">
-                  <ROIChart recommendedTools={recommendations} />
-                  <TrendAnalysisCard />
-                </div>
+              {!isPageLoading && (
+                <>
+                  {comparisonError && (
+                    <div className="mt-8 text-center py-10 bg-destructive/10 rounded-lg border border-destructive text-destructive">
+                      <AlertTriangle className="h-12 w-12 mx-auto mb-4" />
+                      <h3 className="text-xl font-semibold mb-2">Comparison Failed</h3>
+                      <p>{comparisonError}</p>
+                    </div>
+                  )}
+                  {comparisonData && !comparisonError && (
+                    <ToolComparisonTable 
+                      data={comparisonData} 
+                      toolNames={comparedToolNames}
+                      recommendations={recommendations}
+                      allTools={automationToolOptions}
+                      onToolChange={handleComparisonToolChange}
+                    />
+                  )}
+                  
+                  {recommendationsExist && (
+                    <div className="space-y-8">
+                      <ROIChart recommendedTools={recommendations} />
+                      <TrendAnalysisCard />
+                    </div>
+                  )}
+                </>
               )}
 
             </div>
