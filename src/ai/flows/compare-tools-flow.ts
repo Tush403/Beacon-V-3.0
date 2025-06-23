@@ -62,6 +62,18 @@ If "ZeTA Automation" is one of the tools, use the following information as the p
 - Overall Automation Coverage: Very High; unified UI, API, DB, Security.
 - Total Cost of Ownership: Low; open-source with internal infrastructure.
 
+If "Functionize" is one of the tools, use the following as the primary source of truth for its comparison points:
+- Tool Overview: An AI-powered testing platform for web applications that automates test creation and maintenance.
+- Initial Setup Time: Very fast; cloud-based with no local setup required.
+- Maintenance Overhead: Very Low; AI-powered self-healing adapts to UI changes.
+- Test Creation Speed: Very High; uses natural language and visual tools.
+- Script Reusability: Moderate; promotes reusable test steps and flows.
+- Parallel Execution Support: Excellent; cloud infrastructure supports massive parallelization.
+- Test Case Creation Effort: Very Low; uses NLP and visual tools.
+- Skill Requirement: Low; no coding required for most tasks.
+- Overall Automation Coverage: High; focuses primarily on web UI and end-to-end testing.
+- Total Cost of Ownership: High; enterprise-level subscription-based SaaS model.
+
 Provide a detailed comparison based on these criteria. For each criterion, provide a highly concise summary (strictly less than 10 words) that is factual and informative for each tool. The content must be suitable for a small table cell.
 - Initial Setup Time: Describe the typical time and complexity to get the tool running for a new project.
 - Maintenance Overhead: Assess the effort required to maintain tests, handle updates, and manage flakiness.

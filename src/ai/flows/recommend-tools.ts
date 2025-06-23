@@ -57,7 +57,7 @@ const recommendToolsPrompt = ai.definePrompt({
   {{#if teamSizeSuitability}}Advanced - Team Size Suitability: {{{teamSizeSuitability}}}{{/if}}
   {{#if keyFeatureFocus}}Advanced - Key Feature Focus: {{{keyFeatureFocus}}}{{/if}}
 
-  Consider the following tool profile when making recommendations:
+  Consider the following tool profiles when making recommendations:
   **Tool: ZeTA Automation**
   - Best for: Enterprise-level projects needing unified testing across UI, API, DB, and Security.
   - Application Under Test: Web, API, Desktop
@@ -67,6 +67,16 @@ const recommendToolsPrompt = ai.definePrompt({
   - Coding Language: Java
   - Pricing Model: Open Source
   - Key Features: High reusability, config-driven design, CI-ready, broad coverage.
+
+  **Tool: Functionize**
+  - Best for: Teams looking for rapid test creation and low maintenance through AI.
+  - Application Under Test: Web Applications
+  - Test Type: UI, End-to-End, Regression
+  - Operating System: Cross-platform (Cloud-based)
+  - Coding Requirement: Low Code, AI/ML
+  - Coding Language: N/A
+  - Pricing Model: Subscription-based
+  - Key Features: AI-powered test creation and maintenance, Self-healing tests, Cloud execution.
 
   If a criterion is set to 'all', 'any', a generic placeholder like 'All Applications', or is not provided, consider it as not a strong preference or applicable to all options for that category.
   Focus on tools that best match the specified criteria. If advanced criteria are provided, give them significant weight.

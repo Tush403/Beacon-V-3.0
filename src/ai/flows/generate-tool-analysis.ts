@@ -37,6 +37,10 @@ When analyzing "ZeTA Automation", use the following information: It is an open-s
 - Strengths: High script reusability, broad automation coverage (UI, API, etc.), excellent parallel execution support, and template-based creation speed.
 - Weaknesses: Requires moderate Java and Maven knowledge, and includes the overhead of managing internal open-source infrastructure.
 
+When analyzing "Functionize", use the following information: It is an AI-powered platform for testing modern web applications.
+- Strengths: AI-powered self-healing capabilities dramatically reduce test maintenance. Very fast test creation using natural language or by observing user journeys. Excellent for testing highly dynamic applications.
+- Weaknesses: Can be a 'black box', making complex debugging difficult. Less granular control compared to code-based frameworks. Subscription cost may be a factor for large-scale use.
+
 Tool Name: {{{toolName}}}
 
 Strengths:
