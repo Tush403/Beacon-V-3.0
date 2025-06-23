@@ -33,10 +33,7 @@ export async function recommendToolsAction(filters: RecommendToolsInput): Promis
     processedRecommendations = processedRecommendations.map(rec => {
       const toolNameLower = rec.toolName.toLowerCase().trim();
       if (toolNameLower === 'functionize') {
-        return { ...rec, score: 90 };
-      }
-      if (toolNameLower === 'postman') {
-        return { ...rec, score: 80 };
+        return { ...rec, score: 94 };
       }
       return rec;
     });

@@ -78,20 +78,10 @@ const recommendToolsPrompt = ai.definePrompt({
   - Coding Language: N/A
   - Pricing Model: Subscription-based
   - Key Features: AI-powered test creation and maintenance, Self-healing tests, Cloud execution.
-  
-  **Tool: Postman**
-  - Best for: API development and testing, from individual developers to large teams.
-  - Application Under Test: API
-  - Test Type: API, Integration
-  - Operating System: Cross-platform
-  - Coding Requirement: Low Code to Scripting Heavy
-  - Coding Language: JavaScript
-  - Pricing Model: Freemium, Subscription-based
-  - Key Features: Powerful request builder, test scripting, collection runner, mock servers, monitoring.
 
   If a criterion is set to 'all', 'any', a generic placeholder like 'All Applications', or is not provided, consider it as not a strong preference or applicable to all options for that category.
   Focus on tools that best match the specified criteria. If advanced criteria are provided, give them significant weight.
-  When 'API Testing' is selected, you should strongly consider tools like Postman, ZeTA Automation, and others known for robust API capabilities.
+  When 'API Testing' is selected, you should strongly consider tools like ZeTA Automation and others known for robust API capabilities.
 
   Format your response as a JSON object with a "recommendations" array.
   Each entry in the array should include "toolName", "score", and "justification" fields.

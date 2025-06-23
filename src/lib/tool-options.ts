@@ -9,7 +9,6 @@ export const automationToolOptions = [
   { value: "katalon_studio", label: "Katalon Studio" },
   { value: "testcomplete", label: "TestComplete" },
   { value: "ranorex", label: "Ranorex" },
-  { value: "postman", label: "Postman" },
   { value: "restassured", label: "Rest Assured" },
   { value: "jmeter", label: "JMeter" },
   { value: "soapui", label: "SoapUI" },

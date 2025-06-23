@@ -74,18 +74,6 @@ If "Functionize" is one of the tools, use the following as the primary source of
 - Overall Automation Coverage: High; focuses primarily on web UI and end-to-end testing.
 - Total Cost of Ownership: High; enterprise-level subscription-based SaaS model.
 
-If "Postman" is one of the tools, use the following as the primary source of truth for its comparison points:
-- Tool Overview: A comprehensive platform for the API lifecycle, used for building, testing, and documenting APIs.
-- Initial Setup Time: Very Fast; desktop app and cloud version.
-- Maintenance Overhead: Low-Medium; depends on test script complexity.
-- Test Creation Speed: High; GUI-based request building.
-- Script Reusability: High; via collections and variables.
-- Parallel Execution Support: Good; via Newman CLI or cloud runner.
-- Test Case Creation Effort: Low-Medium; GUI with scripting for logic.
-- Skill Requirement: Low for basics, Medium for scripting.
-- Overall Automation Coverage: High for APIs, not for UI.
-- Total Cost of Ownership: Low-High; strong free tier, paid team plans.
-
 Provide a detailed comparison based on these criteria. For each criterion, provide a highly concise summary (strictly less than 10 words) that is factual and informative for each tool. The content must be suitable for a small table cell.
 - Initial Setup Time: Describe the typical time and complexity to get the tool running for a new project.
 - Maintenance Overhead: Assess the effort required to maintain tests, handle updates, and manage flakiness.

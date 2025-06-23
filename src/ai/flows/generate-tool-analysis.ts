@@ -41,10 +41,6 @@ When analyzing "Functionize", use the following information: It is an AI-powered
 - Strengths: AI-powered self-healing capabilities dramatically reduce test maintenance. Very fast test creation using natural language or by observing user journeys. Excellent for testing highly dynamic applications.
 - Weaknesses: Can be a 'black box', making complex debugging difficult. Less granular control compared to code-based frameworks. Subscription cost may be a factor for large-scale use.
 
-When analyzing "Postman", use the following information as the primary source of truth:
-- Strengths: Powerful and easy-to-use request builder. Extensive test scripting capabilities with JavaScript. Collection runner for automating test suites. Mock servers for isolating dependencies. Strong CI/CD integration using Newman.
-- Weaknesses: Can have performance issues with very large collections. Advanced features like extensive monitoring and collaboration are part of paid plans. The user interface can feel complex for new users.
-
 Tool Name: {{{toolName}}}
 
 Strengths:
