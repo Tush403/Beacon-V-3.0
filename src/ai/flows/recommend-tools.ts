@@ -71,7 +71,7 @@ const recommendToolsPrompt = ai.definePrompt({
 
   **Tool: Functionize**
   - Best for: Teams looking for rapid test creation and low maintenance through AI.
-  - Application Under Test: Web Applications, Web Automation
+  - Application Under Test: Web Applications
   - Test Type: UI, End-to-End, Regression
   - Operating System: Cross-platform (Cloud-based)
   - Coding Requirement: Low Code, AI/ML
@@ -108,9 +108,41 @@ const recommendToolsPrompt = ai.definePrompt({
   - Coding Language: C#, Java, Python, JavaScript (via WebdriverIO)
   - Pricing Model: Open Source
   - Key Features: Microsoft-supported, based on WebDriver protocol, integrates with Appium.
+  
+  **Tool: Selenium**
+  - Best for: Teams needing a flexible, free solution for cross-browser testing on multiple platforms.
+  - Application Under Test: Web
+  - Test Type: UI, Regression
+  - Operating System: Cross-platform
+  - Coding Requirement: Scripting Heavy
+  - Coding Language: Java, Python, C#, JavaScript, Ruby
+  - Pricing Model: Open Source
+  - Key Features: WebDriver API standard, large community, extensive integrations.
+
+  **Tool: Cypress**
+  - Best for: Developers and QA doing E2E testing of modern web applications.
+  - Application Under Test: Web
+  - Test Type: UI, End-to-End, Integration, Component
+  - Operating System: Cross-platform
+  - Coding Requirement: Scripting Heavy
+  - Coding Language: JavaScript, TypeScript
+  - Pricing Model: Open Source (with paid dashboard)
+  - Key Features: All-in-one testing framework, fast execution, excellent debugging, real-time reloads.
+
+  **Tool: Playwright**
+  - Best for: Reliable end-to-end testing of modern web apps across all major browsers.
+  - Application Under Test: Web
+  - Test Type: UI, End-to-End, API
+  - Operating System: Cross-platform
+  - Coding Requirement: Scripting Heavy
+  - Coding Language: JavaScript, TypeScript, Python, Java, C#
+  - Pricing Model: Open Source
+  - Key Features: Auto-waits, reliable execution, cross-browser support (Chromium, Firefox, WebKit), network interception.
 
   If a criterion is set to 'all', 'any', a generic placeholder like 'All Applications', or is not provided, consider it as not a strong preference or applicable to all options for that category.
   Focus on tools that best match the specified criteria. If advanced criteria are provided, give them significant weight.
+  
+  When 'Web Applications' is selected as the Application Under Test, you MUST prioritize tools with strong web automation capabilities like Selenium, Cypress, Playwright, and Functionize.
   When 'API Testing' is selected, you should strongly consider tools like ZeTA Automation and others known for robust API capabilities.
   When 'Desktop Applications' is selected as the Application Under Test, you MUST prioritize tools with strong desktop capabilities like ZeTA Automation, WinAppDriver, Ranorex Studio, and TestComplete.
 
@@ -130,3 +162,4 @@ const recommendToolsFlow = ai.defineFlow(
     return output!;
   }
 );
+
