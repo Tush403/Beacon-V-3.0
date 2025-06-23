@@ -13,19 +13,23 @@ interface ROIChartProps {
 
 const generateMockRoiData = (tools: ToolRecommendationItem[]) => {
   if (!tools || tools.length === 0) return [];
-  const months = ['M1', 'M2', 'M3', 'M4', 'M5', 'M6'];
+  const months = ['M0', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'];
   
-  const baseStartRois = [50, 45, 40, 55, 48, 60]; // More base ROIs
-  const growthFactors = [5, 6, 4.5, 5.5, 4, 6.5]; // More growth factors
+  // Base growth factors. Higher score tools will have a slightly better growth factor.
+  const growthFactors = [12, 10, 8, 13, 11, 9];
 
   const data = months.map((monthLabel, monthIndex) => {
     const monthData: { month: string; [toolName: string]: number | string } = { month: monthLabel };
     tools.forEach((tool, toolIndex) => {
-      const startRoi = baseStartRois[toolIndex % baseStartRois.length];
+      // Base growth for this tool
       const growth = growthFactors[toolIndex % growthFactors.length];
-      const scoreInfluence = (tool.score / 100) * 10; // Score can influence up to 10 ROI points
+      // Score influences the growth rate. A score of 100 adds ~2 points to growth, 50 adds 1.
+      const scoreInfluence = (tool.score / 50); 
       
-      let currentRoi = startRoi + (monthIndex * growth) + scoreInfluence + (Math.random() * 6 - 3); // Add some randomness
+      // ROI is a function of time (monthIndex) and the tool's growth rate.
+      // Start near zero for M0.
+      let currentRoi = (monthIndex * (growth + scoreInfluence)) + (Math.random() * 8 - 4); // Add some randomness
+      
       currentRoi = Math.min(100, Math.max(0, currentRoi)); // Clamp between 0 and 100
       monthData[tool.toolName] = Math.round(currentRoi);
     });
@@ -79,7 +83,7 @@ export function ROIChart({ recommendedTools }: ROIChartProps) {
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis 
                 dataKey="month" 
-                ticks={['M1', 'M3', 'M6']} 
+                ticks={['M0', 'M3', 'M6']} 
                 interval={0} 
                 tickLine={false} 
                 axisLine={false} 
