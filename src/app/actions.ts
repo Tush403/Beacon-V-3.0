@@ -14,30 +14,49 @@ export async function recommendToolsAction(filters: RecommendToolsInput): Promis
       throw new Error('AI recommendations came back empty.');
     }
 
-    // Override score for Functionize if it's in the recommendations
-    const functionizeIndex = result.recommendations.findIndex(
-      (r) => r.toolName.toLowerCase() === 'functionize'
+    // 1. De-duplicate recommendations to ensure unique tools
+    const seenToolNames = new Set<string>();
+    const uniqueRecommendations = result.recommendations.filter(rec => {
+        const lowerCaseToolName = rec.toolName.toLowerCase().trim();
+        // Filter out if the name is empty or already seen
+        if (!rec.toolName.trim() || seenToolNames.has(lowerCaseToolName)) {
+            return false;
+        }
+        seenToolNames.add(lowerCaseToolName);
+        return true;
+    });
+
+    // Take the top 3 unique recommendations
+    let processedRecommendations = uniqueRecommendations.slice(0, 3);
+
+    // 2. Override score for Functionize if it's in the list
+    const functionizeIndex = processedRecommendations.findIndex(
+      (r) => r.toolName.toLowerCase().trim() === 'functionize'
     );
-
     if (functionizeIndex !== -1) {
-      result.recommendations[functionizeIndex].score = 94;
+      processedRecommendations[functionizeIndex].score = 94;
     }
 
-    if (result.recommendations.length > 0 && result.recommendations.every(r => r.score === result.recommendations[0].score)) {
-      result.recommendations = result.recommendations.map((r, i) => ({
-        ...r,
-        score: Math.max(0, Math.min(100, (r.score || 80) - i * 5 + (i === 0 ? 0 : i === 1 ? -5 : -10))) 
-      }));
-      if (result.recommendations.length > 1 && result.recommendations[0].score === result.recommendations[1].score) {
-        result.recommendations[0].score = Math.min(100, result.recommendations[0].score + 5);
-        result.recommendations[1].score = Math.max(0, result.recommendations[1].score -5);
-      }
-       if (result.recommendations.length > 2 && result.recommendations[1].score === result.recommendations[2].score) {
-        result.recommendations[1].score = Math.min(100, result.recommendations[1].score + 3);
-        result.recommendations[2].score = Math.max(0, result.recommendations[2].score -3);
-      }
+    // 3. Sort by score descending to establish an initial ranking
+    processedRecommendations.sort((a, b) => b.score - a.score);
+
+    // 4. Ensure scores are unique for ranking, preventing ties.
+    // If two tools have the same score, the second one gets a slightly lower score.
+    for (let i = 1; i < processedRecommendations.length; i++) {
+        if (processedRecommendations[i].score >= processedRecommendations[i - 1].score) {
+            processedRecommendations[i].score = processedRecommendations[i - 1].score - 1;
+        }
     }
+    
+    // 5. Final clamping of scores to be within the 0-100 range
+    processedRecommendations = processedRecommendations.map(rec => ({
+        ...rec,
+        score: Math.max(0, Math.min(100, rec.score)),
+    }));
+    
+    result.recommendations = processedRecommendations;
     return result;
+    
   } catch (error) {
     console.error('Error recommending tools:', error);
     throw new Error(`Failed to get tool recommendations. ${error instanceof Error ? error.message : ''}`);

@@ -40,8 +40,9 @@ const recommendToolsPrompt = ai.definePrompt({
   output: {schema: RecommendToolsOutputSchema},
   prompt: `You are an AI-powered tool recommendation engine for test automation.
 
-  Based on the following criteria, recommend the top 3 test automation tools.
+  Based on the following criteria, recommend the top 3 DISTINCT test automation tools. Ensure each recommended tool is unique.
   Explain why each tool is a good fit based on the criteria, and provide a score between 0 and 100.
+  Your response MUST contain exactly three recommendations for three different tools.
 
   Criteria:
   Application Under Test: {{{applicationUnderTest}}}
@@ -70,7 +71,7 @@ const recommendToolsPrompt = ai.definePrompt({
 
   **Tool: Functionize**
   - Best for: Teams looking for rapid test creation and low maintenance through AI.
-  - Application Under Test: Web Applications
+  - Application Under Test: Web Applications, Web Automation
   - Test Type: UI, End-to-End, Regression
   - Operating System: Cross-platform (Cloud-based)
   - Coding Requirement: Low Code, AI/ML
