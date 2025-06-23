@@ -50,7 +50,7 @@ const prompt = ai.definePrompt({
 - {{{this}}}
 {{/each}}
 
-Provide a detailed comparison based on these criteria. For each criterion, provide concise (1-3 sentences, suitable for a table cell) and factual information for each tool:
+Provide a detailed comparison based on these criteria. For each criterion, provide a highly concise summary (strictly between 10 and 25 words) that is factual and informative for each tool. The content must be suitable for a small table cell.
 - Initial Setup Time: Describe the typical time and complexity to get the tool running for a new project.
 - Maintenance Overhead: Assess the effort required to maintain tests, handle updates, and manage flakiness.
 - Test Creation Speed: How quickly can new tests be authored? Consider scripting vs. low-code/codeless approaches.
@@ -68,7 +68,7 @@ Each object in the "comparisonTable" array represents one of the above criteria.
   - "criterionName": The exact name of the criterion.
   - "toolValues": An array of objects. Each object in this "toolValues" array must have:
     - "toolName": The exact tool name as provided in the input.
-    - "value": The comparison text for that tool for that specific criterion.
+    - "value": The comparison text for that tool for that specific criterion. The value for this field MUST be a string between 10 and 25 words.
 
 For "toolOverviews":
 This should be an array of objects. Each object in this "toolOverviews" array must have:
