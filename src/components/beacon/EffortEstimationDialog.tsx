@@ -39,12 +39,12 @@ export function EffortEstimationDialog({ isOpen, onOpenChange, estimation }: Eff
         </DialogHeader>
         
         <ScrollArea className="flex-grow">
-          <div className="px-6 py-4 space-y-4">
+          <div className="px-6 py-4 space-y-6">
             <div className="flex justify-center items-center text-center p-4 bg-muted/50 rounded-lg">
               <div>
                 <p className="text-sm text-muted-foreground">Estimated Effort</p>
                 <p className="text-3xl font-bold text-primary">{estimation.estimatedEffortDays}</p>
-                <p className="text-xs text-muted-foreground">Person-Days</p>
+                <p className="text-xs text-muted-foreground">Days</p>
               </div>
             </div>
 
@@ -58,14 +58,16 @@ export function EffortEstimationDialog({ isOpen, onOpenChange, estimation }: Eff
               </div>
             )}
 
-            <div>
-              <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+            <div className="space-y-2">
+              <h4 className="font-semibold text-foreground flex items-center gap-2">
                   <Info className="h-5 w-5 text-foreground" />
                   Explanation
               </h4>
-              <p className="text-sm text-muted-foreground bg-muted/20 p-3 rounded-md border whitespace-pre-line">
-                {estimation.explanation}
-              </p>
+              <ScrollArea className="h-48 rounded-md border bg-muted/20 p-3">
+                <p className="text-sm text-muted-foreground whitespace-pre-line">
+                  {estimation.explanation}
+                </p>
+              </ScrollArea>
             </div>
           </div>
         </ScrollArea>
