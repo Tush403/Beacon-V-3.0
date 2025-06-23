@@ -87,7 +87,6 @@ export function ToolComparisonTable({ data, toolNames, recommendations, allTools
         )}
         <div className="border rounded-lg overflow-hidden">
           <Table>
-            <TableCaption className="mt-4 text-xs">AI-generated comparison. Information may require validation for critical decisions.</TableCaption>
             <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead className="min-w-[180px] p-3 font-semibold text-primary border-r">Parameters</TableHead>
@@ -100,7 +99,7 @@ export function ToolComparisonTable({ data, toolNames, recommendations, allTools
                             onValueChange={(newValue) => onToolChange(index, newValue)}
                         >
                             <SelectTrigger className="font-bold text-accent">
-                                <SelectValue placeholder="Select a tool" />
+                                <SelectValue>{toolName}</SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                                 {allTools.map(tool => (
@@ -130,6 +129,7 @@ export function ToolComparisonTable({ data, toolNames, recommendations, allTools
                 </TableRow>
               ))}
             </TableBody>
+            <TableCaption className="mt-4 text-xs">AI-generated comparison. Information may require validation for critical decisions.</TableCaption>
           </Table>
         </div>
       </CardContent>
