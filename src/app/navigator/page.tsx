@@ -157,10 +157,22 @@ export default function NavigatorPage() {
       setLoadingState('finished');
     }
   };
-
-  const handleEstimateSuccess = (result: EstimateEffortOutput) => {
-    setEffortEstimationResult(result);
-    setIsEffortDialogOpen(true);
+  
+  const handleEstimateSubmit = async (input: EstimateEffortInput) => {
+    setLoadingState('loading');
+    try {
+      const result = await estimateEffortAction(input);
+      setEffortEstimationResult(result);
+      setIsEffortDialogOpen(true);
+    } catch (e: any) {
+      toast({
+        title: 'Estimation Error',
+        description: e.message || 'Failed to get effort estimate.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingState('finished');
+    }
   };
 
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState<Record<string, boolean>>({});
@@ -183,7 +195,7 @@ export default function NavigatorPage() {
               onSubmit={handleFilterSubmit} 
               isLoading={isLoading}
               defaultValues={initialFilterValues}
-              onEstimateSuccess={handleEstimateSuccess}
+              onEstimate={handleEstimateSubmit}
             />
           </SidebarContent>
         </Sidebar>

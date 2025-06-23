@@ -43,10 +43,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Loader2, RotateCcw, Settings2, Filter, Check, PlusCircle, SlidersHorizontal } from 'lucide-react';
-import type { FilterCriteria, EstimateEffortInput, EstimateEffortOutput } from '@/types';
+import type { FilterCriteria, EstimateEffortInput } from '@/types';
 import { useState, useEffect } from 'react';
-import { estimateEffortAction } from '@/app/actions';
-import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { automationToolOptions } from '@/lib/tool-options';
 
@@ -82,7 +80,7 @@ interface FilterFormProps {
   onSubmit: (data: FilterFormValues) => void;
   isLoading: boolean;
   defaultValues?: Partial<FilterCriteria>;
-  onEstimateSuccess: (result: EstimateEffortOutput) => void;
+  onEstimate: (input: EstimateEffortInput) => void;
 }
 
 const defaultFormValues: FilterFormValues = {
@@ -109,20 +107,17 @@ const defaultFormValues: FilterFormValues = {
   qaTeamSize: undefined,
 };
 
-export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimateSuccess }: FilterFormProps) {
+export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate }: FilterFormProps) {
   const form = useForm<FilterFormValues>({
     resolver: zodResolver(filterSchema),
     defaultValues: { ...defaultFormValues, ...defaultValues },
   });
 
-  const { toast } = useToast();
-  const [isEstimatingEffort, setIsEstimatingEffort] = useState(false);
-
   const [automationToolPopoverOpen, setAutomationToolPopoverOpen] = useState(false);
   const [automationToolSearch, setAutomationToolSearch] = useState('');
 
 
-  const handleGetEstimate = async () => {
+  const handleGetEstimate = () => {
     const formData = form.getValues();
     const effortInput: EstimateEffortInput = {
       automationTool: formData.automationTool ? (automationToolOptions.find(opt => opt.value === formData.automationTool)?.label || formData.automationTool) : 'None',
@@ -135,20 +130,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimateSucce
       qaTeamSize: formData.qaTeamSize,
       projectDescription: formData.automationTool ? `Effort estimation considering ${automationToolOptions.find(opt => opt.value === formData.automationTool)?.label || formData.automationTool}.` : undefined,
     };
-
-    setIsEstimatingEffort(true);
-    try {
-      const result = await estimateEffortAction(effortInput);
-      onEstimateSuccess(result);
-    } catch (e: any) {
-      toast({
-        title: 'Estimation Error',
-        description: e.message || 'Failed to get effort estimate.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsEstimatingEffort(false);
-    }
+    onEstimate(effortInput);
   };
   
   const filterOptions = {
@@ -617,10 +599,9 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimateSucce
                 variant="accent"
                 className="w-full"
                 onClick={handleGetEstimate}
-                disabled={isEstimatingEffort}
+                disabled={isLoading}
               >
-                {isEstimatingEffort && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isEstimatingEffort ? 'Estimating...' : 'Get Estimate'}
+                Get Estimate
               </Button>
             </AccordionContent>
           </AccordionItem>
