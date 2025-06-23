@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, Fragment } from 'react';
@@ -71,11 +72,19 @@ export default function NavigatorPage() {
     setError(null);
     setRecommendations([]); 
     setToolAnalyses({});
-    // Do not reset comparison data here, user might want to see it with new filter context or no recs
+    // Clear comparison from previous search
+    setComparisonData(null);
+    setComparisonError(null);
+    
     try {
       const result = await recommendToolsAction(data);
       setRecommendations(result.recommendations);
       setFilters(data); 
+
+      // Automatically trigger comparison for new recommendations
+      if (result.recommendations.length > 0) {
+        await handleCompareRequest(result.recommendations.map(r => r.toolName));
+      }
     } catch (e: any) {
       setError(e.message || 'An unknown error occurred while fetching recommendations.');
       toast({
@@ -180,36 +189,24 @@ export default function NavigatorPage() {
           <div className="flex flex-col flex-1 h-full">
             <div className="flex-grow p-4 md:p-8 space-y-10 overflow-y-auto">
               
-              {!recommendationsExist && comparisonIsActive ? (
-                <ComparisonRenderBlock />
-              ) : (
-                <RecommendationsDisplay
-                  recommendations={recommendations}
-                  toolAnalyses={toolAnalyses}
-                  docLinks={{}}
-                  onGetAnalysis={handleGetAnalysis}
-                  isLoadingRecommendations={isLoadingRecommendations}
-                  isLoadingAnalysis={isLoadingAnalysis}
-                  error={error}
-                  hasInteracted={hasInteracted} 
-                />
-              )}
+              <RecommendationsDisplay
+                recommendations={recommendations}
+                toolAnalyses={toolAnalyses}
+                docLinks={{}}
+                onGetAnalysis={handleGetAnalysis}
+                isLoadingRecommendations={isLoadingRecommendations}
+                isLoadingAnalysis={isLoadingAnalysis}
+                error={error}
+                hasInteracted={hasInteracted} 
+              />
 
+              {comparisonIsActive && <ComparisonRenderBlock />}
+              
               {recommendationsExist && (
-                <>
-                  <Separator className="my-12" />
-                   <div className="space-y-8"> 
-                    <ROIChart recommendedTools={recommendations} />
-                    <TrendAnalysisCard />
-                  </div>
-                </>
-              )}
-
-              {recommendationsExist && comparisonIsActive && (
-                <>
-                  <Separator className="my-12" />
-                  <ComparisonRenderBlock />
-                </>
+                <div className="space-y-8">
+                  <ROIChart recommendedTools={recommendations} />
+                  <TrendAnalysisCard />
+                </div>
               )}
 
             </div>

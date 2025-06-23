@@ -51,14 +51,15 @@ const prompt = ai.definePrompt({
 {{/each}}
 
 Provide a detailed comparison based on these criteria. For each criterion, provide concise (1-3 sentences, suitable for a table cell) and factual information for each tool:
-- Ease of Use: Consider setup complexity, learning curve, and UI/UX if applicable.
-- Key Features: Highlight 2-3 unique selling points or core functionalities.
-- Primary Use Case: Specify typical applications (e.g., Web UI, Mobile Native, API, Performance).
-- Strengths: What does this tool do exceptionally well?
-- Weaknesses: What are its main limitations or drawbacks?
-- Pricing Model: Describe the general model (e.g., Open Source, Freemium, Subscription Tiers, Perpetual License). Avoid specific costs unless widely known and stable.
-- Community Support & Documentation: Assess availability, quality, and activity of support channels and docs.
-- Best For: Identify specific project types, team sizes, or scenarios where this tool excels.
+- Initial Setup Time: Describe the typical time and complexity to get the tool running for a new project.
+- Maintenance Overhead: Assess the effort required to maintain tests, handle updates, and manage flakiness.
+- Test Creation Speed: How quickly can new tests be authored? Consider scripting vs. low-code/codeless approaches.
+- Script Reusability: Evaluate the tool's support for creating reusable components, functions, or modules.
+- Parallel Execution Support: Assess the native capabilities for running tests in parallel to reduce execution time.
+- Test Case Creation Effort: Describe the level of effort needed to create test cases (e.g., natural language, visual tools, complex scripting).
+- Skill Requirement: What skills are needed? (e.g., deep coding skills, basic scripting, no coding required).
+- Overall Automation Coverage: How broad is the tool's support for different application types (Web, API, Mobile) and test types?
+- Total Cost of Ownership: Consider licensing costs, infrastructure, and human resource costs over time. Describe the general model (e.g., Open Source, Subscription). Avoid specific costs.
 
 Format the output as a JSON object adhering to the AICompareToolsOutputSchema.
 
@@ -69,13 +70,13 @@ Each object in the "comparisonTable" array represents one of the above criteria.
     - "toolName": The exact tool name as provided in the input.
     - "value": The comparison text for that tool for that specific criterion.
 
-For "toolOverviews" (if you provide it):
+For "toolOverviews":
 This should be an array of objects. Each object in this "toolOverviews" array must have:
   - "toolName": The exact tool name as provided in the input.
   - "overview": Its brief 1-2 sentence overview.
 
 Ensure all requested criteria are present in the comparisonTable.
-Ensure all provided tool names are covered in each criterion's "toolValues" array and in "toolOverviews" if provided.
+Ensure all provided tool names are covered in each criterion's "toolValues" array and in "toolOverviews".
 Be objective and base your comparison on generally accepted knowledge about these tools.
 If a tool is significantly weaker or stronger in a particular area, reflect that in the comparison.
 `,
@@ -147,4 +148,3 @@ const compareToolsFlow = ai.defineFlow(
     return validatedOutput;
   }
 );
-
