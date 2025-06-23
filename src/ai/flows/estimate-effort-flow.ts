@@ -65,19 +65,9 @@ const estimateEffortFlow = ai.defineFlow(
     outputSchema: EstimateEffortOutputSchema,
   },
   async (input) => {
-    const totalTestCases = 
-      (input.complexityLow || 0) + 
-      (input.complexityMedium || 0) + 
-      (input.complexityHigh || 0) + 
-      (input.complexityHighlyComplex || 0);
-
-    if (totalTestCases === 0 && (input.complexityLow !== undefined || input.complexityMedium !== undefined || input.complexityHigh !== undefined || input.complexityHighlyComplex !== undefined)) {
-      return {
-        estimatedEffortDays: 0,
-        explanation: "No test cases were provided for estimation (all complexity counts are zero). Effort is zero.",
-        confidenceScore: 100,
-      };
-    }
+    // Business logic to handle zero test cases is now in the action wrapper (actions.ts)
+    // for better separation of concerns and to handle undefined inputs before Zod defaults.
+    // The prompt is still robust enough to handle a zero-case if called directly.
     
     const {output} = await prompt(input);
     if (!output) {

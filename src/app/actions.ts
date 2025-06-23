@@ -9,7 +9,7 @@ import { compareTools as genkitCompareTools, CompareToolsInput, CompareToolsOutp
 
 export async function recommendToolsAction(filters: RecommendToolsInput): Promise<RecommendToolsOutput> {
   // Hardcode specific results for Web or UI testing
-  if (filters.applicationUnderTest === 'web' || filters.testType === 'ui') {
+  if (filters.applicationUnderTest.toLowerCase().includes('web') || filters.testType.toLowerCase().includes('ui')) {
     return {
       recommendations: [
         {
@@ -111,6 +111,28 @@ export async function generateToolAnalysisAction(input: GenerateToolAnalysisInpu
 }
 
 export async function estimateEffortAction(input: EstimateEffortInput): Promise<EstimateEffortOutput> {
+  // Business logic check: If user provides any complexity counts and they sum to zero,
+  // return a zero-effort estimate immediately without calling the AI.
+  const totalTestCases =
+    (input.complexityLow || 0) +
+    (input.complexityMedium || 0) +
+    (input.complexityHigh || 0) +
+    (input.complexityHighlyComplex || 0);
+
+  const hasComplexityInput =
+    input.complexityLow !== undefined ||
+    input.complexityMedium !== undefined ||
+    input.complexityHigh !== undefined ||
+    input.complexityHighlyComplex !== undefined;
+
+  if (hasComplexityInput && totalTestCases === 0) {
+    return {
+      estimatedEffortDays: 0,
+      explanation: 'No test cases were provided for estimation (all complexity counts are zero). Effort is zero.',
+      confidenceScore: 100,
+    };
+  }
+  
   try {
     const result = await genkitEstimateEffort(input);
     if (!result) {
