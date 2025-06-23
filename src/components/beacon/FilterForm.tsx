@@ -43,7 +43,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Loader2, RotateCcw, Settings2, Filter, Check, PlusCircle, GitCompare, XCircle, SlidersHorizontal } from 'lucide-react';
+import { Loader2, RotateCcw, Settings2, Filter, Check, PlusCircle, SlidersHorizontal } from 'lucide-react';
 import type { FilterCriteria, EstimateEffortInput } from '@/types';
 import { useState, useEffect } from 'react';
 import { estimateEffortAction } from '@/app/actions';
@@ -75,10 +75,6 @@ const filterSchema = z.object({
   useStandardFramework: z.boolean().default(false),
   cicdPipelineIntegrated: z.boolean().default(false),
   qaTeamSize: z.coerce.number().min(0, 'Must be zero or positive').optional(),
-
-  toolToCompare1: z.string().optional(),
-  toolToCompare2: z.string().optional(),
-  toolToCompare3: z.string().optional(),
 });
 
 type FilterFormValues = z.infer<typeof filterSchema>;
@@ -87,8 +83,6 @@ interface FilterFormProps {
   onSubmit: (data: FilterFormValues) => void;
   isLoading: boolean;
   defaultValues?: Partial<FilterCriteria>;
-  onCompareSubmit: (toolDisplayNames: string[]) => Promise<void>;
-  isComparing: boolean;
 }
 
 const defaultFormValues: FilterFormValues = {
@@ -113,12 +107,9 @@ const defaultFormValues: FilterFormValues = {
   useStandardFramework: false,
   cicdPipelineIntegrated: false,
   qaTeamSize: undefined,
-  toolToCompare1: undefined,
-  toolToCompare2: undefined,
-  toolToCompare3: undefined,
 };
 
-export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit, isComparing }: FilterFormProps) {
+export function FilterForm({ onSubmit, isLoading, defaultValues }: FilterFormProps) {
   const form = useForm<FilterFormValues>({
     resolver: zodResolver(filterSchema),
     defaultValues: { ...defaultFormValues, ...defaultValues },
@@ -128,14 +119,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
   const [isEstimatingEffort, setIsEstimatingEffort] = useState(false);
 
   const [automationToolPopoverOpen, setAutomationToolPopoverOpen] = useState(false);
-  const [toolToCompare1PopoverOpen, setToolToCompare1PopoverOpen] = useState(false);
-  const [toolToCompare2PopoverOpen, setToolToCompare2PopoverOpen] = useState(false);
-  const [toolToCompare3PopoverOpen, setToolToCompare3PopoverOpen] = useState(false);
-
   const [automationToolSearch, setAutomationToolSearch] = useState('');
-  const [toolToCompare1Search, setToolToCompare1Search] = useState('');
-  const [toolToCompare2Search, setToolToCompare2Search] = useState('');
-  const [toolToCompare3Search, setToolToCompare3Search] = useState('');
 
 
   const handleGetEstimate = async () => {
@@ -186,41 +170,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
       setIsEstimatingEffort(false);
     }
   };
-
-  const handleCompareTools = () => {
-    const formData = form.getValues();
-    const toolValues = [formData.toolToCompare1, formData.toolToCompare2, formData.toolToCompare3].filter(Boolean) as string[];
-
-    if (toolValues.length < 2) {
-      toast({
-        title: "Select More Tools",
-        description: "Please select at least two tools to compare.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const toolDisplayNames = toolValues.map(value => {
-      const option = automationToolOptions.find(opt => opt.value === value);
-      return option ? option.label : value;
-    });
-
-    onCompareSubmit(toolDisplayNames);
-  };
   
-  const handleResetCompareTools = () => {
-    form.setValue('toolToCompare1', undefined);
-    form.setValue('toolToCompare2', undefined);
-    form.setValue('toolToCompare3', undefined);
-    setToolToCompare1Search('');
-    setToolToCompare2Search('');
-    setToolToCompare3Search('');
-    setToolToCompare1PopoverOpen(false);
-    setToolToCompare2PopoverOpen(false);
-    setToolToCompare3PopoverOpen(false);
-  };
-
-
   const filterOptions = {
     applicationUnderTest: [
       { value: 'all', label: 'All Applications' },
@@ -325,12 +275,11 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
   const handleResetAllFilters = () => {
     form.reset(defaultFormValues); 
     setAutomationToolSearch('');
-    handleResetCompareTools(); 
   };
 
 
   const renderToolCombobox = (
-    fieldName: "automationTool" | "toolToCompare1" | "toolToCompare2" | "toolToCompare3",
+    fieldName: "automationTool",
     popoverOpen: boolean,
     setPopoverOpen: (open: boolean) => void,
     placeholder: string,
@@ -352,7 +301,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
         name={fieldName}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>{fieldName.startsWith("toolToCompare") ? `Tool ${fieldName.slice(-1)}` : "Automation Tool (Optional)"}</FormLabel>
+            <FormLabel>Automation Tool (Optional)</FormLabel>
             <Popover open={popoverOpen} onOpenChange={(isOpen) => {
               setPopoverOpen(isOpen);
               if (!isOpen) { 
@@ -703,74 +652,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
                   'Get Estimate'
                 )}
               </Button>
-            </AccordionContent>
-          </AccordionItem>
-
-          <AccordionItem value="compare-tools">
-            <AccordionTrigger>
-              <div className="flex items-center text-base font-semibold text-foreground hover:no-underline">
-                <GitCompare className="mr-2 h-5 w-5" />
-                Compare Tools
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="px-2 pt-4 pb-4 space-y-4">
-              <p className="text-xs text-muted-foreground">
-                Select 2 to 3 tools for a side-by-side comparison.
-              </p>
-              {renderToolCombobox(
-                "toolToCompare1",
-                toolToCompare1PopoverOpen,
-                setToolToCompare1PopoverOpen,
-                "Select Tool 1 or type custom",
-                toolToCompare1Search,
-                setToolToCompare1Search
-              )}
-              {renderToolCombobox(
-                "toolToCompare2",
-                toolToCompare2PopoverOpen,
-                setToolToCompare2PopoverOpen,
-                "Select Tool 2 or type custom",
-                toolToCompare2Search,
-                setToolToCompare2Search
-              )}
-              {renderToolCombobox(
-                "toolToCompare3",
-                toolToCompare3PopoverOpen,
-                setToolToCompare3PopoverOpen,
-                "Select Tool 3 or type custom",
-                toolToCompare3Search,
-                setToolToCompare3Search
-              )}
-              <div className="space-y-2">
-                <Button
-                  type="button"
-                  variant="accent"
-                  className="w-full"
-                  onClick={handleCompareTools}
-                  disabled={isComparing ||
-                    (form.watch('toolToCompare1') ? 0 : 1) +
-                    (form.watch('toolToCompare2') ? 0 : 1) +
-                    (form.watch('toolToCompare3') ? 0 : 1) > 1 
-                  }
-                >
-                  {isComparing ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Comparing...
-                    </>
-                  ) : (
-                    'Compare Selected Tools'
-                  )}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                  onClick={handleResetCompareTools}
-                >
-                  <XCircle className="mr-2 h-4 w-4" /> Reset Selections
-                </Button>
-              </div>
             </AccordionContent>
           </AccordionItem>
         </Accordion>

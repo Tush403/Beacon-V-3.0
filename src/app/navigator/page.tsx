@@ -199,8 +199,6 @@ export default function NavigatorPage() {
               onSubmit={handleFilterSubmit} 
               isLoading={isLoadingRecommendations}
               defaultValues={initialFilterValues}
-              onCompareSubmit={handleCompareRequest}
-              isComparing={isComparingTools}
             />
           </SidebarContent>
         </Sidebar>
