@@ -297,6 +297,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
       { value: 'codeless', label: 'Codeless' },
       { value: 'low-code', label: 'Low Code' },
       { value: 'scripting', label: 'Scripting Heavy' },
+      { value: 'ai-ml', label: 'AI/ML' },
     ],
     codingLanguage: [
       { value: 'any', label: 'Any Language' },
@@ -425,7 +426,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onCompareSubmit
                         ? automationToolOptions.find(option => option.value === field.value)?.label || String(field.value)
                         : placeholder}
                     </span>
-                    {/* ChevronsUpDown icon removed here */}
+                    
                   </Button>
                 </FormControl>
               </PopoverTrigger>
