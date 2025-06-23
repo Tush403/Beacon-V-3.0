@@ -99,15 +99,38 @@ export async function estimateEffortAction(input: EstimateEffortInput): Promise<
   }
 }
 
+const getMockComparisonData = (toolNames: string[]): CompareToolsOutput => {
+  const criteria = [
+      'Initial Setup Time', 'Maintenance Overhead', 'Test Creation Speed', 
+      'Script Reusability', 'Parallel Execution Support', 'Test Case Creation Effort',
+      'Skill Requirement', 'Overall Automation Coverage', 'Total Cost of Ownership'
+  ];
+  const comparisonTable = criteria.map(criterionName => {
+      const toolValues: Record<string, string> = {};
+      toolNames.forEach(toolName => {
+          toolValues[toolName] = `Data temporarily unavailable.`;
+      });
+      return { criterionName, toolValues };
+  });
+  const toolOverviews: Record<string, string> = {};
+  toolNames.forEach(toolName => {
+      toolOverviews[toolName] = `Overview for ${toolName} is temporarily unavailable due to a service issue. Please try again shortly.`;
+  });
+  return { comparisonTable, toolOverviews };
+};
+
 export async function compareToolsAction(input: CompareToolsInput): Promise<CompareToolsOutput> {
   try {
     const result = await genkitCompareTools(input);
     if (!result || !result.comparisonTable || result.comparisonTable.length === 0) {
-      throw new Error('AI tool comparison came back empty or malformed.');
+      console.warn('AI tool comparison came back empty or malformed, providing mock data.');
+      return getMockComparisonData(input.toolNames);
     }
     return result;
   } catch (error) {
     console.error('Error comparing tools:', error);
-    throw new Error(`Failed to get tool comparison. ${error instanceof Error ? error.message : ''}`);
+    // Instead of throwing, return mock data to prevent UI error display for transient issues.
+    console.warn('Providing mock comparison data due to an API error.');
+    return getMockComparisonData(input.toolNames);
   }
 }
