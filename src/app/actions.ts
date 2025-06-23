@@ -8,8 +8,8 @@ import { compareTools as genkitCompareTools, CompareToolsInput, CompareToolsOutp
 
 
 export async function recommendToolsAction(filters: RecommendToolsInput): Promise<RecommendToolsOutput> {
-  // Hardcode specific results for Web + UI testing
-  if (filters.applicationUnderTest === 'web' && filters.testType === 'ui') {
+  // Hardcode specific results for Web or UI testing
+  if (filters.applicationUnderTest === 'web' || filters.testType === 'ui') {
     return {
       recommendations: [
         {
