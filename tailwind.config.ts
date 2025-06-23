@@ -95,26 +95,14 @@ export default {
             height: '0',
           },
         },
-        'cube-spin': {
-          '0%': { transform: 'rotateX(-25deg) rotateY(25deg)' },
-          '100%': { transform: 'rotateX(-25deg) rotateY(385deg)' },
-        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'cube-spin': 'cube-spin 4s infinite linear',
       },
     },
   },
   plugins: [
     require('tailwindcss-animate'),
-    function({ addUtilities }) {
-      addUtilities({
-        '.transform-style-3d': {
-          'transform-style': 'preserve-3d',
-        },
-      })
-    },
   ],
 } satisfies Config;
