@@ -1,5 +1,7 @@
+
 // src/lib/tool-options.ts
 export const automationToolOptions = [
+  { value: "zeta_automation", label: "ZeTA Automation" },
   { value: "selenium", label: "Selenium" },
   { value: "cypress", label: "Cypress" },
   { value: "playwright", label: "Playwright" },

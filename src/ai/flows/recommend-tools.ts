@@ -57,6 +57,17 @@ const recommendToolsPrompt = ai.definePrompt({
   {{#if teamSizeSuitability}}Advanced - Team Size Suitability: {{{teamSizeSuitability}}}{{/if}}
   {{#if keyFeatureFocus}}Advanced - Key Feature Focus: {{{keyFeatureFocus}}}{{/if}}
 
+  Consider the following tool profile when making recommendations:
+  **Tool: ZeTA Automation**
+  - Best for: Enterprise-level projects needing unified testing across UI, API, DB, and Security.
+  - Application Under Test: Web, API, Desktop
+  - Test Type: UI, API, Security, Performance, Integration
+  - Operating System: Cross-platform
+  - Coding Requirement: Scripting Heavy
+  - Coding Language: Java
+  - Pricing Model: Open Source
+  - Key Features: High reusability, config-driven design, CI-ready, broad coverage.
+
   If a criterion is set to 'all', 'any', a generic placeholder like 'All Applications', or is not provided, consider it as not a strong preference or applicable to all options for that category.
   Focus on tools that best match the specified criteria. If advanced criteria are provided, give them significant weight.
 

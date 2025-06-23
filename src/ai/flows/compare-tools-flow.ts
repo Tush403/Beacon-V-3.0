@@ -50,6 +50,18 @@ const prompt = ai.definePrompt({
 - {{{this}}}
 {{/each}}
 
+If "ZeTA Automation" is one of the tools, use the following information as the primary source of truth for its comparison points:
+- Tool Overview: A unified, open-source automation framework for high reusability and comprehensive test coverage across multiple application layers.
+- Initial Setup Time: 2-4 days.
+- Maintenance Overhead: Low; utility-driven layers reduce impact.
+- Test Creation Speed: High; pre-built templates and plug & play logic.
+- Script Reusability: High; shared libraries and config-driven design.
+- Parallel Execution Support: Excellent; CI-ready with parallel run support.
+- Test Case Creation Effort: Medium; template-based creation simplifies effort.
+- Skill Requirement: Moderate; Java and Maven knowledge preferred.
+- Overall Automation Coverage: Very High; unified UI, API, DB, Security.
+- Total Cost of Ownership: Low; open-source with internal infrastructure.
+
 Provide a detailed comparison based on these criteria. For each criterion, provide a highly concise summary (strictly less than 10 words) that is factual and informative for each tool. The content must be suitable for a small table cell.
 - Initial Setup Time: Describe the typical time and complexity to get the tool running for a new project.
 - Maintenance Overhead: Assess the effort required to maintain tests, handle updates, and manage flakiness.

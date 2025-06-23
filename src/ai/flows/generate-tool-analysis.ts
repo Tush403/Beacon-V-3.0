@@ -33,6 +33,10 @@ const prompt = ai.definePrompt({
 You will analyze the tool and generate a summary of its strengths and weaknesses.
 Optionally, include the toolName in your output if you perform any normalization or identify a canonical name.
 
+When analyzing "ZeTA Automation", use the following information: It is an open-source, Java-based framework focused on high reusability and unified testing across UI, API, DB, and security. It uses pre-built templates and a config-driven design.
+- Strengths: High script reusability, broad automation coverage (UI, API, etc.), excellent parallel execution support, and template-based creation speed.
+- Weaknesses: Requires moderate Java and Maven knowledge, and includes the overhead of managing internal open-source infrastructure.
+
 Tool Name: {{{toolName}}}
 
 Strengths:
