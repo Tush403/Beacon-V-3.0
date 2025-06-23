@@ -29,13 +29,17 @@ export async function recommendToolsAction(filters: RecommendToolsInput): Promis
     // Take the top 3 unique recommendations
     let processedRecommendations = uniqueRecommendations.slice(0, 3);
 
-    // 2. Override score for Functionize if it's in the list
-    const functionizeIndex = processedRecommendations.findIndex(
-      (r) => r.toolName.toLowerCase().trim() === 'functionize'
-    );
-    if (functionizeIndex !== -1) {
-      processedRecommendations[functionizeIndex].score = 94;
-    }
+    // 2. Override scores for specific tools
+    processedRecommendations = processedRecommendations.map(rec => {
+      const toolNameLower = rec.toolName.toLowerCase().trim();
+      if (toolNameLower === 'functionize') {
+        return { ...rec, score: 90 };
+      }
+      if (toolNameLower === 'postman') {
+        return { ...rec, score: 80 };
+      }
+      return rec;
+    });
 
     // 3. Sort by score descending to establish an initial ranking
     processedRecommendations.sort((a, b) => b.score - a.score);
