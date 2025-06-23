@@ -46,11 +46,6 @@ export function ToolComparisonTable({ data, toolNames, recommendations, allTools
     return allTools.find(tool => tool.label === label)?.value || label;
   };
 
-  const getToolScore = (toolName: string) => {
-    const recommendation = recommendations.find(r => r.toolName === toolName);
-    return recommendation ? (recommendation.score / 10).toFixed(1) : null;
-  };
-
   return (
     <Card className="shadow-lg w-full">
       <CardHeader className="flex flex-row items-start justify-between">
@@ -87,11 +82,13 @@ export function ToolComparisonTable({ data, toolNames, recommendations, allTools
         )}
         <div className="border rounded-lg overflow-hidden">
           <Table>
+            <TableCaption className="mt-4 text-xs">AI-generated comparison. Information may require validation for critical decisions.</TableCaption>
             <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead className="min-w-[180px] p-3 font-semibold text-primary border-r">Parameters</TableHead>
                 {uniqueToolNames.map((toolName, index) => {
-                  const score = getToolScore(toolName);
+                  const recommendation = recommendations.find(r => r.toolName === toolName);
+                  const scoreText = recommendation ? `${(recommendation.score / 10).toFixed(1)}/10` : 'N/A';
                   return (
                     <TableHead key={`${toolName}-${index}`} className="min-w-[250px] p-2 align-top text-foreground font-semibold border-r last:border-r-0">
                         <Select 
@@ -109,9 +106,7 @@ export function ToolComparisonTable({ data, toolNames, recommendations, allTools
                                 ))}
                             </SelectContent>
                         </Select>
-                        {score && (
-                            <p className="text-xs text-muted-foreground font-normal mt-1 text-center">Score: {score}/10</p>
-                        )}
+                        <p className="text-xs text-muted-foreground font-normal mt-1 text-center">Score: {scoreText}</p>
                     </TableHead>
                   )
                 })}
@@ -129,7 +124,6 @@ export function ToolComparisonTable({ data, toolNames, recommendations, allTools
                 </TableRow>
               ))}
             </TableBody>
-            <TableCaption className="mt-4 text-xs">AI-generated comparison. Information may require validation for critical decisions.</TableCaption>
           </Table>
         </div>
       </CardContent>
