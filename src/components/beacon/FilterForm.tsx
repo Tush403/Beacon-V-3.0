@@ -50,6 +50,7 @@ import { cn } from '@/lib/utils';
 import { automationToolOptions } from '@/lib/tool-options';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { EffortEstimationResultCard } from './EffortEstimationResultCard';
+import { useToast } from '@/hooks/use-toast';
 
 
 const filterSchema = z.object({
@@ -117,6 +118,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
     resolver: zodResolver(filterSchema),
     defaultValues: { ...defaultFormValues, ...defaultValues },
   });
+  const { toast } = useToast();
 
   const [automationToolPopoverOpen, setAutomationToolPopoverOpen] = useState(false);
   const [automationToolSearch, setAutomationToolSearch] = useState('');
@@ -245,6 +247,10 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
     form.reset(defaultFormValues); 
     setAutomationToolSearch('');
     onClearEstimation();
+    toast({
+        title: "Filters Cleared",
+        description: "All your filter selections have been reset.",
+    });
   };
 
 
