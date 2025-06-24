@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -13,10 +14,12 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useAnimationContext } from '@/contexts/AnimationContext';
+import { useSidebar, SidebarTrigger } from '@/components/ui/sidebar';
 
 const RELEASE_NOTES_ACKNOWLEDGED_KEY = 'release_notes_acknowledged_v2.0';
 
 export function AppHeader() {
+  const { isMobile } = useSidebar();
   const [theme, setTheme] = useState('light');
   const [showReleaseNotesDialog, setShowReleaseNotesDialog] = useState(false);
   const [isSearchDialogOpen, setSearchDialogOpen] = useState(false);
@@ -101,6 +104,7 @@ export function AppHeader() {
           <div className="container mx-auto py-3 px-4 md:px-8 flex items-center justify-between">
             {/* Left Side: TAO Digital Branding */}
             <div className="flex items-center gap-3">
+              {isMobile && <SidebarTrigger className="md:hidden" />}
               <CogIcon ref={logoRef} className="h-9 w-9 text-foreground" />
               <div>
                 <h1 className="text-lg font-bold text-foreground sm:text-xl">TAO DIGITAL</h1>

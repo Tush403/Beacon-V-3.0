@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, Fragment } from 'react';
@@ -13,7 +14,6 @@ import { useToast } from '@/hooks/use-toast';
 import type { FilterCriteria, ToolRecommendationItem, ToolAnalysisItem, GenerateToolAnalysisInput, CompareToolsOutput, CompareToolsInput, EstimateEffortOutput, EstimateEffortInput } from '@/types';
 import { Separator } from '@/components/ui/separator';
 import { 
-  SidebarProvider, 
   Sidebar, 
   SidebarContent, 
   SidebarInset,
@@ -23,6 +23,7 @@ import { AlertTriangle, Loader2 } from 'lucide-react';
 import { automationToolOptions } from '@/lib/tool-options';
 import { GlobalLoader } from '@/components/beacon/GlobalLoader';
 import { cn } from '@/lib/utils';
+import { EffortEstimationResultCard } from '@/components/beacon/EffortEstimationResultCard';
 
 export default function NavigatorPage() {
   const [filters, setFilters] = useState<FilterCriteria | null>(null);
@@ -185,7 +186,7 @@ export default function NavigatorPage() {
   const isLoading = loadingState === 'loading';
 
   return (
-    <SidebarProvider defaultOpen={true}>
+    <>
       <GlobalLoader loadingState={loadingState} />
       <div className="flex flex-1">
         <Sidebar className="border-r" collapsible="icon">
@@ -266,6 +267,6 @@ export default function NavigatorPage() {
         </SidebarInset>
       </div>
       <BackToTopButton />
-    </SidebarProvider>
+    </>
   );
 }
