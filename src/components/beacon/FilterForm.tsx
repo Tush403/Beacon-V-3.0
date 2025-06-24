@@ -44,7 +44,7 @@ import {
 } from "@/components/ui/popover";
 import { Loader2, RotateCcw, Settings2, Filter, Check, PlusCircle, SlidersHorizontal, X } from 'lucide-react';
 import type { FilterCriteria, EstimateEffortInput, EstimateEffortOutput } from '@/types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { automationToolOptions } from '@/lib/tool-options';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -118,6 +118,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
 
   const [automationToolPopoverOpen, setAutomationToolPopoverOpen] = useState(false);
   const [automationToolSearch, setAutomationToolSearch] = useState('');
+  const estimatorRef = useRef<HTMLDivElement>(null);
 
 
   const handleGetEstimate = () => {
@@ -474,8 +475,12 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
           </AccordionItem>
 
 
-          <AccordionItem value="ai-estimator">
-            <AccordionTrigger>
+          <AccordionItem value="ai-estimator" ref={estimatorRef}>
+            <AccordionTrigger onClick={() => {
+              setTimeout(() => {
+                estimatorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }, 150);
+            }}>
               <div className="flex items-center text-base font-semibold text-foreground hover:no-underline">
                 <Settings2 className="mr-2 h-5 w-5" />
                 AI Effort Estimator
