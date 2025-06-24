@@ -1,3 +1,4 @@
+
 'use client';
 
 import { ToolCard } from './ToolCard';
@@ -10,7 +11,6 @@ import { Button } from '../ui/button';
 interface RecommendationsDisplayProps {
   recommendations: ToolRecommendationItem[];
   toolAnalyses: Record<string, ToolAnalysisItem | null>;
-  docLinks: Record<string, DocumentationLink | null>;
   onGetAnalysis: (toolName: string) => void;
   isLoadingRecommendations: boolean;
   isLoadingAnalysis: Record<string, boolean>;
@@ -20,22 +20,62 @@ interface RecommendationsDisplayProps {
   onClearEstimation: () => void;
 }
 
-const mockDocLinks: Record<string, DocumentationLink> = {
-  'Tool A': { toolName: 'Tool A', url: 'https://example.com/tool-a.pdf', label: 'Visit Official Website' },
-  'Tool B': { toolName: 'Tool B', url: 'https://example.com/tool-b.pdf', label: 'Visit Official Website' },
-  'Tool C': { toolName: 'Tool C', url: 'https://example.com/tool-c.pdf', label: 'Visit Official Website' },
-  'DefaultTool1': { toolName: 'DefaultTool1', url: 'https://example.com/default-tool1.pdf', label: 'Visit Official Website' },
-  'DefaultTool2': { toolName: 'DefaultTool2', url: 'https://example.com/default-tool2.pdf', label: 'Visit Official Website' },
-  'DefaultTool3': { toolName: 'DefaultTool3', url: 'https://example.com/default-tool3.pdf', label: 'Visit Official Website' },
+const toolDocumentationLinks: Record<string, DocumentationLink> = {
+  'Functionize': { toolName: 'Functionize', url: 'https://www.functionize.com/', label: 'Visit Official Website' },
+  'ZeTA Automation': { toolName: 'ZeTA Automation', url: 'https://www.taodigitalsolutions.com/zeta', label: 'Visit Official Website' },
+  'Selenium': { toolName: 'Selenium', url: 'https://www.selenium.dev/', label: 'Visit Official Website' },
+  'TestComplete': { toolName: 'TestComplete', url: 'https://smartbear.com/testcomplete/', label: 'Visit Official Website' },
+  'Ranorex Studio': { toolName: 'Ranorex Studio', url: 'https://www.ranorex.com/', label: 'Visit Official Website' },
+  'WinAppDriver': { toolName: 'WinAppDriver', url: 'https://github.com/microsoft/WinAppDriver', label: 'Visit Official Website' },
+  'Cypress': { toolName: 'Cypress', url: 'https://www.cypress.io/', label: 'Visit Official Website' },
+  'Playwright': { toolName: 'Playwright', url: 'https://playwright.dev/', label: 'Visit Official Website' },
+  'ACCELQ': { toolName: 'ACCELQ', url: 'https://www.accelq.com/', label: 'Visit Official Website' },
+  'Appium': { toolName: 'Appium', url: 'https://appium.io/', label: 'Visit Official Website' },
+  'Applitools': { toolName: 'Applitools', url: 'https://applitools.com/', label: 'Visit Official Website' },
+  'BrowserStack Automate': { toolName: 'BrowserStack Automate', url: 'https://www.browserstack.com/automate', label: 'Visit Official Website' },
+  'Cucumber': { toolName: 'Cucumber', url: 'https://cucumber.io/', label: 'Visit Official Website' },
+  'Detox': { toolName: 'Detox', url: 'https://github.com/wix/Detox', label: 'Visit Official Website' },
+  'Eggplant': { toolName: 'Eggplant', url: 'https://eggplant.keysight.com/', label: 'Visit Official Website' },
+  'Espresso': { toolName: 'Espresso', url: 'https://developer.android.com/training/testing/espresso', label: 'Visit Official Website' },
+  'Gatling': { toolName: 'Gatling', url: 'https://gatling.io/', label: 'Visit Official Website' },
+  'Gauge': { toolName: 'Gauge', url: 'https://gauge.org/', label: 'Visit Official Website' },
+  'Ghost Inspector': { toolName: 'Ghost Inspector', url: 'https://ghostinspector.com/', label: 'Visit Official Website' },
+  'Grafana k6': { toolName: 'Grafana k6', url: 'https://k6.io/', label: 'Visit Official Website' },
+  'JMeter': { toolName: 'JMeter', url: 'https://jmeter.apache.org/', label: 'Visit Official Website' },
+  'Karate DSL': { toolName: 'Karate DSL', url: 'https://github.com/karatelabs/karate', label: 'Visit Official Website' },
+  'Katalon Studio': { toolName: 'Katalon Studio', url: 'https://katalon.com/', label: 'Visit Official Website' },
+  'Kobiton': { toolName: 'Kobiton', url: 'https://kobiton.com/', label: 'Visit Official Website' },
+  'LambdaTest': { toolName: 'LambdaTest', url: 'https://www.lambdatest.com/', label: 'Visit Official Website' },
+  'Leapwork': { toolName: 'Leapwork', url: 'https://www.leapwork.com/', label: 'Visit Official Website' },
+  'Mabl': { toolName: 'Mabl', url: 'https://www.mabl.com/', label: 'Visit Official Website' },
+  'Micro Focus UFT One': { toolName: 'Micro Focus UFT One', url: 'https://www.microfocus.com/en-us/products/uft-one/overview', label: 'Visit Official Website' },
+  'Newman': { toolName: 'Newman', url: 'https://github.com/postmanlabs/newman', label: 'Visit Official Website' },
+  'Perfecto': { toolName: 'Perfecto', url: 'https://www.perfecto.io/', label: 'Visit Official Website' },
+  'Percy': { toolName: 'Percy', url: 'https://percy.io/', label: 'Visit Official Website' },
+  'Puppeteer': { toolName: 'Puppeteer', url: 'https://pptr.dev/', label: 'Visit Official Website' },
+  'Ranorex': { toolName: 'Ranorex', url: 'https://www.ranorex.com/', label: 'Visit Official Website' },
+  'Reflect': { toolName: 'Reflect', url: 'https://reflect.run/', label: 'Visit Official Website' },
+  'Rest Assured': { toolName: 'Rest Assured', url: 'https://rest-assured.io/', label: 'Visit Official Website' },
+  'Robot Framework': { toolName: 'Robot Framework', url: 'https://robotframework.org/', label: 'Visit Official Website' },
+  'Sahi Pro': { toolName: 'Sahi Pro', url: 'https://sahipro.com/', label: 'Visit Official Website' },
+  'Sauce Labs': { toolName: 'Sauce Labs', url: 'https://saucelabs.com/', label: 'Visit Official Website' },
+  'SoapUI': { toolName: 'SoapUI', url: 'https://www.soapui.org/', label: 'Visit Official Website' },
+  'SpecFlow': { toolName: 'SpecFlow', url: 'https://specflow.org/', label: 'Visit Official Website' },
+  'TestCafe': { toolName: 'TestCafe', url: 'https://testcafe.io/', label: 'Visit Official Website' },
+  'Testim': { toolName: 'Testim', url: 'https://www.testim.io/', label: 'Visit Official Website' },
+  'TestSigma': { toolName: 'TestSigma', url: 'https://testsigma.com/', label: 'Visit Official Website' },
+  'Tricentis Tosca': { toolName: 'Tricentis Tosca', url: 'https://www.tricentis.com/products/tosca-automated-testing', label: 'Visit Official Website' },
+  'WebdriverIO': { toolName: 'WebdriverIO', url: 'https://webdriver.io/', label: 'Visit Official Website' },
+  'XCUITest': { toolName: 'XCUITest', url: 'https://developer.apple.com/documentation/xctest', label: 'Visit Official Website' },
 };
 
 
 export function RecommendationsDisplay({
   recommendations,
   toolAnalyses,
+  onGetAnalysis,
   isLoadingRecommendations,
   isLoadingAnalysis,
-  onGetAnalysis,
   error,
   hasInteracted,
   estimationResult,
@@ -166,7 +206,7 @@ export function RecommendationsDisplay({
             key={`${tool.toolName}-${index}`}
             tool={tool}
             analysis={toolAnalyses[tool.toolName]}
-            docLink={mockDocLinks[tool.toolName] || mockDocLinks[`DefaultTool${index + 1}`]}
+            docLink={toolDocumentationLinks[tool.toolName]}
             onGetAnalysis={onGetAnalysis}
             isAnalysisLoading={!!isLoadingAnalysis[tool.toolName]}
             rank={index + 1}

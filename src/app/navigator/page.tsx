@@ -211,7 +211,6 @@ export default function NavigatorPage() {
               <RecommendationsDisplay
                 recommendations={recommendations}
                 toolAnalyses={toolAnalyses}
-                docLinks={{}}
                 onGetAnalysis={handleGetAnalysis}
                 isLoadingRecommendations={false}
                 isLoadingAnalysis={isLoadingAnalysis}
