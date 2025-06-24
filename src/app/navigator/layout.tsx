@@ -16,7 +16,7 @@ export default function NavigatorLayout({
   return (
     <AnimationProvider>
       <SidebarProvider defaultOpen={true}>
-        <div className="flex flex-col min-h-screen bg-background">
+        <div className="flex w-full flex-col min-h-screen bg-background">
           <AppHeader />
           <main className="flex-grow flex"> {/* Added flex to allow sidebar and main content to fill height */}
             {children}
