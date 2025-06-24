@@ -607,31 +607,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
               >
                 Get Estimate
               </Button>
-               {estimationResult && !isLoading && (
-                <div className="mt-4 p-4 border rounded-lg bg-card shadow-sm relative animate-in fade-in-50 duration-500">
-                    <Button variant="ghost" size="icon" className="absolute top-2 right-2 h-6 w-6" onClick={onClearEstimation}>
-                        <X className="h-4 w-4" />
-                        <span className="sr-only">Close Estimation</span>
-                    </Button>
-                    <h3 className="text-base font-semibold text-center mb-2">AI Effort Estimation</h3>
-                    <div className="flex flex-col items-center text-center p-2 mb-3 bg-muted/50 rounded-lg">
-                        <p className="text-xs text-muted-foreground">Estimated Effort</p>
-                        <p className="text-2xl font-bold text-primary">{estimationResult.estimatedEffortDays}</p>
-                        <p className="text-xs text-muted-foreground">Days</p>
-                    </div>
-                    <div className="space-y-1">
-                        <h4 className="font-semibold text-sm">Explanation</h4>
-                        <ScrollArea className="h-32 rounded-md border bg-muted/20 p-3">
-                            <p className="text-sm text-muted-foreground whitespace-pre-line">
-                                {estimationResult.explanation}
-                            </p>
-                        </ScrollArea>
-                    </div>
-                    <p className="text-xs text-center text-muted-foreground mt-3">
-                        Confidence Score: <span className="font-semibold text-foreground">{estimationResult.confidenceScore}%</span>
-                    </p>
-                </div>
-              )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>

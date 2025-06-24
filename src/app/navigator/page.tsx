@@ -23,6 +23,7 @@ import { AlertTriangle, Loader2 } from 'lucide-react';
 import { automationToolOptions } from '@/lib/tool-options';
 import { GlobalLoader } from '@/components/beacon/GlobalLoader';
 import { cn } from '@/lib/utils';
+import { EffortEstimationResultCard } from '@/components/beacon/EffortEstimationResultCard';
 
 export default function NavigatorPage() {
   const [filters, setFilters] = useState<FilterCriteria | null>(null);
@@ -84,6 +85,7 @@ export default function NavigatorPage() {
     setToolAnalyses({});
     setComparisonData(null);
     setComparisonError(null);
+    setEffortEstimationResult(null); // Clear estimation on new filter
     
     try {
       const result = await recommendToolsAction(data);
@@ -216,6 +218,13 @@ export default function NavigatorPage() {
                 error={error}
                 hasInteracted={hasInteracted} 
               />
+              
+              {effortEstimationResult && (
+                <EffortEstimationResultCard 
+                  estimationResult={effortEstimationResult} 
+                  onClose={() => setEffortEstimationResult(null)}
+                />
+              )}
 
               {!isLoading && (
                 <>
