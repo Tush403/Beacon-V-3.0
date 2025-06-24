@@ -496,131 +496,140 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-2 pt-4 pb-4 space-y-4">
-              <p className="text-xs text-muted-foreground">
-                Provide project details to get an effort estimation.
-              </p>
-              {renderToolCombobox(
-                "automationTool",
-                automationToolPopoverOpen,
-                setAutomationToolPopoverOpen,
-                "Select a tool or type custom",
-                automationToolSearch,
-                setAutomationToolSearch
-              )}
+              {estimationResult ? (
+                <EffortEstimationResultCard 
+                  estimationResult={estimationResult}
+                  onClose={onClearEstimation}
+                />
+              ) : (
+                <>
+                  <p className="text-xs text-muted-foreground">
+                    Provide project details to get an effort estimation.
+                  </p>
+                  {renderToolCombobox(
+                    "automationTool",
+                    automationToolPopoverOpen,
+                    setAutomationToolPopoverOpen,
+                    "Select a tool or type custom",
+                    automationToolSearch,
+                    setAutomationToolSearch
+                  )}
 
-              <FormField
-                control={form.control}
-                name="complexityLow"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Complexity - Low (Test Cases)</FormLabel>
-                    <FormControl>
-                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="complexityMedium"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Complexity - Medium (Test Cases)</FormLabel>
-                    <FormControl>
-                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="complexityHigh"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Complexity - High (Test Cases)</FormLabel>
-                    <FormControl>
-                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="complexityHighlyComplex"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Complexity - Highly Complex (Test Cases)</FormLabel>
-                    <FormControl>
-                      <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="useStandardFramework"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <div className="space-y-0.5">
-                      <FormLabel>Using a Standard Test Framework?</FormLabel>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="cicdPipelineIntegrated"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <div className="space-y-0.5">
-                      <FormLabel>CI/CD Pipeline Integrated?</FormLabel>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="qaTeamSize"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>QA Team Size (Engineers)</FormLabel>
-                    <div className="flex items-center gap-2">
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback className="bg-muted text-muted-foreground text-xs">N</AvatarFallback>
-                      </Avatar>
-                      <FormControl>
-                        <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
-                      </FormControl>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button
-                type="button"
-                variant="accent"
-                className="w-full"
-                onClick={handleGetEstimate}
-                disabled={isLoading}
-              >
-                {isLoading ? <Loader2 className="animate-spin" /> : 'Get Estimate'}
-              </Button>
+                  <FormField
+                    control={form.control}
+                    name="complexityLow"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Complexity - Low (Test Cases)</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} onWheel={(e) => (e.target as HTMLElement).blur()} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="complexityMedium"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Complexity - Medium (Test Cases)</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} onWheel={(e) => (e.target as HTMLElement).blur()} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="complexityHigh"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Complexity - High (Test Cases)</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} onWheel={(e) => (e.target as HTMLElement).blur()} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="complexityHighlyComplex"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Complexity - Highly Complex (Test Cases)</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} onWheel={(e) => (e.target as HTMLElement).blur()} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="useStandardFramework"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5">
+                          <FormLabel>Using a Standard Test Framework?</FormLabel>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="cicdPipelineIntegrated"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5">
+                          <FormLabel>CI/CD Pipeline Integrated?</FormLabel>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="qaTeamSize"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>QA Team Size (Engineers)</FormLabel>
+                        <div className="flex items-center gap-2">
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback className="bg-muted text-muted-foreground text-xs">N</AvatarFallback>
+                          </Avatar>
+                          <FormControl>
+                            <Input type="number" placeholder="Enter value" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} onWheel={(e) => (e.target as HTMLElement).blur()} />
+                          </FormControl>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    type="button"
+                    variant="accent"
+                    className="w-full"
+                    onClick={handleGetEstimate}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? <Loader2 className="animate-spin" /> : 'Get Estimate'}
+                  </Button>
+                </>
+              )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
