@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -14,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Info, Download, Star } from 'lucide-react';
 import type { CompareToolsOutput } from '@/types';
+import { useToast } from '@/hooks/use-toast';
 
 interface ToolComparisonTableProps {
   data: CompareToolsOutput;
@@ -23,6 +25,47 @@ interface ToolComparisonTableProps {
 }
 
 export function ToolComparisonTable({ data, toolNames, allTools, onToolChange }: ToolComparisonTableProps) {
+  const { toast } = useToast();
+
+  const handleExportCSV = () => {
+    if (!data || !data.comparisonTable) return;
+
+    const { comparisonTable, toolOverviews } = data;
+    let csvContent = 'data:text/csv;charset=utf-8,';
+
+    // Headers
+    const headers = ['Parameters', ...toolNames];
+    csvContent += headers.join(',') + '\r\n';
+
+    // Overviews
+    if (toolOverviews) {
+      const overviewRow = ['Overview', ...toolNames.map(name => `"${toolOverviews[name]?.replace(/"/g, '""') || 'N/A'}"`)];
+      csvContent += overviewRow.join(',') + '\r\n';
+    }
+
+    // Comparison Table
+    comparisonTable.forEach(criterion => {
+      const row = [
+        `"${criterion.criterionName}"`,
+        ...toolNames.map(toolName => `"${criterion.toolValues[toolName]?.replace(/"/g, '""') || 'N/A'}"`)
+      ];
+      csvContent += row.join(',') + '\r\n';
+    });
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'tool_comparison.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "Export Successful",
+      description: "The tool comparison data has been exported to CSV.",
+    });
+  };
+
   if (!data || !data.comparisonTable || data.comparisonTable.length === 0) {
     return (
       <Card className="shadow-lg">
@@ -56,7 +99,7 @@ export function ToolComparisonTable({ data, toolNames, allTools, onToolChange }:
                 Compare tools side-by-side. The first tool is based on your filters. Click tool names to see more details.
             </CardDescription>
         </div>
-        <Button variant="outline">
+        <Button variant="outline" onClick={handleExportCSV}>
             <Download className="mr-2 h-4 w-4" />
             Export CSV
         </Button>

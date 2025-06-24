@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -11,11 +12,12 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2, Search as SearchIcon, AlertCircle, Sparkles } from 'lucide-react'; // Renamed Search to SearchIcon to avoid conflict
-import { generateToolAnalysisAction } from '@/app/actions';
-import type { ToolAnalysisItem, GenerateToolAnalysisInput } from '@/types';
+import { Loader2, Search as SearchIcon, AlertCircle, Sparkles } from 'lucide-react';
+import { getToolDetailsAction } from '@/app/actions';
+import type { GetToolDetailsOutput, GetToolDetailsInput } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ToolSearchDialogProps {
   isOpen: boolean;
@@ -25,23 +27,30 @@ interface ToolSearchDialogProps {
 export function ToolSearchDialog({ isOpen, onOpenChange }: ToolSearchDialogProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<ToolAnalysisItem | null>(null);
+  const [toolDetails, setToolDetails] = useState<GetToolDetailsOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) {
       setError('Please enter a tool name to search.');
-      setAnalysisResult(null);
+      setToolDetails(null);
       return;
     }
     setIsLoading(true);
     setError(null);
-    setAnalysisResult(null);
+    setToolDetails(null);
     try {
-      const input: GenerateToolAnalysisInput = { toolName: searchTerm };
-      const result = await generateToolAnalysisAction(input);
-      setAnalysisResult(result);
+      const input: GetToolDetailsInput = { toolName: searchTerm };
+      const result = await getToolDetailsAction(input);
+      
+      if (result.toolName?.includes('(Error)')) {
+          setError(result.overview);
+          setToolDetails(null);
+      } else {
+          setToolDetails(result);
+      }
+
     } catch (e: any) {
       const errorMessage = e.message || `Failed to get analysis for ${searchTerm}.`;
       setError(errorMessage);
@@ -53,11 +62,32 @@ export function ToolSearchDialog({ isOpen, onOpenChange }: ToolSearchDialogProps
   const handleCloseDialog = () => {
     onOpenChange(false);
     // Reset state when dialog is explicitly closed or onOpenChange(false) is called
-    setSearchTerm('');
-    setAnalysisResult(null);
-    setError(null);
-    setIsLoading(false);
+    setTimeout(() => {
+      setSearchTerm('');
+      setToolDetails(null);
+      setError(null);
+      setIsLoading(false);
+    }, 300); // Delay reset to allow fade-out animation
   };
+
+  const renderSkeleton = () => (
+    <div className="mt-6 space-y-4 pt-4 border-t animate-pulse">
+        <div className="flex items-center gap-2">
+            <Skeleton className="h-6 w-6 rounded-full" />
+            <Skeleton className="h-6 w-48" />
+        </div>
+        <Skeleton className="h-10 w-full" />
+        <Separator/>
+        <div className="space-y-3">
+          {[...Array(5)].map((_, i) => (
+            <div key={i}>
+                <Skeleton className="h-4 w-24 mb-1" />
+                <Skeleton className="h-4 w-full" />
+            </div>
+          ))}
+        </div>
+    </div>
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={handleCloseDialog}>
@@ -82,7 +112,7 @@ export function ToolSearchDialog({ isOpen, onOpenChange }: ToolSearchDialogProps
               aria-label="Tool name for search"
             />
             <Button onClick={handleSearch} disabled={isLoading || !searchTerm.trim()} className="bg-primary hover:bg-primary/90 text-primary-foreground px-3">
-              <SearchIcon className="h-4 w-4" />
+              {isLoading ? <Loader2 className="h-4 w-4 animate-spin"/> : <SearchIcon className="h-4 w-4" />}
               <span className="sr-only">Search</span>
             </Button>
           </div>
@@ -94,20 +124,29 @@ export function ToolSearchDialog({ isOpen, onOpenChange }: ToolSearchDialogProps
             </div>
           )}
 
-          {analysisResult && !isLoading && (
+          {isLoading && renderSkeleton()}
+
+          {toolDetails && !isLoading && (
             <div className="mt-6 space-y-4 pt-4 border-t">
               <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-accent" />
-                AI Analysis for: <span className="text-accent">{analysisResult.toolName || searchTerm}</span>
+                Analysis for: <span className="text-accent">{toolDetails.toolName}</span>
               </h3>
+              
               <div>
-                <h4 className="font-medium text-primary">Strengths:</h4>
-                <p className="text-sm text-muted-foreground whitespace-pre-line">{analysisResult.strengths}</p>
+                <h4 className="font-medium text-primary">Overview</h4>
+                <p className="text-sm text-muted-foreground whitespace-pre-line">{toolDetails.overview}</p>
               </div>
-              <Separator />
-              <div>
-                <h4 className="font-medium text-destructive">Weaknesses:</h4>
-                <p className="text-sm text-muted-foreground whitespace-pre-line">{analysisResult.weaknesses}</p>
+
+              <Separator/>
+
+              <div className="space-y-3">
+                {toolDetails.details.map(detail => (
+                    <div key={detail.criterionName}>
+                        <h4 className="font-medium text-foreground text-sm">{detail.criterionName}</h4>
+                        <p className="text-sm text-muted-foreground whitespace-pre-line">{detail.value}</p>
+                    </div>
+                ))}
               </div>
             </div>
           )}

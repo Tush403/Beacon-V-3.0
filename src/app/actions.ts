@@ -5,6 +5,7 @@ import { recommendTools as genkitRecommendTools, RecommendToolsInput, RecommendT
 import { generateToolAnalysis as genkitGenerateToolAnalysis, GenerateToolAnalysisOutput, GenerateToolAnalysisInput } from '@/ai/flows/generate-tool-analysis'; // Updated import
 import { estimateEffort as genkitEstimateEffort, EstimateEffortInput, EstimateEffortOutput } from '@/ai/flows/estimate-effort-flow';
 import { compareTools as genkitCompareTools, CompareToolsInput, CompareToolsOutput } from '@/ai/flows/compare-tools-flow';
+import { getToolDetails as genkitGetToolDetails, GetToolDetailsInput, GetToolDetailsOutput } from '@/ai/flows/get-tool-details';
 
 
 export async function recommendToolsAction(filters: RecommendToolsInput): Promise<RecommendToolsOutput> {
@@ -110,6 +111,27 @@ export async function generateToolAnalysisAction(input: GenerateToolAnalysisInpu
   }
 }
 
+export async function getToolDetailsAction(input: GetToolDetailsInput): Promise<GetToolDetailsOutput> {
+    try {
+        const result = await genkitGetToolDetails(input);
+        if (!result || !result.overview || !result.details || result.details.length === 0) {
+            throw new Error('AI response for tool details was incomplete.');
+        }
+        return result;
+    } catch (error) {
+        console.error(`Error getting tool details for ${input.toolName}:`, error);
+        // Provide a structured mock/fallback response
+        return {
+            toolName: `${input.toolName} (Error)`,
+            overview: `An error occurred while fetching details for ${input.toolName}. The information could not be retrieved. Please try again later.`,
+            details: [
+                { criterionName: 'Status', value: 'Data temporarily unavailable.' },
+                { criterionName: 'Reason', value: `An internal error prevented the retrieval of tool-specific data. ${error instanceof Error ? error.message : ''}` },
+            ]
+        };
+    }
+}
+
 export async function estimateEffortAction(input: EstimateEffortInput): Promise<EstimateEffortOutput> {
   // Business logic check: If user provides any complexity counts and they sum to zero,
   // return a zero-effort estimate immediately without calling the AI.
@@ -119,13 +141,7 @@ export async function estimateEffortAction(input: EstimateEffortInput): Promise<
     (input.complexityHigh || 0) +
     (input.complexityHighlyComplex || 0);
 
-  const hasComplexityInput =
-    input.complexityLow !== undefined ||
-    input.complexityMedium !== undefined ||
-    input.complexityHigh !== undefined ||
-    input.complexityHighlyComplex !== undefined;
-
-  if (hasComplexityInput && totalTestCases === 0) {
+  if (totalTestCases === 0) {
     return {
       estimatedEffortDays: 0,
       explanation: 'No test cases were provided for estimation (all complexity counts are zero). Effort is zero.',

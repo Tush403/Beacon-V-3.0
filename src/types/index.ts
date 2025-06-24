@@ -95,6 +95,26 @@ export const GenerateToolAnalysisOutputSchema = z.object({
 });
 export type GenerateToolAnalysisOutput = z.infer<typeof GenerateToolAnalysisOutputSchema>;
 
+
+// Schemas for Get Tool Details (for the search dialog)
+export const GetToolDetailsInputSchema = z.object({
+    toolName: z.string().describe('The name of the tool to get details for.'),
+});
+export type GetToolDetailsInput = z.infer<typeof GetToolDetailsInputSchema>;
+
+export const ToolDetailCriterionSchema = z.object({
+    criterionName: z.string().describe("The name of the detail criterion (e.g., 'Initial Setup Time')."),
+    value: z.string().describe("The value or assessment for that criterion."),
+});
+
+export const GetToolDetailsOutputSchema = z.object({
+    toolName: z.string().describe('The official name of the tool.'),
+    overview: z.string().describe('A brief, 1-2 sentence overview of the tool.'),
+    details: z.array(ToolDetailCriterionSchema).describe('An array of detailed criteria and their corresponding values for the tool.'),
+});
+export type GetToolDetailsOutput = z.infer<typeof GetToolDetailsOutputSchema>;
+
+
 // Schemas for Tool Comparison
 export const CompareToolsInputSchema = z.object({
   toolNames: z.array(z.string()).min(2).max(3).describe('An array of 2 to 3 tool names to compare.'),
