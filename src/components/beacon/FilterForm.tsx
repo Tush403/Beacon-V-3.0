@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -48,6 +49,7 @@ import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { automationToolOptions } from '@/lib/tool-options';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { EffortEstimationResultCard } from './EffortEstimationResultCard';
 
 
 const filterSchema = z.object({
@@ -119,6 +121,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
   const [automationToolPopoverOpen, setAutomationToolPopoverOpen] = useState(false);
   const [automationToolSearch, setAutomationToolSearch] = useState('');
   const estimatorRef = useRef<HTMLDivElement>(null);
+  const advancedFiltersRef = useRef<HTMLDivElement>(null);
 
 
   const handleGetEstimate = () => {
@@ -428,8 +431,14 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
             </AccordionContent>
           </AccordionItem>
 
-          <AccordionItem value="advanced-filters">
-            <AccordionTrigger>
+          <AccordionItem value="advanced-filters" ref={advancedFiltersRef}>
+            <AccordionTrigger
+              onClick={() => {
+                setTimeout(() => {
+                  advancedFiltersRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 150);
+              }}
+            >
               <div className="flex items-center text-base font-semibold text-foreground hover:no-underline">
                 <SlidersHorizontal className="mr-2 h-5 w-5" />
                 Advanced Filters
@@ -610,7 +619,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
                 onClick={handleGetEstimate}
                 disabled={isLoading}
               >
-                Get Estimate
+                {isLoading ? <Loader2 className="animate-spin" /> : 'Get Estimate'}
               </Button>
             </AccordionContent>
           </AccordionItem>
