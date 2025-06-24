@@ -23,7 +23,6 @@ import { AlertTriangle, Loader2 } from 'lucide-react';
 import { automationToolOptions } from '@/lib/tool-options';
 import { GlobalLoader } from '@/components/beacon/GlobalLoader';
 import { cn } from '@/lib/utils';
-import { EffortEstimationResultCard } from '@/components/beacon/EffortEstimationResultCard';
 
 export default function NavigatorPage() {
   const [filters, setFilters] = useState<FilterCriteria | null>(null);
@@ -216,15 +215,10 @@ export default function NavigatorPage() {
                 isLoadingRecommendations={false}
                 isLoadingAnalysis={isLoadingAnalysis}
                 error={error}
-                hasInteracted={hasInteracted} 
+                hasInteracted={hasInteracted}
+                estimationResult={effortEstimationResult}
+                onClearEstimation={() => setEffortEstimationResult(null)}
               />
-              
-              {effortEstimationResult && (
-                <EffortEstimationResultCard 
-                  estimationResult={effortEstimationResult} 
-                  onClose={() => setEffortEstimationResult(null)}
-                />
-              )}
 
               {!isLoading && (
                 <>
