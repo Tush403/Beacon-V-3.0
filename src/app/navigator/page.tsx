@@ -190,15 +190,17 @@ export default function NavigatorPage() {
       <GlobalLoader loadingState={loadingState} />
       <div className="flex flex-1">
         <Sidebar className="border-r" collapsible="icon">
-          <SidebarContent className="md:mt-16 px-4 pb-4">
-            <FilterForm 
-              onSubmit={handleFilterSubmit} 
-              isLoading={isLoading}
-              defaultValues={initialFilterValues}
-              onEstimate={handleEstimateSubmit}
-              estimationResult={effortEstimationResult}
-              onClearEstimation={() => setEffortEstimationResult(null)}
-            />
+          <SidebarContent className="md:mt-16">
+            <div className="px-4 pb-4">
+              <FilterForm 
+                onSubmit={handleFilterSubmit} 
+                isLoading={isLoading}
+                defaultValues={initialFilterValues}
+                onEstimate={handleEstimateSubmit}
+                estimationResult={effortEstimationResult}
+                onClearEstimation={() => setEffortEstimationResult(null)}
+              />
+            </div>
           </SidebarContent>
         </Sidebar>
         <SidebarInset>
