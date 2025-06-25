@@ -616,15 +616,26 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
                       </FormItem>
                     )}
                   />
-                  <Button
-                    type="button"
-                    variant="accent"
-                    className="w-full"
-                    onClick={handleGetEstimate}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? <Loader2 className="animate-spin" /> : 'Get Estimate'}
-                  </Button>
+                  <div className="space-y-3 pt-6 border-t mt-4">
+                    <Button
+                      type="button"
+                      variant="accent"
+                      className="w-full"
+                      onClick={handleGetEstimate}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? <Loader2 className="animate-spin" /> : 'Get Estimate'}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleResetAllFilters}
+                      className="w-full"
+                      disabled={isLoading}
+                    >
+                      <RotateCcw className="mr-2 h-4 w-4" /> Reset All Filters
+                    </Button>
+                  </div>
                 </>
               )}
             </AccordionContent>
