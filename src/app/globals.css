@@ -28,6 +28,9 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
+    --success: 140 60% 45%; /* A nice green for success states */
+    --success-foreground: 140 60% 95%; /* White/light text for on-success color */
+
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 232 32% 60%; /* Lighter primary for ring */
@@ -74,6 +77,9 @@
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
+
+    --success: 140 50% 50%; /* A brighter green for dark mode success */
+    --success-foreground: 140 50% 10%; /* Dark text for on-success color in dark mode */
 
     --border: 231 30% 28%; /* Subtle borders */
     --input: 231 30% 25%;

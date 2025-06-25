@@ -43,7 +43,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Loader2, RotateCcw, Settings2, Filter, Check, PlusCircle, SlidersHorizontal, X } from 'lucide-react';
+import { Loader2, RotateCcw, Settings2, Filter, Check, PlusCircle, SlidersHorizontal, X, CheckCircle } from 'lucide-react';
 import type { FilterCriteria, EstimateEffortInput, EstimateEffortOutput } from '@/types';
 import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
@@ -348,12 +348,18 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
 
 
   const handleResetAllFilters = () => {
-    form.reset(defaultFormValues); 
+    form.reset(defaultFormValues);
     onClearEstimation();
     toast({
-        title: "Filters Cleared",
-        description: "All your filter selections have been reset.",
-        duration: 2000,
+      variant: 'success',
+      title: (
+        <div className="flex items-center gap-2">
+          <CheckCircle className="h-5 w-5" />
+          <span className="font-semibold">Filters Cleared</span>
+        </div>
+      ),
+      description: 'All your filter selections have been reset.',
+      duration: 2000,
     });
   };
 
