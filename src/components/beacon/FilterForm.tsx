@@ -353,6 +353,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
     toast({
         title: "Filters Cleared",
         description: "All your filter selections have been reset.",
+        duration: 2000,
     });
   };
 
