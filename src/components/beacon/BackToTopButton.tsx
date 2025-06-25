@@ -10,7 +10,8 @@ export function BackToTopButton() {
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => {
-    if (window.scrollY > 200) {
+    // Show button if page is scrolled more than 300px
+    if (window.scrollY > 300) {
       setIsVisible(true);
     } else {
       setIsVisible(false);
@@ -36,8 +37,8 @@ export function BackToTopButton() {
       variant="default"
       size="icon"
       className={cn(
-        'fixed bottom-6 right-6 rounded-full h-12 w-12 shadow-lg transition-opacity duration-300 z-50 bg-primary hover:bg-primary/90 text-primary-foreground',
-        isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        'fixed bottom-24 right-6 rounded-full h-12 w-12 shadow-lg transition-all duration-300 z-50 bg-primary hover:bg-primary/90 text-primary-foreground',
+        isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0 pointer-events-none'
       )}
       onClick={scrollToTop}
       aria-label="Scroll to top"

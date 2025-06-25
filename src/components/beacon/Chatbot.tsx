@@ -54,12 +54,13 @@ export function Chatbot() {
     <>
       <div className={cn("fixed bottom-6 right-6 z-50 transition-transform duration-300", isOpen ? 'scale-0' : 'scale-100')}>
         <Button
+          variant="accent"
           size="icon"
-          className="rounded-full h-16 w-16 shadow-lg bg-primary hover:bg-primary/90 text-primary-foreground"
+          className="rounded-full h-14 w-14 shadow-lg"
           onClick={() => setIsOpen(true)}
           aria-label="Open Chat"
         >
-          <MessageSquare className="h-8 w-8" />
+          <MessageSquare className="h-7 w-7" />
         </Button>
       </div>
 
