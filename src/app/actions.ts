@@ -6,6 +6,7 @@ import { generateToolAnalysis as genkitGenerateToolAnalysis, GenerateToolAnalysi
 import { estimateEffort as genkitEstimateEffort, EstimateEffortInput, EstimateEffortOutput } from '@/ai/flows/estimate-effort-flow';
 import { compareTools as genkitCompareTools, CompareToolsInput, CompareToolsOutput } from '@/ai/flows/compare-tools-flow';
 import { getToolDetails as genkitGetToolDetails, GetToolDetailsInput, GetToolDetailsOutput } from '@/ai/flows/get-tool-details';
+import { supportChat as genkitSupportChat, SupportChatInput, SupportChatOutput } from '@/ai/flows/support-chat-flow';
 
 
 export async function recommendToolsAction(filters: RecommendToolsInput): Promise<RecommendToolsOutput> {
@@ -194,5 +195,21 @@ export async function compareToolsAction(input: CompareToolsInput): Promise<Comp
     // Instead of throwing, return mock data to prevent UI error display for transient issues.
     console.warn('Providing mock comparison data due to an API error.');
     return getMockComparisonData(input.toolNames);
+  }
+}
+
+export async function supportChatAction(input: SupportChatInput): Promise<SupportChatOutput> {
+  try {
+    const result = await genkitSupportChat(input);
+    if (!result || !result.response) {
+      throw new Error('AI chatbot came back with an empty response.');
+    }
+    return result;
+  } catch (error) {
+    console.error('Error in support chat action:', error);
+    // Return a user-friendly error message within the chat response
+    return {
+      response: `Sorry, I encountered an error and can't respond right now. Please try again later. ${error instanceof Error ? error.message : ''}`
+    };
   }
 }

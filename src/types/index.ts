@@ -158,3 +158,20 @@ export const CompareToolsOutputSchema = z.object({
 export type CompareToolsOutput = z.infer<typeof CompareToolsOutputSchema>;
 
 export type { AICompareToolsOutput }; // Export internal AI type if needed by flow
+
+// Schemas for Support Chatbot
+export const ChatMessageSchema = z.object({
+  role: z.enum(['user', 'model']),
+  content: z.string(),
+});
+export type ChatMessage = z.infer<typeof ChatMessageSchema>;
+
+export const SupportChatInputSchema = z.object({
+  messages: z.array(ChatMessageSchema).describe('The history of the conversation.'),
+});
+export type SupportChatInput = z.infer<typeof SupportChatInputSchema>;
+
+export const SupportChatOutputSchema = z.object({
+  response: z.string().describe('The chatbot\'s response.'),
+});
+export type SupportChatOutput = z.infer<typeof SupportChatOutputSchema>;

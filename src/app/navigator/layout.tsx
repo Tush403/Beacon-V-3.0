@@ -7,6 +7,7 @@ import React from 'react';
 import { Separator } from '@/components/ui/separator';
 import { AnimationProvider } from '@/contexts/AnimationContext';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { Chatbot } from '@/components/beacon/Chatbot';
 
 export default function NavigatorLayout({
   children,
@@ -22,6 +23,7 @@ export default function NavigatorLayout({
             {children}
           </main>
           {/* Footer has been moved to navigator/page.tsx to be within SidebarInset */}
+          <Chatbot />
         </div>
       </SidebarProvider>
     </AnimationProvider>
