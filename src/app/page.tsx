@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -23,7 +22,7 @@ const LandingHeader = () => (
 );
 
 const LandingFooter = () => {
-  const [year, setYear] = useState(new Date().getFullYear());
+  const [year, setYear] = useState<number | null>(null);
 
   useEffect(() => {
     setYear(new Date().getFullYear());

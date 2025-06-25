@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, Fragment } from 'react';
@@ -42,7 +41,7 @@ export default function NavigatorPage() {
 
   const [effortEstimationResult, setEffortEstimationResult] = useState<EstimateEffortOutput | null>(null);
 
-  const [year, setYear] = useState(new Date().getFullYear());
+  const [year, setYear] = useState<number | null>(null);
   useEffect(() => {
     setYear(new Date().getFullYear());
   }, []);
