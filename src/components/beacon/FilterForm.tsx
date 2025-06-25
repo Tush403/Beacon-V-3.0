@@ -358,8 +358,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
           <span className="font-semibold">Filters Cleared</span>
         </div>
       ),
-      description: 'All your filter selections have been reset.',
-      duration: 2000,
+      duration: 1000,
     });
   };
 
