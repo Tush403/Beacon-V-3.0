@@ -18,7 +18,7 @@ export default function NavigatorLayout({
       <SidebarProvider defaultOpen={true}>
         <div className="flex w-full flex-col min-h-screen bg-background">
           <AppHeader />
-          <main className="flex-grow flex"> {/* Added flex to allow sidebar and main content to fill height */}
+          <main className="flex-grow flex min-h-0"> {/* Added flex to allow sidebar and main content to fill height */}
             {children}
           </main>
           {/* Footer has been moved to navigator/page.tsx to be within SidebarInset */}
