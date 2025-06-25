@@ -351,7 +351,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
     form.reset(defaultFormValues);
     onClearEstimation();
     toast({
-      variant: 'success',
       title: (
         <div className="flex items-center gap-2">
           <CheckCircle className="h-5 w-5" />
@@ -359,6 +358,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
         </div>
       ),
       duration: 1000,
+      className: "bg-accent text-accent-foreground border-transparent",
     });
   };
 
