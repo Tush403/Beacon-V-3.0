@@ -2,7 +2,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useFormContext } from 'react-hook-form';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -113,6 +113,112 @@ const defaultFormValues: FilterFormValues = {
   qaTeamSize: undefined,
 };
 
+const ToolCombobox = ({
+  fieldName,
+  placeholder,
+}: {
+  fieldName: 'automationTool';
+  placeholder: string;
+}) => {
+  const form = useFormContext<FilterFormValues>();
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+
+  const currentFieldValue = form.watch(fieldName);
+
+  useEffect(() => {
+      const selectedOption = automationToolOptions.find(opt => opt.value === currentFieldValue);
+      setSearchValue(selectedOption ? selectedOption.label : currentFieldValue || '');
+  }, [currentFieldValue, popoverOpen]);
+  
+  return (
+    <FormField
+      control={form.control}
+      name={fieldName}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Automation Tool (Optional)</FormLabel>
+          <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+            <PopoverTrigger asChild>
+              <FormControl>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={popoverOpen}
+                  className={cn(
+                    "w-full justify-between items-center text-xs h-9 px-2 py-2 font-normal",
+                    !field.value && "text-muted-foreground"
+                  )}
+                >
+                  <span className="line-clamp-1 text-left">
+                    {field.value
+                      ? automationToolOptions.find(option => option.value === field.value)?.label || String(field.value)
+                      : placeholder}
+                  </span>
+                  
+                </Button>
+              </FormControl>
+            </PopoverTrigger>
+            <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+              <Command shouldFilter={false}>
+                <CommandInput
+                  placeholder="Search tool or type custom..."
+                  className="text-xs"
+                  value={searchValue}
+                  onValueChange={setSearchValue}
+                />
+                <CommandEmpty>
+                  {searchValue.trim() && !automationToolOptions.some(opt => opt.label.toLowerCase() === searchValue.trim().toLowerCase())
+                    ? `No tool found. Click to use "${searchValue.trim()}"`
+                    : "No tool found."}
+                </CommandEmpty>
+                <CommandList>
+                  {automationToolOptions
+                    .filter(option => option.label.toLowerCase().includes(searchValue.toLowerCase().trim()))
+                    .map((option) => (
+                    <CommandItem
+                      key={option.value}
+                      value={option.label} 
+                      onSelect={() => {
+                        form.setValue(fieldName, option.value, { shouldValidate: true });
+                        setPopoverOpen(false);
+                      }}
+                      className="text-xs"
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          field.value === option.value ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      {option.label}
+                    </CommandItem>
+                  ))}
+                  {searchValue.trim() && !automationToolOptions.some(opt => opt.label.toLowerCase() === searchValue.trim().toLowerCase()) && (
+                    <CommandItem
+                      key={searchValue.trim()}
+                      value={searchValue.trim()}
+                      onSelect={() => {
+                        form.setValue(fieldName, searchValue.trim(), { shouldValidate: true });
+                        setPopoverOpen(false);
+                      }}
+                      className="text-xs"
+                    >
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      Use custom tool: "{searchValue.trim()}"
+                    </CommandItem>
+                  )}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+};
+
 export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, estimationResult, onClearEstimation }: FilterFormProps) {
   const form = useForm<FilterFormValues>({
     resolver: zodResolver(filterSchema),
@@ -120,8 +226,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
   });
   const { toast } = useToast();
 
-  const [automationToolPopoverOpen, setAutomationToolPopoverOpen] = useState(false);
-  const [automationToolSearch, setAutomationToolSearch] = useState('');
   const estimatorRef = useRef<HTMLDivElement>(null);
   const advancedFiltersRef = useRef<HTMLDivElement>(null);
 
@@ -245,7 +349,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
 
   const handleResetAllFilters = () => {
     form.reset(defaultFormValues); 
-    setAutomationToolSearch('');
     onClearEstimation();
     toast({
         title: "Filters Cleared",
@@ -254,121 +357,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
   };
 
 
-  const renderToolCombobox = (
-    fieldName: "automationTool",
-    popoverOpen: boolean,
-    setPopoverOpen: (open: boolean) => void,
-    placeholder: string,
-    currentSearchValue: string,
-    setCurrentSearchValue: (value: string) => void
-  ) => {
-    const currentFieldValue = form.watch(fieldName);
-
-    useEffect(() => {
-      if (popoverOpen) {
-        const selectedOption = automationToolOptions.find(opt => opt.value === currentFieldValue);
-        setCurrentSearchValue(selectedOption ? selectedOption.label : currentFieldValue || '');
-      }
-    }, [popoverOpen, currentFieldValue, setCurrentSearchValue]);
-    
-    return (
-      <FormField
-        control={form.control}
-        name={fieldName}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Automation Tool (Optional)</FormLabel>
-            <Popover open={popoverOpen} onOpenChange={(isOpen) => {
-              setPopoverOpen(isOpen);
-              if (!isOpen) { 
-                const selectedOption = automationToolOptions.find(opt => opt.value === field.value);
-                setCurrentSearchValue(selectedOption ? selectedOption.label : field.value || '');
-              } else { 
-                 const selectedOption = automationToolOptions.find(opt => opt.value === field.value);
-                 setCurrentSearchValue(selectedOption ? selectedOption.label : field.value || '');
-              }
-            }}>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={popoverOpen}
-                    className={cn(
-                      "w-full justify-between items-center text-xs h-9 px-2 py-2 font-normal",
-                      !field.value && "text-muted-foreground"
-                    )}
-                  >
-                    <span className="line-clamp-1 text-left">
-                      {field.value
-                        ? automationToolOptions.find(option => option.value === field.value)?.label || String(field.value)
-                        : placeholder}
-                    </span>
-                    
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-                <Command shouldFilter={false}>
-                  <CommandInput
-                    placeholder="Search tool or type custom..."
-                    className="text-xs"
-                    value={currentSearchValue}
-                    onValueChange={setCurrentSearchValue}
-                  />
-                  <CommandEmpty>
-                    {currentSearchValue.trim() && !automationToolOptions.some(opt => opt.label.toLowerCase() === currentSearchValue.trim().toLowerCase())
-                      ? `No tool found. Click to use "${currentSearchValue.trim()}"`
-                      : "No tool found."}
-                  </CommandEmpty>
-                  <CommandList>
-                    {automationToolOptions
-                      .filter(option => option.label.toLowerCase().includes(currentSearchValue.toLowerCase().trim()))
-                      .map((option) => (
-                      <CommandItem
-                        key={option.value}
-                        value={option.label} 
-                        onSelect={() => {
-                          form.setValue(fieldName, option.value, { shouldValidate: true });
-                          setCurrentSearchValue(option.label);
-                          setPopoverOpen(false);
-                        }}
-                        className="text-xs"
-                      >
-                        <Check
-                          className={cn(
-                            "mr-2 h-4 w-4",
-                            field.value === option.value ? "opacity-100" : "opacity-0"
-                          )}
-                        />
-                        {option.label}
-                      </CommandItem>
-                    ))}
-                    {currentSearchValue.trim() && !automationToolOptions.some(opt => opt.label.toLowerCase() === currentSearchValue.trim().toLowerCase()) && (
-                      <CommandItem
-                        key={currentSearchValue.trim()}
-                        value={currentSearchValue.trim()}
-                        onSelect={() => {
-                          form.setValue(fieldName, currentSearchValue.trim(), { shouldValidate: true });
-                          setPopoverOpen(false);
-                        }}
-                        className="text-xs"
-                      >
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Use custom tool: "{currentSearchValue.trim()}"
-                      </CommandItem>
-                    )}
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    );
-  };
-  
   const RecommendationActionButtons = () => (
     <div className="space-y-3 pt-6 border-t mt-4">
       <Button type="submit" className="w-full" variant="accent" disabled={isLoading}>
@@ -512,14 +500,10 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
                   <p className="text-xs text-muted-foreground">
                     Provide project details to get an effort estimation.
                   </p>
-                  {renderToolCombobox(
-                    "automationTool",
-                    automationToolPopoverOpen,
-                    setAutomationToolPopoverOpen,
-                    "Select a tool or type custom",
-                    automationToolSearch,
-                    setAutomationToolSearch
-                  )}
+                  <ToolCombobox
+                    fieldName="automationTool"
+                    placeholder="Select a tool or type custom"
+                  />
 
                   <FormField
                     control={form.control}
