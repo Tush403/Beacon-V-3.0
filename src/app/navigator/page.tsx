@@ -33,6 +33,7 @@ export default function NavigatorPage() {
   const [comparisonData, setComparisonData] = useState<CompareToolsOutput | null>(null);
   const [comparedToolNames, setComparedToolNames] = useState<string[]>([]);
   const [comparisonError, setComparisonError] = useState<string | null>(null);
+  const [isInitialComparisonLoading, setIsInitialComparisonLoading] = useState(true);
 
   const [hasInteracted, setHasInteracted] = useState(false);
   const [loadingState, setLoadingState] = useState<'idle' | 'loading' | 'finished'>('idle');
@@ -110,6 +111,8 @@ export default function NavigatorPage() {
     }
   };
 
+  const [isLoadingAnalysis, setIsLoadingAnalysis] = useState<Record<string, boolean>>({});
+  
   const handleGetAnalysis = async (toolName: string) => {
     if (toolAnalyses[toolName]) return; 
 
@@ -174,8 +177,6 @@ export default function NavigatorPage() {
     }
   };
 
-  const [isLoadingAnalysis, setIsLoadingAnalysis] = useState<Record<string, boolean>>({});
-  
   const loadDefaultResults = useCallback(async () => {
     setHasInteracted(true);
     setLoadingState('loading');
@@ -226,8 +227,51 @@ export default function NavigatorPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast]);
 
+  // On initial mount, load default results WITHOUT the full-screen animation.
   useEffect(() => {
-    loadDefaultResults();
+    setHasInteracted(true);
+    setIsInitialComparisonLoading(true);
+    const defaultRecommendations: ToolRecommendationItem[] = [
+      {
+        toolName: 'Functionize',
+        score: 95,
+        justification: 'An AI-powered testing platform ideal for web applications that automates test creation and maintenance.',
+      },
+      {
+        toolName: 'ZeTA Automation',
+        score: 92,
+        justification: 'A unified, open-source framework for high reusability and comprehensive test coverage across multiple application layers.',
+      },
+      {
+        toolName: 'Selenium',
+        score: 90,
+        justification: 'A highly flexible, open-source framework for web browser automation with extensive community support.',
+      },
+    ];
+    
+    setRecommendations(defaultRecommendations);
+    setFilters(initialFilterValues);
+    const toolNames = defaultRecommendations.map(r => r.toolName);
+    setComparedToolNames(toolNames);
+    
+    const fetchInitialComparison = async () => {
+      try {
+        const comparisonInput: CompareToolsInput = { toolNames };
+        const comparisonResult = await compareToolsAction(comparisonInput);
+        setComparisonData(comparisonResult);
+      } catch (e: any) {
+        setComparisonError(e.message || 'An unknown error occurred while fetching default comparison data.');
+        toast({
+          title: 'Error',
+          description: e.message || 'Failed to get default tool comparison.',
+          variant: 'destructive',
+        });
+      } finally {
+        setIsInitialComparisonLoading(false);
+      }
+    };
+    
+    fetchInitialComparison();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -281,12 +325,13 @@ export default function NavigatorPage() {
                       <p>{comparisonError}</p>
                     </div>
                   )}
-                  {comparisonData && !comparisonError && (
+                  {!comparisonError && (
                     <ToolComparisonTable 
                       data={comparisonData} 
                       toolNames={comparedToolNames}
                       allTools={automationToolOptions}
                       onToolChange={handleComparisonToolChange}
+                      isLoading={isInitialComparisonLoading}
                     />
                   )}
                   

@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -16,15 +15,54 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Info, Download, Star } from 'lucide-react';
 import type { CompareToolsOutput } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ToolComparisonTableProps {
-  data: CompareToolsOutput;
+  data: CompareToolsOutput | null;
   toolNames: string[];
   allTools: { value: string; label: string; }[];
   onToolChange: (index: number, newToolValue: string) => void;
+  isLoading?: boolean;
 }
 
-export function ToolComparisonTable({ data, toolNames, allTools, onToolChange }: ToolComparisonTableProps) {
+const ComparisonTableSkeleton = ({ toolNames }: { toolNames: string[] }) => (
+  <Card className="shadow-lg w-full">
+    <CardHeader>
+      <Skeleton className="h-7 w-1/2 mb-2" />
+      <Skeleton className="h-4 w-3/4" />
+    </CardHeader>
+    <CardContent>
+      <div className="border rounded-lg overflow-hidden">
+        <Table>
+          <TableHeader className="bg-muted/50">
+            <TableRow>
+              <TableHead className="min-w-[180px] p-3">
+                <Skeleton className="h-5 w-24" />
+              </TableHead>
+              {toolNames.map((_, index) => (
+                <TableHead key={index} className="min-w-[250px] p-2">
+                  <Skeleton className="h-9 w-full" />
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {[...Array(6)].map((_, i) => (
+              <TableRow key={i}>
+                <TableCell className="p-3"><Skeleton className="h-5 w-32" /></TableCell>
+                {toolNames.map((_, j) => (
+                  <TableCell key={j} className="p-3"><Skeleton className="h-5 w-full" /></TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </CardContent>
+  </Card>
+);
+
+export function ToolComparisonTable({ data, toolNames, allTools, onToolChange, isLoading }: ToolComparisonTableProps) {
   const { toast } = useToast();
 
   const handleExportCSV = () => {
@@ -66,18 +104,12 @@ export function ToolComparisonTable({ data, toolNames, allTools, onToolChange }:
     });
   };
 
+  if (isLoading) {
+    return <ComparisonTableSkeleton toolNames={toolNames} />;
+  }
+
   if (!data || !data.comparisonTable || data.comparisonTable.length === 0) {
-    return (
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl font-headline text-foreground">
-            <Star className="h-6 w-6 text-primary" />
-            Tool Comparison
-          </CardTitle>
-          <CardDescription>No comparison data available.</CardDescription>
-        </CardHeader>
-      </Card>
-    );
+    return null; // Return null if there's no data and it's not loading, navigator page handles error display
   }
 
   const { comparisonTable, toolOverviews } = data;
@@ -96,7 +128,7 @@ export function ToolComparisonTable({ data, toolNames, allTools, onToolChange }:
                 Tool Comparison Table
             </CardTitle>
             <CardDescription className="mt-1">
-                Compare tools side-by-side. The first tool is based on your filters. Click tool names to see more details.
+                Compare tools side-by-side. You can change tools from the dropdowns to update the comparison.
             </CardDescription>
         </div>
         <Button variant="outline" onClick={handleExportCSV}>
