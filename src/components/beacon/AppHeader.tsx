@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -99,7 +100,7 @@ export function AppHeader() {
   return (
     <>
       <TooltipProvider delayDuration={100}>
-        <header className="bg-primary text-primary-foreground border-b border-primary/90 shadow-lg sticky top-0 z-40">
+        <header className="bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg sticky top-0 z-40">
           <div className="py-3 px-4 md:px-8 flex items-center">
             {/* Left Side: TAO Digital Branding */}
             <div className="flex items-center gap-3">
