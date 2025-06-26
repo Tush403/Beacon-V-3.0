@@ -48,9 +48,9 @@ export async function recommendToolsAction(filters: RecommendToolsInput): Promis
           justification: 'Provides robust, reliable end-to-end testing for modern web apps across all major browsers.',
         },
         {
-          toolName: 'Postman',
-          score: 91,
-          justification: 'The industry standard for API testing, offering a complete platform for the API lifecycle.',
+          toolName: 'Selenium',
+          score: 90,
+          justification: 'A highly flexible and widely-used open-source framework for web browser automation with extensive community support.',
         },
       ],
     };
@@ -86,8 +86,8 @@ export async function recommendToolsAction(filters: RecommendToolsInput): Promis
        if (toolNameLower === 'playwright') {
         return { ...rec, score: 92 };
       }
-       if (toolNameLower === 'postman') {
-        return { ...rec, score: 91 };
+       if (toolNameLower === 'selenium') {
+        return { ...rec, score: 90 };
       }
       return rec;
     });
