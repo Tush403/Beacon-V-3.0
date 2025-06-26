@@ -148,20 +148,17 @@ export async function generateToolAnalysisAction(input: GenerateToolAnalysisInpu
 export async function getToolDetailsAction(input: GetToolDetailsInput): Promise<GetToolDetailsOutput> {
     try {
         const result = await genkitGetToolDetails(input);
-        if (!result || !result.overview || !result.details || result.details.length === 0) {
+        if (!result || !result.overview || !result.detailedAnalysis) {
             throw new Error('AI response for tool details was incomplete.');
         }
         return result;
     } catch (error) {
         console.error(`Error getting tool details for ${input.toolName}:`, error);
-        // Provide a structured mock/fallback response
+        // Provide a structured mock/fallback response that matches the schema
         return {
             toolName: `${input.toolName} (Error)`,
             overview: `An error occurred while fetching details for ${input.toolName}. The information could not be retrieved. Please try again later.`,
-            details: [
-                { criterionName: 'Status', value: 'Data temporarily unavailable.' },
-                { criterionName: 'Reason', value: `An internal error prevented the retrieval of tool-specific data. ${error instanceof Error ? error.message : ''}` },
-            ]
+            detailedAnalysis: `An internal error prevented the retrieval of tool-specific data. ${error instanceof Error ? error.message : ''}`
         };
     }
 }
