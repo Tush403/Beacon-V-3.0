@@ -53,11 +53,6 @@ const recommendToolsPrompt = ai.definePrompt({
   Pricing Model: {{{pricingModel}}}
   Reporting & Analytics Capabilities: {{{reportingAnalytics}}}
 
-  {{#if applicationSubCategory}}Advanced - Application Sub-Category: {{{applicationSubCategory}}}{{/if}}
-  {{#if integrationCapabilities}}Advanced - Integration Capabilities: {{{integrationCapabilities}}}{{/if}}
-  {{#if teamSizeSuitability}}Advanced - Team Size Suitability: {{{teamSizeSuitability}}}{{/if}}
-  {{#if keyFeatureFocus}}Advanced - Key Feature Focus: {{{keyFeatureFocus}}}{{/if}}
-
   Consider the following tool profiles when making recommendations:
   **Tool: ZeTA Automation**
   - Best for: Enterprise-level projects needing unified testing across UI, API, DB, and Security.
@@ -140,7 +135,7 @@ const recommendToolsPrompt = ai.definePrompt({
   - Key Features: Auto-waits, reliable execution, cross-browser support (Chromium, Firefox, WebKit), network interception.
 
   If a criterion is set to 'all', 'any', a generic placeholder like 'All Applications', or is not provided, consider it as not a strong preference or applicable to all options for that category.
-  Focus on tools that best match the specified criteria. If advanced criteria are provided, give them significant weight.
+  Focus on tools that best match the specified criteria.
   
   When 'Web Applications' is selected as the Application Under Test, you MUST prioritize tools with strong web automation capabilities like Selenium, Cypress, Playwright, and Functionize.
   When 'API Testing' is selected, you should strongly consider tools like ZeTA Automation and others known for robust API capabilities.
@@ -163,3 +158,4 @@ const recommendToolsFlow = ai.defineFlow(
   }
 );
 
+    

@@ -36,12 +36,6 @@ export const RecommendToolsInputSchema = z.object({
   pricingModel: z.string().describe('The preferred pricing model for the tool (e.g., "Open Source", "Subscription", "Perpetual License", "Any Model").'),
   reportingAnalytics: z.string().describe('The required level of reporting and analytics capabilities (e.g., "Basic Reporting", "Advanced Analytics", "Dashboard Integration", "Any Analytics").'),
   
-  // Advanced Filters
-  applicationSubCategory: z.string().optional().describe('Specific sub-category or industry for the application under test (e.g., "E-commerce", "Healthcare", "Fintech", "Any").'),
-  integrationCapabilities: z.string().optional().describe('Key integration capabilities required (e.g., "Jira", "Jenkins/CI-CD", "Test Management Tools", "Any").'),
-  teamSizeSuitability: z.string().optional().describe('The size of the team that will be using the tool (e.g., "Small Team (2-10)", "Enterprise (>200)", "Any").'),
-  keyFeatureFocus: z.string().optional().describe('A specific key feature or testing focus area (e.g., "Visual Regression Testing", "BDD Support", "AI-assisted Scripting", "Any").'),
-
   // AI Effort Estimator Fields (also part of RecommendToolsInput as they are on the same form)
   automationTool: z.string().optional().describe('Selected automation tool for effort estimation.'),
   complexityLow: z.number().optional().describe('Number of low complexity test cases.'),
@@ -175,3 +169,5 @@ export const SupportChatOutputSchema = z.object({
   response: z.string().describe('The chatbot\'s response.'),
 });
 export type SupportChatOutput = z.infer<typeof SupportChatOutputSchema>;
+
+    

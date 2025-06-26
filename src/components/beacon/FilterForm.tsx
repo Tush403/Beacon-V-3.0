@@ -62,12 +62,6 @@ const filterSchema = z.object({
   pricingModel: z.string().min(1, 'Please select an option').default('any'),
   reportingAnalytics: z.string().min(1, 'Please select an option').default('any'),
 
-  // Advanced Filters
-  applicationSubCategory: z.string().optional().default('any'),
-  integrationCapabilities: z.string().optional().default('any'),
-  teamSizeSuitability: z.string().optional().default('any'),
-  keyFeatureFocus: z.string().optional().default('any'),
-
   automationTool: z.string().optional(),
   complexityLow: z.coerce.number().min(0, 'Must be zero or positive').optional(),
   complexityMedium: z.coerce.number().min(0, 'Must be zero or positive').optional(),
@@ -97,11 +91,6 @@ const defaultFormValues: FilterFormValues = {
   codingLanguage: 'any',
   pricingModel: 'any',
   reportingAnalytics: 'any',
-
-  applicationSubCategory: 'any',
-  integrationCapabilities: 'any',
-  teamSizeSuitability: 'any',
-  keyFeatureFocus: 'any',
 
   automationTool: undefined,
   complexityLow: undefined,
@@ -227,7 +216,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
   const { toast } = useToast();
 
   const estimatorRef = useRef<HTMLDivElement>(null);
-  const advancedFiltersRef = useRef<HTMLDivElement>(null);
 
 
   const handleGetEstimate = () => {
@@ -301,51 +289,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
       { value: 'integration', label: 'Integration with BI Tools' },
     ],
   };
-
-  const advancedFilterOptions = {
-    applicationSubCategory: [
-        { value: 'any', label: 'Any Sub-Category' },
-        { value: 'e-commerce', label: 'E-commerce' },
-        { value: 'healthcare', label: 'Healthcare' },
-        { value: 'fintech', label: 'Fintech' },
-        { value: 'saas', label: 'SaaS' },
-        { value: 'gaming', label: 'Gaming' },
-        { value: 'media-entertainment', label: 'Media/Entertainment' },
-        { value: 'social-media', label: 'Social Media' },
-        { value: 'education', label: 'Education' },
-        { value: 'travel-hospitality', label: 'Travel/Hospitality' },
-        { value: 'other-specific', label: 'Other Specific Industry' },
-    ],
-    integrationCapabilities: [
-        { value: 'any', label: 'Any Integrations' },
-        { value: 'jira', label: 'Jira' },
-        { value: 'jenkins-ci-cd', label: 'Jenkins / General CI/CD' },
-        { value: 'slack-teams', label: 'Slack / Teams' },
-        { value: 'git', label: 'Version Control (Git)' },
-        { value: 'test-management', label: 'Test Management Tools (e.g., TestRail, Zephyr)' },
-        { value: 'bi-tools', label: 'BI Tools (e.g., Tableau, PowerBI)' },
-    ],
-    teamSizeSuitability: [
-        { value: 'any', label: 'Any Team Size' },
-        { value: 'individual', label: 'Individual Developer' },
-        { value: 'small-team', label: 'Small Team (2-10)' },
-        { value: 'medium-team', label: 'Medium Team (11-50)' },
-        { value: 'large-team', label: 'Large Team (51-200)' },
-        { value: 'enterprise', label: 'Enterprise (>200)' },
-    ],
-    keyFeatureFocus: [
-        { value: 'any', label: 'Any Key Feature' },
-        { value: 'visual-regression', label: 'Visual Regression Testing' },
-        { value: 'bdd-support', label: 'BDD Support (Cucumber, SpecFlow)' },
-        { value: 'ai-scripting', label: 'AI-assisted Scripting/Maintenance' },
-        { value: 'cross-platform-cloud', label: 'Cross-browser/Device Cloud Execution' },
-        { value: 'api-mocking', label: 'API Mocking/Service Virtualization' },
-        { value: 'security-focus', label: 'Security Testing Features (SAST/DAST)' },
-        { value: 'performance-focus', label: 'Performance/Load Testing Focus' },
-        { value: 'accessibility-focus', label: 'Accessibility Testing Features' },
-    ],
-  };
-
 
   const handleResetAllFilters = () => {
     form.reset(defaultFormValues);
@@ -430,59 +373,6 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
               <RecommendationActionButtons />
             </AccordionContent>
           </AccordionItem>
-
-          <AccordionItem value="advanced-filters" ref={advancedFiltersRef}>
-            <AccordionTrigger
-              onClick={() => {
-                setTimeout(() => {
-                  advancedFiltersRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 150);
-              }}
-            >
-              <div className="flex items-center text-base font-semibold text-foreground hover:no-underline">
-                <SlidersHorizontal className="mr-2 h-5 w-5" />
-                Advanced Filters
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="px-2 pt-4 pb-4 space-y-4">
-              {(Object.keys(advancedFilterOptions) as Array<keyof typeof advancedFilterOptions>)
-              .map((key) => (
-                <FormField
-                  key={key}
-                  control={form.control}
-                  name={key as keyof FilterFormValues}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}
-                      </FormLabel>
-                      <Select
-                          onValueChange={field.onChange}
-                          value={field.value?.toString() ?? ""}
-                          disabled={isLoading}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder={advancedFilterOptions[key as keyof typeof advancedFilterOptions].find(opt => opt.value === defaultFormValues[key as keyof FilterFormValues])?.label || "Select an option"} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {advancedFilterOptions[key as keyof typeof advancedFilterOptions].map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ))}
-               <RecommendationActionButtons />
-            </AccordionContent>
-          </AccordionItem>
-
 
           <AccordionItem value="ai-estimator" ref={estimatorRef}>
             <AccordionTrigger onClick={() => {
@@ -644,3 +534,5 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
     </Form>
   );
 }
+
+    
