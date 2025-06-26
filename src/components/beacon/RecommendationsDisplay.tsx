@@ -134,13 +134,7 @@ export function RecommendationsDisplay({
   }
 
   if (recommendations.length === 0) {
-    return (
-        <div className="mt-8 text-center py-8">
-            <Lightbulb className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
-            <h3 className="text-lg font-semibold text-muted-foreground">Ready to Discover?</h3>
-            <p className="text-sm text-muted-foreground">Use the filters to find your ideal test automation tools.</p>
-        </div>
-    );
+    return null;
   }
 
   const selectedTool = sortedRecommendations.find(r => r.toolName === selectedToolName) || sortedRecommendations[0];
