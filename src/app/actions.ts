@@ -10,6 +10,29 @@ import { supportChat as genkitSupportChat, SupportChatInput, SupportChatOutput }
 
 
 export async function recommendToolsAction(filters: RecommendToolsInput): Promise<RecommendToolsOutput> {
+  // Handle AI/ML selection first with a curated list for accuracy
+  if (filters.codingRequirement === 'ai-ml') {
+    return {
+      recommendations: [
+        {
+          toolName: 'Functionize',
+          score: 95,
+          justification: 'A leading AI-powered platform for web testing that automates test creation and maintenance.',
+        },
+        {
+          toolName: 'Mabl',
+          score: 92,
+          justification: 'Uses AI for low-code test automation, offering intelligent, self-healing tests for web applications.',
+        },
+        {
+          toolName: 'Testim',
+          score: 90,
+          justification: 'AI-based test automation that speeds up authoring, execution, and maintenance of tests.',
+        },
+      ],
+    };
+  }
+
   // Hardcode specific results for Web or UI testing
   if (filters.applicationUnderTest.toLowerCase().includes('web') || filters.testType.toLowerCase().includes('ui')) {
     return {
