@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -11,115 +12,144 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, Sparkles, FileText, ExternalLink, AlertCircle } from 'lucide-react';
+import { Loader2, Component, ExternalLink, CheckCircle, XCircle, Eye } from 'lucide-react';
 import type { ToolRecommendationItem, ToolAnalysisItem, DocumentationLink } from '@/types';
-import { Progress } from '@/components/ui/progress';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ToolCardProps {
   tool: ToolRecommendationItem;
   analysis?: ToolAnalysisItem | null;
   docLink?: DocumentationLink | null;
-  onGetAnalysis: (toolName: string) => void;
   isAnalysisLoading: boolean;
-  rank: number;
+}
+
+const AnalysisContent = ({ analysis, isAnalysisLoading }: { analysis?: ToolAnalysisItem | null, isAnalysisLoading: boolean }) => {
+  if (isAnalysisLoading && !analysis) {
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-5/6" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-5/6" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!analysis) {
+    return (
+      <div className="text-center text-muted-foreground py-8">
+        <p>Analysis for {name} is being loaded...</p>
+      </div>
+    );
+  }
+
+  const strengths = analysis.strengths?.split('\n').filter(s => s.trim() !== '') || [];
+  const weaknesses = analysis.weaknesses?.split('\n').filter(w => w.trim() !== '') || [];
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+        <div>
+          <h4 className="font-semibold text-base flex items-center gap-2 text-green-600 dark:text-green-500 mb-2">
+            <CheckCircle className="h-5 w-5" />
+            Strengths
+          </h4>
+          <ul className="list-none space-y-1.5 text-sm text-muted-foreground">
+            {strengths.map((item, index) => (
+              <li key={`str-${index}`} className="flex items-start">
+                <span className="mr-2 mt-1">•</span>
+                <span>{item}</span>
+              </li>
+            ))}
+            {strengths.length === 0 && <li>No specific strengths listed.</li>}
+          </ul>
+        </div>
+        <div>
+          <h4 className="font-semibold text-base flex items-center gap-2 text-red-600 dark:text-red-500 mb-2">
+            <XCircle className="h-5 w-5" />
+            Weaknesses
+          </h4>
+          <ul className="list-none space-y-1.5 text-sm text-muted-foreground">
+            {weaknesses.map((item, index) => (
+              <li key={`wk-${index}`} className="flex items-start">
+                <span className="mr-2 mt-1">•</span>
+                <span>{item}</span>
+              </li>
+            ))}
+            {weaknesses.length === 0 && <li>No specific weaknesses listed.</li>}
+          </ul>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 pt-4 border-t">
+        <div>
+            <h4 className="font-semibold text-sm text-foreground">Application Types</h4>
+            <p className="text-sm text-muted-foreground">{analysis.applicationTypes?.join(', ') || 'N/A'}</p>
+        </div>
+        <div>
+            <h4 className="font-semibold text-sm text-foreground">Test Types</h4>
+            <p className="text-sm text-muted-foreground">{analysis.testTypes?.join(', ') || 'N/A'}</p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function ToolCard({
   tool,
   analysis,
   docLink,
-  onGetAnalysis,
   isAnalysisLoading,
-  rank
 }: ToolCardProps) {
-  const cardBorderColor = rank === 1 ? "border-accent" : rank === 2 ? "border-primary" : "border-border";
 
   return (
-    <Card className={`shadow-lg transition-all duration-300 hover:shadow-xl flex flex-col h-full ${cardBorderColor} border-2`}>
-      <CardHeader className="pb-4">
-        <div className="flex justify-between items-start">
-          <div>
-            <CardTitle className="text-2xl font-headline text-foreground">{tool.toolName}</CardTitle>
-            <CardDescription className="text-sm">AI Justification: {tool.justification}</CardDescription>
-          </div>
-          <Badge variant={rank === 1 ? "default" : "secondary"} className={`text-lg px-3 py-1 ${rank === 1 ? 'bg-accent text-accent-foreground' : 'bg-primary text-primary-foreground'}`}>
-            Rank #{rank}
-          </Badge>
-        </div>
-        <div className="mt-2">
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-sm font-medium text-muted-foreground">Suitability Score</span>
-            <span className="text-lg font-bold text-accent">{tool.score}%</span>
-          </div>
-          <Progress value={tool.score} aria-label={`Suitability score: ${tool.score}%`} className="w-full h-3 [&>div]:bg-gradient-to-r [&>div]:from-secondary [&>div]:to-primary" />
+    <Card className="shadow-none border rounded-lg">
+      <CardHeader>
+        <div className="flex items-center gap-4">
+            <div className="p-3 bg-muted rounded-lg">
+                <Component className="h-8 w-8 text-primary" />
+            </div>
+            <div>
+                <CardTitle className="text-2xl font-headline text-foreground">{tool.toolName}</CardTitle>
+                <CardDescription className="text-base">
+                    Overall Score: <span className="font-bold text-accent">{(tool.score / 10).toFixed(1)}/10</span>
+                </CardDescription>
+            </div>
         </div>
       </CardHeader>
-      <CardContent className="flex-grow">
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="analysis">
-            <AccordionTrigger
-              onClick={() => {
-                if (!analysis && !isAnalysisLoading) {
-                  onGetAnalysis(tool.toolName);
-                }
-              }}
-              className="text-left hover:no-underline"
-              disabled={isAnalysisLoading && !analysis}
-            >
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-accent" />
-                AI-Generated Analysis
-                {isAnalysisLoading && !analysis && <Loader2 className="h-4 w-4 animate-spin ml-2" />}
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="pt-2">
-              {isAnalysisLoading && !analysis ? (
-                <div className="space-y-2 mt-2">
-                  <div className="h-4 bg-muted rounded w-3/4 animate-pulse"></div>
-                  <div className="h-4 bg-muted rounded w-1/2 animate-pulse"></div>
-                </div>
-              ) : analysis ? (
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <h4 className="font-semibold text-primary">Strengths:</h4>
-                    <p className="text-muted-foreground whitespace-pre-line">{analysis.strengths}</p>
-                  </div>
-                  <Separator />
-                  <div>
-                    <h4 className="font-semibold text-destructive">Weaknesses:</h4>
-                    <p className="text-muted-foreground whitespace-pre-line">{analysis.weaknesses}</p>
-                  </div>
-                </div>
-              ) : (
-                 <div className="flex items-center text-muted-foreground text-sm">
-                    <AlertCircle className="h-4 w-4 mr-2"/> Click to load analysis.
-                 </div>
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+      <CardContent>
+        <AnalysisContent analysis={analysis} isAnalysisLoading={isAnalysisLoading} />
       </CardContent>
-      <CardFooter className="pt-4 mt-auto border-t">
-        {docLink ? (
-          <Button variant="outline" asChild className="w-full">
+      <CardFooter className="pt-6 mt-auto border-t bg-muted/30 flex justify-end gap-2 px-6 py-4">
+        {docLink && (
+          <Button variant="outline" asChild>
             <a href={docLink.url} target="_blank" rel="noopener noreferrer">
-              <FileText className="mr-2 h-4 w-4" />
-              Visit Official Website
-              <ExternalLink className="ml-auto h-4 w-4 opacity-70" />
+              <ExternalLink className="mr-2" />
+              Visit Website
             </a>
           </Button>
-        ) : (
-            <Button variant="outline" disabled className="w-full">
-                <FileText className="mr-2 h-4 w-4" />
-                Documentation N/A
-            </Button>
         )}
+        <Button variant="default" disabled>
+            <Eye className="mr-2" />
+            View Full Details
+        </Button>
       </CardFooter>
     </Card>
   );

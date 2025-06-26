@@ -16,18 +16,18 @@ export async function recommendToolsAction(filters: RecommendToolsInput): Promis
       recommendations: [
         {
           toolName: 'Functionize',
-          score: 90,
+          score: 93,
           justification: 'Excellent for web UI testing with its AI-powered, low-code platform for rapid creation and maintenance.',
         },
         {
-          toolName: 'ZeTA Automation',
-          score: 85,
-          justification: 'Provides robust, reusable components for comprehensive web UI test automation across enterprise applications.',
+          toolName: 'Playwright',
+          score: 92,
+          justification: 'Provides robust, reliable end-to-end testing for modern web apps across all major browsers.',
         },
         {
-          toolName: 'Selenium',
-          score: 80,
-          justification: 'The industry standard for web browser automation, offering unparalleled flexibility and cross-browser support.',
+          toolName: 'Postman',
+          score: 91,
+          justification: 'The industry standard for API testing, offering a complete platform for the API lifecycle.',
         },
       ],
     };
@@ -58,7 +58,13 @@ export async function recommendToolsAction(filters: RecommendToolsInput): Promis
     processedRecommendations = processedRecommendations.map(rec => {
       const toolNameLower = rec.toolName.toLowerCase().trim();
       if (toolNameLower === 'functionize') {
-        return { ...rec, score: 90 };
+        return { ...rec, score: 93 };
+      }
+       if (toolNameLower === 'playwright') {
+        return { ...rec, score: 92 };
+      }
+       if (toolNameLower === 'postman') {
+        return { ...rec, score: 91 };
       }
       return rec;
     });
@@ -95,9 +101,11 @@ export async function generateToolAnalysisAction(input: GenerateToolAnalysisInpu
      if (!result || !result.strengths || !result.weaknesses) {
       console.warn('AI analysis came back empty or failed, providing mock data for:', input.toolName);
       return {
-        toolName: input.toolName, // Include toolName in mock response
+        toolName: input.toolName,
         strengths: `Mock Strength: ${input.toolName} is highly adaptable and supports various plugins. It has a strong community and performs well under load.`,
-        weaknesses: `Mock Weakness: ${input.toolName} can have a steep learning curve for beginners and may require significant setup for complex projects. Documentation could be improved.`
+        weaknesses: `Mock Weakness: ${input.toolName} can have a steep learning curve for beginners and may require significant setup for complex projects. Documentation could be improved.`,
+        applicationTypes: ['Web', 'API'],
+        testTypes: ['UI Testing', 'E2E Testing'],
       };
     }
     return result;
@@ -105,9 +113,11 @@ export async function generateToolAnalysisAction(input: GenerateToolAnalysisInpu
     console.error('Error generating tool analysis:', error);
     // Ensure the error fallback also adheres to the GenerateToolAnalysisOutput structure
     return {
-        toolName: input.toolName, // Include toolName in error fallback
+        toolName: input.toolName,
         strengths: `Mock Strength (Error Fallback): ${input.toolName} is known for its extensive documentation and ease of integration. It is praised for cross-platform compatibility.`,
-        weaknesses: `Mock Weakness (Error Fallback): ${input.toolName} might be resource-intensive for very large test suites on limited hardware. Some advanced features require paid licenses.`
+        weaknesses: `Mock Weakness (Error Fallback): ${input.toolName} might be resource-intensive for very large test suites on limited hardware. Some advanced features require paid licenses.`,
+        applicationTypes: ['Web', 'Mobile'],
+        testTypes: ['Regression Testing', 'Functional Testing'],
       };
   }
 }

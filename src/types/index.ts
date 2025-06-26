@@ -9,6 +9,8 @@ export interface ToolAnalysisItem {
   toolName?: string; // Optional: AI can return it, or we use searchTerm
   strengths: string;
   weaknesses: string;
+  applicationTypes?: string[];
+  testTypes?: string[];
 }
 
 
@@ -84,8 +86,10 @@ export type EstimateEffortOutput = z.infer<typeof EstimateEffortOutputSchema>;
 // Output schema for generateToolAnalysisFlow - ensure it matches the flow
 export const GenerateToolAnalysisOutputSchema = z.object({
   toolName: z.string().optional().describe('The name of the tool that was analyzed. May be returned by AI if it differs from input or for confirmation.'),
-  strengths: z.string().describe('The strengths of the tool.'),
-  weaknesses: z.string().describe('The weaknesses of the tool.'),
+  strengths: z.string().describe('The strengths of the tool, separated by newlines.'),
+  weaknesses: z.string().describe('The weaknesses of the tool, separated by newlines.'),
+  applicationTypes: z.array(z.string()).optional().describe('The typical application types the tool is used for (e.g., Web, API, Mobile).'),
+  testTypes: z.array(z.string()).optional().describe('The typical test types the tool supports (e.g., UI, E2E, Performance).'),
 });
 export type GenerateToolAnalysisOutput = z.infer<typeof GenerateToolAnalysisOutputSchema>;
 
@@ -169,5 +173,3 @@ export const SupportChatOutputSchema = z.object({
   response: z.string().describe('The chatbot\'s response.'),
 });
 export type SupportChatOutput = z.infer<typeof SupportChatOutputSchema>;
-
-    

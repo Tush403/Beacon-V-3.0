@@ -1,12 +1,14 @@
 
 'use client';
 
-import { ToolCard } from './ToolCard';
+import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from '@/components/ui/card';
 import type { ToolRecommendationItem, ToolAnalysisItem, DocumentationLink, EstimateEffortOutput } from '@/types';
-import { Lightbulb, AlertTriangle, Compass, Calculator, X } from 'lucide-react';
+import { Lightbulb, AlertTriangle, Compass, Calculator, X, Star } from 'lucide-react';
 import { Button } from '../ui/button';
+import { cn } from '@/lib/utils';
+import { ToolCard } from './ToolCard';
 
 interface RecommendationsDisplayProps {
   recommendations: ToolRecommendationItem[];
@@ -29,6 +31,7 @@ const toolDocumentationLinks: Record<string, DocumentationLink> = {
   'WinAppDriver': { toolName: 'WinAppDriver', url: 'https://github.com/microsoft/WinAppDriver', label: 'Visit Official Website' },
   'Cypress': { toolName: 'Cypress', url: 'https://www.cypress.io/', label: 'Visit Official Website' },
   'Playwright': { toolName: 'Playwright', url: 'https://playwright.dev/', label: 'Visit Official Website' },
+  'Postman': { toolName: 'Postman', url: 'https://www.postman.com/', label: 'Visit Official Website' },
   'ACCELQ': { toolName: 'ACCELQ', url: 'https://www.accelq.com/', label: 'Visit Official Website' },
   'Appium': { toolName: 'Appium', url: 'https://appium.io/', label: 'Visit Official Website' },
   'Applitools': { toolName: 'Applitools', url: 'https://applitools.com/', label: 'Visit Official Website' },
@@ -81,8 +84,31 @@ export function RecommendationsDisplay({
   estimationResult,
   onClearEstimation,
 }: RecommendationsDisplayProps) {
+  const [selectedToolName, setSelectedToolName] = useState<string | null>(null);
+
+  const sortedRecommendations = [...recommendations].sort((a, b) => b.score - a.score);
+
+  useEffect(() => {
+    if (sortedRecommendations.length > 0 && !selectedToolName) {
+      const topToolName = sortedRecommendations[0].toolName;
+      setSelectedToolName(topToolName);
+      if (!toolAnalyses[topToolName]) {
+        onGetAnalysis(topToolName);
+      }
+    } else if (sortedRecommendations.length > 0 && selectedToolName && !sortedRecommendations.some(r => r.toolName === selectedToolName)) {
+      // If the selected tool is no longer in the recommendations, default to the first one
+      const topToolName = sortedRecommendations[0].toolName;
+      setSelectedToolName(topToolName);
+      if (!toolAnalyses[topToolName]) {
+        onGetAnalysis(topToolName);
+      }
+    } else if (sortedRecommendations.length === 0) {
+      setSelectedToolName(null);
+    }
+  }, [sortedRecommendations, selectedToolName, toolAnalyses, onGetAnalysis]);
+
   if (isLoadingRecommendations) {
-    return null; // Return nothing while loading, the global loader will be visible
+    return null; // The global loader handles this
   }
 
   if (error) {
@@ -132,7 +158,7 @@ export function RecommendationsDisplay({
 
   if (!hasInteracted && recommendations.length === 0) {
     return (
-      <Card className="mt-8 shadow-md">
+      <Card className="shadow-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl font-headline text-foreground">
             <Compass className="h-6 w-6 text-foreground" />
@@ -178,10 +204,7 @@ export function RecommendationsDisplay({
     );
   }
 
-
   if (recommendations.length === 0) {
-    // This case should ideally not be hit if the above logic is correct,
-    // but as a fallback, it ensures something is shown.
     return (
         <div className="mt-8 text-center py-8">
             <Lightbulb className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
@@ -191,28 +214,52 @@ export function RecommendationsDisplay({
     );
   }
 
-  // Sort recommendations by score descending before assigning rank
-  const sortedRecommendations = [...recommendations].sort((a, b) => b.score - a.score);
+  const selectedTool = sortedRecommendations.find(r => r.toolName === selectedToolName) || sortedRecommendations[0];
 
   return (
-    <div className="mt-10">
-      <h2 className="text-3xl font-headline font-semibold mb-8 text-center flex items-center justify-center gap-3 text-foreground">
-        <Lightbulb className="h-8 w-8 text-foreground" />
-        Top 3 AI-Recommended Tools
-      </h2>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-        {sortedRecommendations.map((tool, index) => (
+    <div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-xl font-headline text-foreground">
+            <Star className="h-6 w-6 text-foreground" />
+            Top Recommended Tools
+          </CardTitle>
+          <CardDescription>
+            Click on a tool to see more details. Results are sorted by overall score.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex space-x-1 rounded-lg bg-muted p-1 mb-4">
+            {sortedRecommendations.map((tool) => (
+              <button
+                key={tool.toolName}
+                onClick={() => {
+                  setSelectedToolName(tool.toolName);
+                  if (!toolAnalyses[tool.toolName]) {
+                    onGetAnalysis(tool.toolName);
+                  }
+                }}
+                className={cn(
+                  "w-full rounded-md py-2 px-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  selectedToolName === tool.toolName
+                    ? "bg-primary text-primary-foreground shadow"
+                    : "text-muted-foreground hover:bg-background/50"
+                )}
+              >
+                {tool.toolName} - {(tool.score / 10).toFixed(1)}/10
+              </button>
+            ))}
+          </div>
+
           <ToolCard
-            key={`${tool.toolName}-${index}`}
-            tool={tool}
-            analysis={toolAnalyses[tool.toolName]}
-            docLink={toolDocumentationLinks[tool.toolName]}
-            onGetAnalysis={onGetAnalysis}
-            isAnalysisLoading={!!isLoadingAnalysis[tool.toolName]}
-            rank={index + 1}
+            tool={selectedTool}
+            analysis={toolAnalyses[selectedTool.toolName]}
+            docLink={toolDocumentationLinks[selectedTool.toolName]}
+            isAnalysisLoading={!!isLoadingAnalysis[selectedTool.toolName]}
           />
-        ))}
-      </div>
+
+        </CardContent>
+      </Card>
     </div>
   );
 }
