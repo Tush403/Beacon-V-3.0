@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -54,7 +53,7 @@ export function Chatbot() {
     <>
       <div className={cn("fixed bottom-6 right-6 z-50 transition-transform duration-300", isOpen ? 'scale-0' : 'scale-100')}>
         <Button
-          variant="accent"
+          variant="default"
           size="icon"
           className="rounded-full h-14 w-14 shadow-lg"
           onClick={() => setIsOpen(true)}

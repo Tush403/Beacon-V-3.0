@@ -308,7 +308,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
 
   const RecommendationActionButtons = () => (
     <div className="space-y-3 pt-6 border-t mt-4">
-      <Button type="submit" className="w-full" variant="accent" disabled={isLoading}>
+      <Button type="submit" className="w-full" variant="default" disabled={isLoading}>
         Get AI Recommendations
       </Button>
       <Button
@@ -508,7 +508,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
                   <div className="space-y-3 pt-6 border-t mt-4">
                     <Button
                       type="button"
-                      variant="accent"
+                      variant="default"
                       className="w-full"
                       onClick={handleGetEstimate}
                       disabled={isLoading}
