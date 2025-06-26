@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -101,7 +100,7 @@ export function AppHeader() {
     <>
       <TooltipProvider delayDuration={100}>
         <header className="bg-primary text-primary-foreground border-b border-primary/90 shadow-lg sticky top-0 z-40">
-          <div className="py-3 px-4 md:px-8 flex items-center justify-between">
+          <div className="py-3 px-4 md:px-8 flex items-center">
             {/* Left Side: TAO Digital Branding */}
             <div className="flex items-center gap-3">
               {isMobile && <SidebarTrigger className="md:hidden" />}
@@ -113,7 +112,7 @@ export function AppHeader() {
             </div>
 
             {/* Right Side: Beacon Branding & Icons */}
-            <div className="flex items-center gap-3 sm:gap-4">
+            <div className="flex items-center gap-3 sm:gap-4 ml-auto">
               <h2 className="text-lg md:text-xl font-headline font-semibold">
                 Beacon
               </h2>
