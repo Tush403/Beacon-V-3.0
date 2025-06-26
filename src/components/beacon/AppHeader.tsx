@@ -100,27 +100,27 @@ export function AppHeader() {
   return (
     <>
       <TooltipProvider delayDuration={100}>
-        <header className="bg-card border-b border-border shadow-sm sticky top-0 z-40">
-          <div className="container mx-auto py-3 px-4 md:px-8 flex items-center justify-between">
+        <header className="bg-primary text-primary-foreground border-b border-primary/90 shadow-lg sticky top-0 z-40">
+          <div className="py-3 px-4 md:px-8 flex items-center justify-between">
             {/* Left Side: TAO Digital Branding */}
             <div className="flex items-center gap-3">
               {isMobile && <SidebarTrigger className="md:hidden" />}
-              <CogIcon ref={logoRef} className="h-9 w-9 text-foreground" />
+              <CogIcon ref={logoRef} className="h-9 w-9" />
               <div>
-                <h1 className="text-lg font-bold text-foreground sm:text-xl">TAO DIGITAL</h1>
-                <p className="text-xs text-muted-foreground hidden sm:block">Transformation Made Simple</p>
+                <h1 className="text-lg font-bold sm:text-xl">TAO DIGITAL</h1>
+                <p className="text-xs text-primary-foreground/80 hidden sm:block">Transformation Made Simple</p>
               </div>
             </div>
 
             {/* Right Side: Beacon Branding & Icons */}
             <div className="flex items-center gap-3 sm:gap-4">
-              <h2 className="text-lg md:text-xl font-headline font-semibold text-accent">
+              <h2 className="text-lg md:text-xl font-headline font-semibold">
                 Beacon
               </h2>
               <div className="flex items-center gap-1 sm:gap-2">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" aria-label="Contact Us" asChild>
+                    <Button variant="ghost" size="icon" aria-label="Contact Us" asChild className="hover:bg-primary-foreground/10">
                       <Link href="https://www.taodigitalsolutions.com/contact-us-lead-generation-form" target="_blank" rel="noopener noreferrer">
                         <Mail className="h-5 w-5" />
                       </Link>
@@ -133,7 +133,7 @@ export function AppHeader() {
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" aria-label="Toggle Theme" onClick={toggleTheme}>
+                    <Button variant="ghost" size="icon" aria-label="Toggle Theme" onClick={toggleTheme} className="hover:bg-primary-foreground/10">
                       {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
                     </Button>
                   </TooltipTrigger>
@@ -144,7 +144,7 @@ export function AppHeader() {
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" aria-label="Search Tool Information" onClick={() => setSearchDialogOpen(true)}>
+                    <Button variant="ghost" size="icon" aria-label="Search Tool Information" onClick={() => setSearchDialogOpen(true)} className="hover:bg-primary-foreground/10">
                       <Search className="h-5 w-5" />
                     </Button>
                   </TooltipTrigger>
@@ -156,7 +156,7 @@ export function AppHeader() {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <div className="relative">
-                      <Button variant="ghost" size="icon" aria-label="View Release Notes" onClick={handleDocButtonClick}>
+                      <Button variant="ghost" size="icon" aria-label="View Release Notes" onClick={handleDocButtonClick} className="hover:bg-primary-foreground/10">
                         <Library className="h-5 w-5" />
                       </Button>
                       {showUpdateIndicator && (
