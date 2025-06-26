@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -508,8 +509,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
                   <div className="space-y-3 pt-6 border-t mt-4">
                     <Button
                       type="button"
-                      variant="default"
-                      className="w-full"
+                      className="w-full bg-gradient-from hover:bg-gradient-from/90 text-primary-foreground"
                       onClick={handleGetEstimate}
                       disabled={isLoading}
                     >
