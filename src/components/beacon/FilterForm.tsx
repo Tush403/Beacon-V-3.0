@@ -308,7 +308,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
 
   const RecommendationActionButtons = () => (
     <div className="space-y-3 pt-6 border-t mt-4">
-      <Button type="submit" className="w-full" variant="default" disabled={isLoading}>
+      <Button type="submit" className="w-full bg-gradient-from hover:bg-gradient-from/90 text-primary-foreground" disabled={isLoading}>
         Get AI Recommendations
       </Button>
       <Button
