@@ -53,9 +53,8 @@ export function Chatbot() {
     <>
       <div className={cn("fixed bottom-6 right-6 z-50 transition-transform duration-300", isOpen ? 'scale-0' : 'scale-100')}>
         <Button
-          variant="default"
           size="icon"
-          className="rounded-full h-14 w-14 shadow-lg"
+          className="rounded-full h-14 w-14 shadow-lg bg-gradient-from hover:bg-gradient-from/90 text-primary-foreground"
           onClick={() => setIsOpen(true)}
           aria-label="Open Chat"
         >
