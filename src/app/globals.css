@@ -14,7 +14,7 @@
     --popover-foreground: 231 33% 10%;
 
     --primary: 232 32% 60%; /* Lighter primary for light theme */
-    --primary-foreground: 232 32% 10%;
+    --primary-foreground: 0 0% 98%; /* White text for primary elements */
 
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 231 33% 10%;
