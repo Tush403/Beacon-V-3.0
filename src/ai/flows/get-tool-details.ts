@@ -23,52 +23,45 @@ const prompt = ai.definePrompt({
   name: 'getToolDetailsPrompt',
   input: {schema: GetToolDetailsInputSchema},
   output: {schema: GetToolDetailsOutputSchema},
-  prompt: `You are an expert Test Automation Analyst. Provide a detailed profile for the following tool: {{{toolName}}}.
+  prompt: `You are a Principal Test Automation Architect providing a detailed analysis memo for the tool: {{{toolName}}}.
 
-If the tool is "ZeTA Automation", use the following information as the primary source of truth:
-- Tool Overview: A unified, open-source automation framework for high reusability and comprehensive test coverage across multiple application layers.
-- Criteria:
-  - Initial Setup Time: 2-4 days.
-  - Maintenance Overhead: Low; utility-driven layers reduce impact.
-  - Test Creation Speed: High; pre-built templates and plug & play logic.
-  - Script Reusability: High; shared libraries and config-driven design.
-  - Parallel Execution Support: Excellent; CI-ready with parallel run support.
-  - Test Case Creation Effort: Medium; template-based creation simplifies effort.
-  - Skill Requirement: Moderate; Java and Maven knowledge preferred.
-  - Overall Automation Coverage: Very High; unified UI, API, DB, Security.
-  - Total Cost of Ownership: Low; open-source with internal infrastructure.
+If the tool is "ZeTA Automation", use the following information as the primary source of truth for its profile:
+- Overview: A unified, open-source automation framework for high reusability and comprehensive test coverage across multiple application layers.
+- Ideal Project: Enterprise-level projects requiring a single framework for UI, API, DB, and Security testing.
+- Technical Deep-Dive: Built on Java and Maven, using a utility-driven layer architecture. It promotes high script reusability and parallel execution.
+- Best-Fit Team: Teams with moderate to strong Java skills who prefer a code-centric, configurable framework.
+- Cost of Ownership: Open-source (low licensing cost), but requires internal infrastructure management and skilled Java resources.
 
-If the tool is "Functionize", use the following as the primary source of truth:
-- Tool Overview: An AI-powered testing platform for web applications that automates test creation and maintenance.
-- Criteria:
-  - Initial Setup Time: <1 day; cloud-based with no local setup.
-  - Maintenance Overhead: Very Low; AI-powered self-healing adapts to UI changes.
-  - Test Creation Speed: Very High; uses natural language and visual tools.
-  - Script Reusability: Moderate; promotes reusable test steps and flows.
-  - Parallel Execution Support: Excellent; cloud infrastructure supports massive parallelization.
-  - Test Case Creation Effort: Very Low; uses NLP and visual tools.
-  - Skill Requirement: Low; no coding required for most tasks.
-  - Overall Automation Coverage: High; focuses primarily on web UI and end-to-end testing.
-  - Total Cost of Ownership: High; enterprise-level subscription-based SaaS model.
+If the tool is "Functionize", use the following as the primary source of truth for its profile:
+- Overview: An AI-powered testing platform for web applications that automates test creation and maintenance.
+- Ideal Project: Fast-paced projects with dynamic web UIs where reducing test maintenance is critical.
+- Technical Deep-Dive: Uses AI and machine learning for element detection and self-healing tests. It's a cloud-based platform with a low-code/NLP interface.
+- Best-Fit Team: Mixed-skill teams, including manual testers and BAs, who need to create and run tests quickly without extensive coding.
+- Cost of Ownership: High subscription-based SaaS model, but reduces costs related to script maintenance and flakiness.
 
-Provide a detailed profile based on these criteria. For each criterion, provide a highly concise summary (strictly less than 10-15 words) that is factual and informative.
-- Initial Setup Time
-- Maintenance Overhead
-- Test Creation Speed
-- Script Reusability
-- Parallel Execution Support
-- Test Case Creation Effort
-- Skill Requirement
-- Overall Automation Coverage
-- Total Cost of Ownership
+Your analysis must be a comprehensive, well-structured narrative. Use markdown for formatting, including bolding for headers (e.g., **Ideal Project & Use Case:**) and bullet points for lists where appropriate.
 
-Format the output as a JSON object adhering to the GetToolDetailsOutputSchema.
-- "toolName": The official tool name.
-- "overview": A brief 1-2 sentence overview.
-- "details": An array of objects, where each object has "criterionName" and "value".
+The analysis should cover the following key aspects, presented as a cohesive memo:
+
+- **Ideal Project & Use Case:**
+   - Describe the type of project where this tool excels.
+   - What are its primary use cases?
+
+- **Technical Deep-Dive:**
+   - Briefly explain its core architecture or technology.
+   - Mention any notable technical strengths or limitations.
+
+- **Best-Fit Team Profile:**
+   - What kind of team would be most successful with this tool?
+   - Comment on the learning curve.
+
+- **Total Cost of Ownership Considerations:**
+   - Discuss factors beyond licensing, like infrastructure, training, and maintenance effort.
+
+Format the output as a JSON object adhering to the GetToolDetailsOutputSchema. The full narrative goes into the "detailedAnalysis" field. The "overview" field should remain a concise 1-2 sentence summary.
 `,
   config: {
-    temperature: 0.2,
+    temperature: 0.3,
   }
 });
 
@@ -88,6 +81,10 @@ const getToolDetailsFlow = ai.defineFlow(
     // Ensure toolName is present in the output
     if (!output.toolName) {
         output.toolName = input.toolName;
+    }
+    // Ensure detailedAnalysis is present
+    if (!output.detailedAnalysis) {
+      output.detailedAnalysis = "No detailed analysis was generated."
     }
 
     return output;
