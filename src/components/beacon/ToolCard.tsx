@@ -148,7 +148,7 @@ export function ToolCard({
             </a>
           </Button>
         )}
-        <Button variant="default" onClick={() => onViewDetails(tool.toolName)}>
+        <Button className="bg-gradient-from hover:bg-gradient-from/90 text-primary-foreground" onClick={() => onViewDetails(tool.toolName)}>
             <Eye className="mr-2" />
             View Full Details
         </Button>
