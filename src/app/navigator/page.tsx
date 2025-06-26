@@ -33,7 +33,7 @@ export default function NavigatorPage() {
   const [comparisonData, setComparisonData] = useState<CompareToolsOutput | null>(null);
   const [comparedToolNames, setComparedToolNames] = useState<string[]>([]);
   const [comparisonError, setComparisonError] = useState<string | null>(null);
-  const [isInitialComparisonLoading, setIsInitialComparisonLoading] = useState(true);
+  const [isComparisonLoading, setIsComparisonLoading] = useState(true);
 
   const [hasInteracted, setHasInteracted] = useState(false);
   const [loadingState, setLoadingState] = useState<'idle' | 'loading' | 'finished'>('idle');
@@ -141,7 +141,7 @@ export default function NavigatorPage() {
     const newToolNames = [...comparedToolNames];
     newToolNames[indexToChange] = newToolLabel;
   
-    setLoadingState('loading');
+    setIsComparisonLoading(true);
     setComparisonError(null);
     setComparisonData(null);
     setComparedToolNames(newToolNames);
@@ -159,7 +159,7 @@ export default function NavigatorPage() {
         variant: 'destructive',
       });
     } finally {
-      setLoadingState('finished');
+      setIsComparisonLoading(false);
     }
   };
   
@@ -183,7 +183,6 @@ export default function NavigatorPage() {
   const loadDefaultResults = useCallback(async () => {
     mainContentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
     setHasInteracted(true);
-    setLoadingState('loading');
     setError(null);
     setToolAnalyses({});
     setComparisonData(null);
@@ -214,6 +213,7 @@ export default function NavigatorPage() {
     const toolNames = defaultRecommendations.map(r => r.toolName);
     setComparedToolNames(toolNames);
     
+    setIsComparisonLoading(true);
     try {
       const comparisonInput: CompareToolsInput = { toolNames };
       const comparisonResult = await compareToolsAction(comparisonInput);
@@ -226,7 +226,7 @@ export default function NavigatorPage() {
         variant: 'destructive',
       });
     } finally {
-      setLoadingState('finished');
+      setIsComparisonLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast]);
@@ -234,7 +234,7 @@ export default function NavigatorPage() {
   // On initial mount, load default results WITHOUT the full-screen animation.
   useEffect(() => {
     setHasInteracted(true);
-    setIsInitialComparisonLoading(true);
+    setIsComparisonLoading(true);
     const defaultRecommendations: ToolRecommendationItem[] = [
       {
         toolName: 'Functionize',
@@ -271,7 +271,7 @@ export default function NavigatorPage() {
           variant: 'destructive',
         });
       } finally {
-        setIsInitialComparisonLoading(false);
+        setIsComparisonLoading(false);
       }
     };
     
@@ -335,7 +335,7 @@ export default function NavigatorPage() {
                       toolNames={comparedToolNames}
                       allTools={automationToolOptions}
                       onToolChange={handleComparisonToolChange}
-                      isLoading={isInitialComparisonLoading}
+                      isLoading={isComparisonLoading}
                     />
                   )}
                   
