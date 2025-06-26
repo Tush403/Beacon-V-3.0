@@ -242,7 +242,7 @@ export function RecommendationsDisplay({
                 className={cn(
                   "w-full rounded-md py-2 px-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   selectedToolName === tool.toolName
-                    ? "bg-primary text-primary-foreground shadow"
+                    ? "bg-gradient-from text-primary-foreground shadow hover:bg-gradient-from/90"
                     : "text-muted-foreground hover:bg-background/50"
                 )}
               >
