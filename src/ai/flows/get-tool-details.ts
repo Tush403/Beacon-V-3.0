@@ -37,8 +37,6 @@ If the tool is "ZeTA Automation", use the following information as the primary s
   - Skill Requirement: Moderate; Java and Maven knowledge preferred.
   - Overall Automation Coverage: Very High; unified UI, API, DB, Security.
   - Total Cost of Ownership: Low; open-source with internal infrastructure.
-  - Strengths: High script reusability, broad coverage, excellent parallel execution.
-  - Weaknesses: Requires Java/Maven knowledge, internal infrastructure overhead.
 
 If the tool is "Functionize", use the following as the primary source of truth:
 - Tool Overview: An AI-powered testing platform for web applications that automates test creation and maintenance.
@@ -52,8 +50,6 @@ If the tool is "Functionize", use the following as the primary source of truth:
   - Skill Requirement: Low; no coding required for most tasks.
   - Overall Automation Coverage: High; focuses primarily on web UI and end-to-end testing.
   - Total Cost of Ownership: High; enterprise-level subscription-based SaaS model.
-  - Strengths: AI-powered self-healing, rapid test creation, low maintenance.
-  - Weaknesses: Less granular control, potential 'black box' issues, subscription cost.
 
 Provide a detailed profile based on these criteria. For each criterion, provide a highly concise summary (strictly less than 10-15 words) that is factual and informative.
 - Initial Setup Time
@@ -65,8 +61,6 @@ Provide a detailed profile based on these criteria. For each criterion, provide 
 - Skill Requirement
 - Overall Automation Coverage
 - Total Cost of Ownership
-- Strengths
-- Weaknesses
 
 Format the output as a JSON object adhering to the GetToolDetailsOutputSchema.
 - "toolName": The official tool name.
