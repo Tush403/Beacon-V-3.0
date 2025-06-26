@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, Fragment, useCallback } from 'react';
 import Link from 'next/link';
 import React from 'react';
 import { FilterForm } from '@/components/beacon/FilterForm';
@@ -176,56 +176,57 @@ export default function NavigatorPage() {
 
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState<Record<string, boolean>>({});
   
-  useEffect(() => {
-    const loadDefaultResults = async () => {
-      setHasInteracted(true);
-      setLoadingState('loading');
-      setError(null);
-      setToolAnalyses({});
-      setComparisonData(null);
-      setComparisonError(null);
-      setEffortEstimationResult(null);
+  const loadDefaultResults = useCallback(async () => {
+    setHasInteracted(true);
+    setLoadingState('loading');
+    setError(null);
+    setToolAnalyses({});
+    setComparisonData(null);
+    setComparisonError(null);
+    setEffortEstimationResult(null);
 
-      const defaultRecommendations: ToolRecommendationItem[] = [
-        {
-          toolName: 'Functionize',
-          score: 95,
-          justification: 'An AI-powered testing platform ideal for web applications that automates test creation and maintenance.',
-        },
-        {
-          toolName: 'ZeTA Automation',
-          score: 92,
-          justification: 'A unified, open-source framework for high reusability and comprehensive test coverage across multiple application layers.',
-        },
-        {
-          toolName: 'Selenium',
-          score: 90,
-          justification: 'A highly flexible, open-source framework for web browser automation with extensive community support.',
-        },
-      ];
-      
-      setRecommendations(defaultRecommendations);
-      setFilters(initialFilterValues);
-
-      const toolNames = defaultRecommendations.map(r => r.toolName);
-      setComparedToolNames(toolNames);
-      
-      try {
-        const comparisonInput: CompareToolsInput = { toolNames };
-        const comparisonResult = await compareToolsAction(comparisonInput);
-        setComparisonData(comparisonResult);
-      } catch (e: any) {
-        setComparisonError(e.message || 'An unknown error occurred while fetching default comparison data.');
-        toast({
-          title: 'Error',
-          description: e.message || 'Failed to get default tool comparison.',
-          variant: 'destructive',
-        });
-      } finally {
-        setLoadingState('finished');
-      }
-    };
+    const defaultRecommendations: ToolRecommendationItem[] = [
+      {
+        toolName: 'Functionize',
+        score: 95,
+        justification: 'An AI-powered testing platform ideal for web applications that automates test creation and maintenance.',
+      },
+      {
+        toolName: 'ZeTA Automation',
+        score: 92,
+        justification: 'A unified, open-source framework for high reusability and comprehensive test coverage across multiple application layers.',
+      },
+      {
+        toolName: 'Selenium',
+        score: 90,
+        justification: 'A highly flexible, open-source framework for web browser automation with extensive community support.',
+      },
+    ];
     
+    setRecommendations(defaultRecommendations);
+    setFilters(initialFilterValues);
+
+    const toolNames = defaultRecommendations.map(r => r.toolName);
+    setComparedToolNames(toolNames);
+    
+    try {
+      const comparisonInput: CompareToolsInput = { toolNames };
+      const comparisonResult = await compareToolsAction(comparisonInput);
+      setComparisonData(comparisonResult);
+    } catch (e: any) {
+      setComparisonError(e.message || 'An unknown error occurred while fetching default comparison data.');
+      toast({
+        title: 'Error',
+        description: e.message || 'Failed to get default tool comparison.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingState('finished');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toast]);
+
+  useEffect(() => {
     loadDefaultResults();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -247,6 +248,7 @@ export default function NavigatorPage() {
                 onEstimate={handleEstimateSubmit}
                 estimationResult={effortEstimationResult}
                 onClearEstimation={() => setEffortEstimationResult(null)}
+                onResetToDefaults={loadDefaultResults}
               />
             </div>
           </SidebarContent>

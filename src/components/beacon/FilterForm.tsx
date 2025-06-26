@@ -1,4 +1,3 @@
-
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -81,6 +80,7 @@ interface FilterFormProps {
   onEstimate: (input: EstimateEffortInput) => void;
   estimationResult: EstimateEffortOutput | null;
   onClearEstimation: () => void;
+  onResetToDefaults: () => void;
 }
 
 const defaultFormValues: FilterFormValues = {
@@ -208,7 +208,7 @@ const ToolCombobox = ({
   );
 };
 
-export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, estimationResult, onClearEstimation }: FilterFormProps) {
+export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, estimationResult, onClearEstimation, onResetToDefaults }: FilterFormProps) {
   const form = useForm<FilterFormValues>({
     resolver: zodResolver(filterSchema),
     defaultValues: { ...defaultFormValues, ...defaultValues },
@@ -292,15 +292,15 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
 
   const handleResetAllFilters = () => {
     form.reset(defaultFormValues);
-    onClearEstimation();
+    onResetToDefaults();
     toast({
       title: (
         <div className="flex items-center gap-2">
           <CheckCircle className="h-5 w-5" />
-          <span className="font-semibold">Filters Cleared</span>
+          <span className="font-semibold">Filters Cleared & Defaults Loaded</span>
         </div>
       ),
-      duration: 1000,
+      duration: 2000,
       className: "bg-accent text-accent-foreground border-transparent",
     });
   };
@@ -534,5 +534,3 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
     </Form>
   );
 }
-
-    
