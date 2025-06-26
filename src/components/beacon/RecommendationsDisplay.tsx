@@ -4,8 +4,8 @@
 import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from '@/components/ui/card';
-import type { ToolRecommendationItem, ToolAnalysisItem, DocumentationLink, EstimateEffortOutput } from '@/types';
-import { Lightbulb, AlertTriangle, Compass, Calculator, X, Star } from 'lucide-react';
+import type { ToolRecommendationItem, ToolAnalysisItem, DocumentationLink } from '@/types';
+import { Lightbulb, AlertTriangle, Star } from 'lucide-react';
 import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
 import { ToolCard } from './ToolCard';
@@ -19,8 +19,6 @@ interface RecommendationsDisplayProps {
   isLoadingAnalysis: Record<string, boolean>;
   error?: string | null;
   hasInteracted: boolean;
-  estimationResult: EstimateEffortOutput | null;
-  onClearEstimation: () => void;
 }
 
 const toolDocumentationLinks: Record<string, DocumentationLink> = {
@@ -82,8 +80,6 @@ export function RecommendationsDisplay({
   isLoadingAnalysis,
   error,
   hasInteracted,
-  estimationResult,
-  onClearEstimation,
 }: RecommendationsDisplayProps) {
   const [selectedToolName, setSelectedToolName] = useState<string | null>(null);
   const [detailsToolName, setDetailsToolName] = useState<string | null>(null);
@@ -120,41 +116,6 @@ export function RecommendationsDisplay({
         <h3 className="text-xl font-semibold mb-2">Oops! Something went wrong.</h3>
         <p>{error}</p>
       </div>
-    );
-  }
-
-  if (estimationResult) {
-    return (
-       <Card className="shadow-lg animate-in fade-in-50 duration-500">
-        <CardHeader className="flex flex-row items-start justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2 text-xl font-headline text-foreground">
-              <Calculator className="h-6 w-6 text-foreground" />
-              AI Effort Estimation Result
-            </CardTitle>
-            <CardDescription>
-              Confidence Score: <span className="font-semibold text-foreground">{estimationResult.confidenceScore}%</span>
-            </CardDescription>
-          </div>
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClearEstimation}>
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close Estimation</span>
-          </Button>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col items-center justify-center text-center p-4 bg-muted/50 rounded-lg">
-            <p className="text-sm text-muted-foreground">Estimated Effort</p>
-            <p className="text-4xl font-bold text-primary">{estimationResult.estimatedEffortDays}</p>
-            <p className="text-sm text-muted-foreground">Days</p>
-          </div>
-          <div className="space-y-2">
-            <h4 className="font-semibold text-base">Explanation</h4>
-            <p className="text-sm text-muted-foreground whitespace-pre-line border bg-muted/20 p-3 rounded-md">
-              {estimationResult.explanation}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
     );
   }
 

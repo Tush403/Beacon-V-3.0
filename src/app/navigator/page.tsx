@@ -33,7 +33,7 @@ export default function NavigatorPage() {
   const [comparisonData, setComparisonData] = useState<CompareToolsOutput | null>(null);
   const [comparedToolNames, setComparedToolNames] = useState<string[]>([]);
   const [comparisonError, setComparisonError] = useState<string | null>(null);
-  const [isComparisonLoading, setIsComparisonLoading] = useState(true);
+  const [isComparisonLoading, setIsComparisonLoading] = useState(false);
 
   const [hasInteracted, setHasInteracted] = useState(false);
   const [loadingState, setLoadingState] = useState<'idle' | 'loading' | 'finished'>('idle');
@@ -98,9 +98,11 @@ export default function NavigatorPage() {
       if (result.recommendations.length > 0) {
         const toolNames = result.recommendations.map(r => r.toolName);
         setComparedToolNames(toolNames);
+        setIsComparisonLoading(true);
         const comparisonInput: CompareToolsInput = { toolNames };
         const comparisonResult = await compareToolsAction(comparisonInput);
         setComparisonData(comparisonResult);
+        setIsComparisonLoading(false);
       }
     } catch (e: any) {
       setError(e.message || 'An unknown error occurred while fetching recommendations.');
@@ -188,7 +190,8 @@ export default function NavigatorPage() {
     setComparisonData(null);
     setComparisonError(null);
     setEffortEstimationResult(null);
-
+    // Don't set loading state for resets
+    
     const defaultRecommendations: ToolRecommendationItem[] = [
       {
         toolName: 'Functionize',
@@ -316,8 +319,6 @@ export default function NavigatorPage() {
                 isLoadingAnalysis={isLoadingAnalysis}
                 error={error}
                 hasInteracted={hasInteracted}
-                estimationResult={effortEstimationResult}
-                onClearEstimation={() => setEffortEstimationResult(null)}
               />
 
               {!isLoading && (
