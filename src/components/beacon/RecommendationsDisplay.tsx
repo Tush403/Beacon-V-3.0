@@ -9,6 +9,7 @@ import { Lightbulb, AlertTriangle, Compass, Calculator, X, Star } from 'lucide-r
 import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
 import { ToolCard } from './ToolCard';
+import { ToolDetailsDialog } from './ToolDetailsDialog';
 
 interface RecommendationsDisplayProps {
   recommendations: ToolRecommendationItem[];
@@ -85,6 +86,7 @@ export function RecommendationsDisplay({
   onClearEstimation,
 }: RecommendationsDisplayProps) {
   const [selectedToolName, setSelectedToolName] = useState<string | null>(null);
+  const [detailsToolName, setDetailsToolName] = useState<string | null>(null);
 
   const sortedRecommendations = [...recommendations].sort((a, b) => b.score - a.score);
 
@@ -182,50 +184,66 @@ export function RecommendationsDisplay({
 
   const selectedTool = sortedRecommendations.find(r => r.toolName === selectedToolName) || sortedRecommendations[0];
 
+  const handleViewDetails = (toolName: string) => {
+    setDetailsToolName(toolName);
+  };
+
   return (
-    <div>
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl font-headline text-foreground">
-            <Star className="h-6 w-6 text-foreground" />
-            Top Recommended Tools
-          </CardTitle>
-          <CardDescription>
-            Click on a tool to see more details. Results are sorted by overall score.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex space-x-1 rounded-lg bg-muted p-1 mb-4">
-            {sortedRecommendations.map((tool) => (
-              <button
-                key={tool.toolName}
-                onClick={() => {
-                  setSelectedToolName(tool.toolName);
-                  if (!toolAnalyses[tool.toolName]) {
-                    onGetAnalysis(tool.toolName);
-                  }
-                }}
-                className={cn(
-                  "w-full rounded-md py-2 px-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  selectedToolName === tool.toolName
-                    ? "bg-gradient-from text-primary-foreground shadow hover:bg-gradient-from/90"
-                    : "text-muted-foreground hover:bg-background/50"
-                )}
-              >
-                {tool.toolName} - {(tool.score / 10).toFixed(1)}/10
-              </button>
-            ))}
-          </div>
+    <>
+      <div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-xl font-headline text-foreground">
+              <Star className="h-6 w-6 text-foreground" />
+              Top Recommended Tools
+            </CardTitle>
+            <CardDescription>
+              Click on a tool to see more details. Results are sorted by overall score.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex space-x-1 rounded-lg bg-muted p-1 mb-4">
+              {sortedRecommendations.map((tool) => (
+                <button
+                  key={tool.toolName}
+                  onClick={() => {
+                    setSelectedToolName(tool.toolName);
+                    if (!toolAnalyses[tool.toolName]) {
+                      onGetAnalysis(tool.toolName);
+                    }
+                  }}
+                  className={cn(
+                    "w-full rounded-md py-2 px-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    selectedToolName === tool.toolName
+                      ? "bg-gradient-from text-primary-foreground shadow hover:bg-gradient-from/90"
+                      : "text-muted-foreground hover:bg-background/50"
+                  )}
+                >
+                  {tool.toolName} - {(tool.score / 10).toFixed(1)}/10
+                </button>
+              ))}
+            </div>
 
-          <ToolCard
-            tool={selectedTool}
-            analysis={toolAnalyses[selectedTool.toolName]}
-            docLink={toolDocumentationLinks[selectedTool.toolName]}
-            isAnalysisLoading={!!isLoadingAnalysis[selectedTool.toolName]}
-          />
+            <ToolCard
+              tool={selectedTool}
+              analysis={toolAnalyses[selectedTool.toolName]}
+              docLink={toolDocumentationLinks[selectedTool.toolName]}
+              isAnalysisLoading={!!isLoadingAnalysis[selectedTool.toolName]}
+              onViewDetails={handleViewDetails}
+            />
 
-        </CardContent>
-      </Card>
-    </div>
+          </CardContent>
+        </Card>
+      </div>
+      <ToolDetailsDialog
+        isOpen={!!detailsToolName}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setDetailsToolName(null);
+          }
+        }}
+        toolName={detailsToolName}
+      />
+    </>
   );
 }

@@ -21,6 +21,7 @@ interface ToolCardProps {
   analysis?: ToolAnalysisItem | null;
   docLink?: DocumentationLink | null;
   isAnalysisLoading: boolean;
+  onViewDetails: (toolName: string) => void;
 }
 
 const AnalysisContent = ({ analysis, isAnalysisLoading }: { analysis?: ToolAnalysisItem | null, isAnalysisLoading: boolean }) => {
@@ -117,6 +118,7 @@ export function ToolCard({
   analysis,
   docLink,
   isAnalysisLoading,
+  onViewDetails,
 }: ToolCardProps) {
 
   return (
@@ -146,7 +148,7 @@ export function ToolCard({
             </a>
           </Button>
         )}
-        <Button variant="default" disabled>
+        <Button variant="default" onClick={() => onViewDetails(tool.toolName)}>
             <Eye className="mr-2" />
             View Full Details
         </Button>
