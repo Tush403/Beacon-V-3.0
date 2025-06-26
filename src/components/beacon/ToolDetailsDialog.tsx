@@ -25,7 +25,7 @@ interface ToolDetailsDialogProps {
 }
 
 const DetailsSkeleton = () => (
-  <div className="mt-4 space-y-4 pt-4 animate-pulse">
+  <div className="space-y-4 pt-4 animate-pulse">
     <Skeleton className="h-6 w-1/2 mb-2" />
     <Skeleton className="h-4 w-full" />
     <Skeleton className="h-4 w-5/6" />
@@ -84,8 +84,8 @@ export function ToolDetailsDialog({ isOpen, onOpenChange, toolName }: ToolDetail
 
   return (
     <Dialog open={isOpen} onOpenChange={handleCloseDialog}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col">
-        <DialogHeader className="pr-6">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col p-0">
+        <DialogHeader className="p-6 pb-4 border-b">
           <DialogTitle className="flex items-center gap-2 text-foreground">
             <Sparkles className="h-6 w-6 text-accent" />
             Tool Deep Dive
@@ -95,37 +95,35 @@ export function ToolDetailsDialog({ isOpen, onOpenChange, toolName }: ToolDetail
           </DialogDescription>
         </DialogHeader>
         
-        <div className="py-4 flex-grow min-h-0">
-            <ScrollArea className="h-full pr-6">
-              {error && !isLoading && (
-                <div className="mt-4 p-3 bg-destructive/10 border border-destructive text-destructive rounded-md flex items-center gap-2 text-sm">
-                  <AlertCircle className="h-5 w-5 shrink-0" />
-                  <p>{error}</p>
+        <ScrollArea className="flex-grow overflow-y-auto px-6 py-4">
+            {error && !isLoading && (
+              <div className="p-3 bg-destructive/10 border border-destructive text-destructive rounded-md flex items-center gap-2 text-sm">
+                <AlertCircle className="h-5 w-5 shrink-0" />
+                <p>{error}</p>
+              </div>
+            )}
+
+            {isLoading && <DetailsSkeleton />}
+
+            {toolDetails && !isLoading && (
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-foreground">
+                    {toolDetails.toolName}
+                </h3>
+                <p className="text-sm text-muted-foreground">{toolDetails.overview}</p>
+                
+                <Separator className="my-4"/>
+
+                <div 
+                  className="text-sm text-foreground/90 whitespace-pre-line leading-relaxed"
+                >
+                  {toolDetails.detailedAnalysis}
                 </div>
-              )}
+              </div>
+            )}
+        </ScrollArea>
 
-              {isLoading && <DetailsSkeleton />}
-
-              {toolDetails && !isLoading && (
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-foreground">
-                      {toolDetails.toolName}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">{toolDetails.overview}</p>
-                  
-                  <Separator className="my-4"/>
-
-                  <div 
-                    className="text-sm text-foreground/90 whitespace-pre-line leading-relaxed"
-                  >
-                    {toolDetails.detailedAnalysis}
-                  </div>
-                </div>
-              )}
-            </ScrollArea>
-        </div>
-
-        <DialogFooter className="border-t pt-4">
+        <DialogFooter className="p-6 pt-4 border-t">
           <Button variant="outline" onClick={handleCloseDialog}>
             Close
           </Button>
