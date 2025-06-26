@@ -156,40 +156,6 @@ export function RecommendationsDisplay({
     );
   }
 
-  if (!hasInteracted && recommendations.length === 0) {
-    return (
-      <Card className="shadow-md">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl font-headline text-foreground">
-            <Compass className="h-6 w-6 text-foreground" />
-            Navigate Your Test Automation Journey
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="text-base text-muted-foreground">
-            Welcome to Beacon, your AI-powered guide to selecting the perfect test automation tools.
-          </p>
-          <div>
-            <p className="text-sm text-foreground font-medium">
-              To get started:
-            </p>
-            <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 my-2 ml-4">
-              <li>Explore the <span className="font-semibold text-accent">Filter Tools</span> section in the sidebar.</li>
-              <li>Define your project's specific requirements (application type, test type, OS, etc.).</li>
-              <li>Click <span className="font-semibold text-accent">"Get AI Recommendations"</span>.</li>
-            </ul>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Beacon will then analyze your criteria and present the top 3 AI-recommended tools, complete with detailed analysis and insights.
-          </p>
-        </CardContent>
-        <CardFooter>
-          <p className="text-xs text-muted-foreground">Let's find the best tools for your success!</p>
-        </CardFooter>
-      </Card>
-    );
-  }
-
   if (hasInteracted && recommendations.length === 0) {
     return (
       <div className="mt-8 text-center py-8">
