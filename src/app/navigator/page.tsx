@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Fragment, useCallback } from 'react';
+import { useState, useEffect, Fragment, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import React from 'react';
 import { FilterForm } from '@/components/beacon/FilterForm';
@@ -43,6 +43,8 @@ export default function NavigatorPage() {
   const [effortEstimationResult, setEffortEstimationResult] = useState<EstimateEffortOutput | null>(null);
 
   const [year, setYear] = useState<number | null>(null);
+  const mainContentRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     setYear(new Date().getFullYear());
   }, []);
@@ -78,6 +80,7 @@ export default function NavigatorPage() {
   };
 
   const handleFilterSubmit = async (data: FilterCriteria) => {
+    mainContentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
     setHasInteracted(true);
     setLoadingState('loading');
     setError(null);
@@ -178,6 +181,7 @@ export default function NavigatorPage() {
   };
 
   const loadDefaultResults = useCallback(async () => {
+    mainContentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
     setHasInteracted(true);
     setLoadingState('loading');
     setError(null);
@@ -299,7 +303,7 @@ export default function NavigatorPage() {
         </Sidebar>
         <SidebarInset>
           <div className="flex flex-col flex-1 h-full">
-            <div className={cn(
+            <div ref={mainContentRef} className={cn(
               "flex-grow p-4 md:p-8 space-y-10 overflow-y-auto transition-opacity duration-500",
               isLoading ? "opacity-0" : "opacity-100 delay-300"
             )}>
