@@ -48,7 +48,7 @@ const LandingFooter = () => {
 
 const RELEASE_NOTES_ACKNOWLEDGED_KEY = 'release_notes_acknowledged_v2.0';
 
-export default function LandingPage() {
+export default function LandingPage({ params, searchParams }: { params: any, searchParams: any }) {
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
   const router = useRouter();
 
@@ -85,7 +85,7 @@ export default function LandingPage() {
         </p>
         <Button
           size="lg"
-          className="bg-gradient-from hover:bg-gradient-from/90 text-primary-foreground px-10 py-6 text-lg rounded-lg shadow-lg transform transition-transform hover:scale-105"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-6 text-lg rounded-lg shadow-lg transform transition-transform hover:scale-105"
           onClick={handleGetStartedClick}
         >
           Get Started

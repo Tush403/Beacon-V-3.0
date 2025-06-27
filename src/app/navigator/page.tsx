@@ -24,7 +24,7 @@ import { GlobalLoader } from '@/components/beacon/GlobalLoader';
 import { cn } from '@/lib/utils';
 import { EffortEstimationResultCard } from '@/components/beacon/EffortEstimationResultCard';
 
-export default function NavigatorPage() {
+export default function NavigatorPage({ params, searchParams }: { params: any, searchParams: any }) {
   const [filters, setFilters] = useState<FilterCriteria | null>(null);
   const [recommendations, setRecommendations] = useState<ToolRecommendationItem[]>([]);
   const [toolAnalyses, setToolAnalyses] = useState<Record<string, ToolAnalysisItem | null>>({});
@@ -288,7 +288,7 @@ export default function NavigatorPage() {
   return (
     <>
       <GlobalLoader loadingState={loadingState} />
-      <div className="flex flex-1">
+      <div className="flex flex-1 min-w-0">
         <Sidebar className="border-r" collapsible="icon">
           <SidebarContent className="md:mt-16">
             <div className="px-4 pb-4">
