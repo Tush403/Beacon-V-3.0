@@ -85,7 +85,7 @@ export default function LandingPage() {
         </p>
         <Button
           size="lg"
-          className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-6 text-lg rounded-lg shadow-lg transform transition-transform hover:scale-105"
+          className="bg-gradient-from hover:bg-gradient-from/90 text-primary-foreground px-10 py-6 text-lg rounded-lg shadow-lg transform transition-transform hover:scale-105"
           onClick={handleGetStartedClick}
         >
           Get Started
