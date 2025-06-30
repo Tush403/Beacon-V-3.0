@@ -94,7 +94,7 @@ export function ReleaseNotesDialog({ isOpen, onOpenChange, onAcknowledge }: Rele
             <DialogClose asChild>
               <Button variant="outline">Close</Button>
             </DialogClose>
-            <Button onClick={onAcknowledge} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+            <Button onClick={onAcknowledge} className="bg-gradient-from hover:bg-gradient-from/90 text-primary-foreground">
               Acknowledge & Continue
             </Button>
           </div>
