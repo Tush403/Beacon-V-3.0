@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -28,7 +27,7 @@ export function ReleaseNotesDialog({ isOpen, onOpenChange, onAcknowledge }: Rele
         <DialogHeader className="p-6 pb-4 border-b">
           <DialogTitle className="flex items-center text-2xl">
             <PackageCheck className="h-7 w-7 mr-3 text-primary" />
-            What's New in Beacon V2.1
+            What's New in Beacon V 3.0
           </DialogTitle>
           <DialogDescription className="pt-1">
             Discover the latest enhancements designed to streamline your workflow.
@@ -89,7 +88,7 @@ export function ReleaseNotesDialog({ isOpen, onOpenChange, onAcknowledge }: Rele
         </ScrollArea>
 
         <DialogFooter className="p-6 pt-4 border-t flex flex-col items-center gap-3">
-          <p className="text-xs text-muted-foreground">Beacon V.2.1 - Powered by Firebase Studio</p>
+          <p className="text-xs text-muted-foreground">Beacon V 3.0 - Powered by Firebase Studio</p>
           <div className="flex flex-row gap-2">
             <DialogClose asChild>
               <Button variant="outline">Close</Button>

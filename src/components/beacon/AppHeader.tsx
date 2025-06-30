@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -16,7 +15,7 @@ import {
 import { useAnimationContext } from '@/contexts/AnimationContext';
 import { useSidebar, SidebarTrigger } from '@/components/ui/sidebar';
 
-const RELEASE_NOTES_ACKNOWLEDGED_KEY = 'release_notes_acknowledged_v2.0';
+const RELEASE_NOTES_ACKNOWLEDGED_KEY = 'release_notes_acknowledged_v3.0';
 
 export function AppHeader() {
   const { isMobile } = useSidebar();

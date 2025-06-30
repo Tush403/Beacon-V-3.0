@@ -46,7 +46,7 @@ const LandingFooter = () => {
   );
 };
 
-const RELEASE_NOTES_ACKNOWLEDGED_KEY = 'release_notes_acknowledged_v2.0';
+const RELEASE_NOTES_ACKNOWLEDGED_KEY = 'release_notes_acknowledged_v3.0';
 
 export default function LandingPage({ params, searchParams }: { params: any, searchParams: any }) {
   const [showReleaseNotes, setShowReleaseNotes] = useState(false);
