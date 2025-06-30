@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/separator';
 
 const LandingHeader = () => (
   <header className="py-6 px-4 md:px-8">
-    <div className="container mx-auto flex items-center">
+    <div className="flex items-center">
       <CogIcon className="h-10 w-10 text-foreground mr-3" />
       <div>
         <h1 className="text-2xl font-bold text-foreground">TAO DIGITAL</h1>
