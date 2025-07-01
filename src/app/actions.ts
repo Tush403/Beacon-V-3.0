@@ -8,6 +8,8 @@ import { compareTools as genkitCompareTools, CompareToolsInput, CompareToolsOutp
 import { getToolDetails as genkitGetToolDetails, GetToolDetailsInput, GetToolDetailsOutput } from '@/ai/flows/get-tool-details';
 import { supportChat as genkitSupportChat, SupportChatInput, SupportChatOutput } from '@/ai/flows/support-chat-flow';
 import { localToolAnalysisData } from '@/lib/tool-analysis-data'; // Import local data
+import { localToolComparisonData, comparisonCriteriaOrder } from '@/lib/tool-comparison-data';
+import type { ComparisonCriterion } from '@/types';
 
 
 export async function recommendToolsAction(filters: RecommendToolsInput): Promise<RecommendToolsOutput> {
@@ -226,6 +228,32 @@ const getMockComparisonData = (toolNames: string[]): CompareToolsOutput => {
 };
 
 export async function compareToolsAction(input: CompareToolsInput): Promise<CompareToolsOutput> {
+  const { toolNames } = input;
+  const lowercasedToolNames = toolNames.map(name => name.toLowerCase().trim());
+
+  // Check if all requested tools are available in our local data
+  const allToolsAreLocal = lowercasedToolNames.every(name => localToolComparisonData[name]);
+
+  if (allToolsAreLocal) {
+    const comparisonTable: ComparisonCriterion[] = comparisonCriteriaOrder.map(criterionName => {
+      const toolValues: Record<string, string> = {};
+      toolNames.forEach((toolName, index) => {
+        const localDataKey = lowercasedToolNames[index];
+        toolValues[toolName] = localToolComparisonData[localDataKey]?.[criterionName] || 'N/A';
+      });
+      return { criterionName, toolValues };
+    });
+
+    const toolOverviews: Record<string, string> = {};
+    toolNames.forEach((toolName, index) => {
+      const localDataKey = lowercasedToolNames[index];
+      toolOverviews[toolName] = localToolComparisonData[localDataKey]?.['Overview'] || 'No overview available.';
+    });
+
+    return { comparisonTable, toolOverviews };
+  }
+  
+  // Fallback to Genkit AI call if not all tools are found locally
   try {
     const result = await genkitCompareTools(input);
     if (!result || !result.comparisonTable || result.comparisonTable.length === 0) {
