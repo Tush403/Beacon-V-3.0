@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, Component, ExternalLink, CheckCircle, XCircle, Eye } from 'lucide-react';
+import { Loader2, Puzzle, ExternalLink, CheckCircle, XCircle, Eye } from 'lucide-react';
 import type { ToolRecommendationItem, ToolAnalysisItem, DocumentationLink } from '@/types';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -126,7 +126,7 @@ export function ToolCard({
       <CardHeader>
         <div className="flex items-center gap-4">
             <div className="p-3 bg-muted rounded-lg">
-                <Component className="h-8 w-8 text-primary" />
+                <Puzzle className="h-8 w-8 text-primary" />
             </div>
             <div>
                 <CardTitle className="text-2xl font-headline text-foreground">{tool.toolName}</CardTitle>
