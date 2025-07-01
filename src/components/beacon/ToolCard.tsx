@@ -10,11 +10,10 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Loader2, Puzzle, ExternalLink, CheckCircle, XCircle, Eye } from 'lucide-react';
+import { Loader2, ExternalLink, CheckCircle, XCircle, Eye } from 'lucide-react';
 import type { ToolRecommendationItem, ToolAnalysisItem, DocumentationLink } from '@/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 interface ToolCardProps {
   tool: ToolRecommendationItem;
@@ -24,7 +23,17 @@ interface ToolCardProps {
   onViewDetails: (toolName: string) => void;
 }
 
-const AnalysisContent = ({ analysis, isAnalysisLoading }: { analysis?: ToolAnalysisItem | null, isAnalysisLoading: boolean }) => {
+const getInitials = (name: string) => {
+  const words = name.replace(/[^a-zA-Z0-9\s]/g, '').trim().split(/\s+/);
+  if (words.length === 1) {
+    // For single-word names, take up to 2 characters.
+    return words[0].substring(0, 2).toUpperCase();
+  }
+  // For multi-word names, take the first letter of the first two words.
+  return (words[0][0] + (words[1]?.[0] || '')).toUpperCase();
+};
+
+const AnalysisContent = ({ analysis, isAnalysisLoading, toolName }: { analysis?: ToolAnalysisItem | null, isAnalysisLoading: boolean, toolName: string }) => {
   if (isAnalysisLoading && !analysis) {
     return (
       <div className="space-y-6">
@@ -57,7 +66,7 @@ const AnalysisContent = ({ analysis, isAnalysisLoading }: { analysis?: ToolAnaly
   if (!analysis) {
     return (
       <div className="text-center text-muted-foreground py-8">
-        <p>Analysis for {name} is being loaded...</p>
+        <p>Analysis for {toolName} is being loaded...</p>
       </div>
     );
   }
@@ -125,9 +134,11 @@ export function ToolCard({
     <Card className="shadow-none border rounded-lg">
       <CardHeader>
         <div className="flex items-center gap-4">
-            <div className="p-3 bg-muted rounded-lg">
-                <Puzzle className="h-8 w-8 text-primary" />
-            </div>
+            <Avatar className="h-16 w-16 text-xl">
+              <AvatarFallback className="bg-muted text-primary font-semibold">
+                {getInitials(tool.toolName)}
+              </AvatarFallback>
+            </Avatar>
             <div>
                 <CardTitle className="text-2xl font-headline text-foreground">{tool.toolName}</CardTitle>
                 <CardDescription className="text-base">
@@ -137,7 +148,7 @@ export function ToolCard({
         </div>
       </CardHeader>
       <CardContent>
-        <AnalysisContent analysis={analysis} isAnalysisLoading={isAnalysisLoading} />
+        <AnalysisContent analysis={analysis} isAnalysisLoading={isAnalysisLoading} toolName={tool.toolName} />
       </CardContent>
       <CardFooter className="pt-6 mt-auto border-t bg-muted/30 flex justify-end gap-2 px-6 py-4">
         {docLink && (
