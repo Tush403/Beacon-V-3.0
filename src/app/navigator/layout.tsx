@@ -11,8 +11,12 @@ import { Chatbot } from '@/components/beacon/Chatbot';
 
 export default function NavigatorLayout({
   children,
+  params,
+  searchParams,
 }: Readonly<{
   children: React.ReactNode;
+  params?: any;
+  searchParams?: any;
 }>) {
   return (
     <AnimationProvider>
