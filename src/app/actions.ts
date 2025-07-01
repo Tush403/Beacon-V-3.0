@@ -2,11 +2,12 @@
 'use server';
 
 import { recommendTools as genkitRecommendTools, RecommendToolsInput, RecommendToolsOutput } from '@/ai/flows/recommend-tools';
-import { generateToolAnalysis as genkitGenerateToolAnalysis, GenerateToolAnalysisOutput, GenerateToolAnalysisInput } from '@/ai/flows/generate-tool-analysis'; // Updated import
+import { generateToolAnalysis as genkitGenerateToolAnalysis, GenerateToolAnalysisOutput, GenerateToolAnalysisInput } from '@/ai/flows/generate-tool-analysis';
 import { estimateEffort as genkitEstimateEffort, EstimateEffortInput, EstimateEffortOutput } from '@/ai/flows/estimate-effort-flow';
 import { compareTools as genkitCompareTools, CompareToolsInput, CompareToolsOutput } from '@/ai/flows/compare-tools-flow';
 import { getToolDetails as genkitGetToolDetails, GetToolDetailsInput, GetToolDetailsOutput } from '@/ai/flows/get-tool-details';
 import { supportChat as genkitSupportChat, SupportChatInput, SupportChatOutput } from '@/ai/flows/support-chat-flow';
+import { localToolAnalysisData } from '@/lib/tool-analysis-data'; // Import local data
 
 
 export async function recommendToolsAction(filters: RecommendToolsInput): Promise<RecommendToolsOutput> {
@@ -119,6 +120,18 @@ export async function recommendToolsAction(filters: RecommendToolsInput): Promis
 }
 
 export async function generateToolAnalysisAction(input: GenerateToolAnalysisInput): Promise<GenerateToolAnalysisOutput> {
+  const toolNameLower = input.toolName.toLowerCase();
+  
+  // 1. Check local data first for an instant response
+  if (localToolAnalysisData[toolNameLower]) {
+    const localData = localToolAnalysisData[toolNameLower];
+    return {
+      toolName: input.toolName, // Return with original casing for display
+      ...localData
+    };
+  }
+
+  // 2. Fallback to Genkit AI call if not found locally
   try {
     const result = await genkitGenerateToolAnalysis(input);
      if (!result || !result.strengths || !result.weaknesses) {
