@@ -33,14 +33,14 @@ const ComparisonTableSkeleton = ({ toolNames }: { toolNames: string[] }) => (
     </CardHeader>
     <CardContent>
       <div className="border rounded-lg overflow-hidden">
-        <Table>
+        <Table className="table-fixed">
           <TableHeader className="bg-muted/50">
             <TableRow>
-              <TableHead className="min-w-[180px] p-3">
+              <TableHead className="w-[220px] p-3">
                 <Skeleton className="h-5 w-24" />
               </TableHead>
               {toolNames.map((_, index) => (
-                <TableHead key={index} className="min-w-[250px] p-2">
+                <TableHead key={index} className="p-2">
                   <Skeleton className="h-9 w-full" />
                 </TableHead>
               ))}
@@ -154,14 +154,14 @@ export function ToolComparisonTable({ data, toolNames, allTools, onToolChange, i
           </div>
         )}
         <div className="border rounded-lg overflow-hidden">
-          <Table>
+          <Table className="table-fixed">
             <TableCaption className="mt-4 text-xs">AI-generated comparison. Information may require validation for critical decisions.</TableCaption>
             <TableHeader className="bg-muted/50">
               <TableRow>
-                <TableHead className="min-w-[180px] p-3 font-semibold text-primary border-r">Parameters</TableHead>
+                <TableHead className="w-[220px] p-3 font-semibold text-primary border-r">Parameters</TableHead>
                 {uniqueToolNames.map((toolName, index) => {
                   return (
-                    <TableHead key={`${toolName}-${index}`} className="min-w-[250px] p-2 align-top text-foreground font-semibold border-r last:border-r-0">
+                    <TableHead key={`${toolName}-${index}`} className="p-2 align-top text-foreground font-semibold border-r last:border-r-0">
                         <Select 
                             value={getToolValueByName(toolName)}
                             onValueChange={(newValue) => onToolChange(index, newValue)}
