@@ -166,7 +166,7 @@ export function ToolComparisonTable({ data, toolNames, allTools, onToolChange, i
                             value={getToolValueByName(toolName)}
                             onValueChange={(newValue) => onToolChange(index, newValue)}
                         >
-                            <SelectTrigger className="font-bold text-accent">
+                            <SelectTrigger className="font-semibold text-sm text-primary">
                                 <SelectValue>{toolName}</SelectValue>
                             </SelectTrigger>
                             <SelectContent>
