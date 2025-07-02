@@ -1,6 +1,7 @@
 
 'use client';
 
+import Image from 'next/image';
 import {
   Card,
   CardContent,
@@ -10,10 +11,11 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, ExternalLink, CheckCircle, XCircle, Eye } from 'lucide-react';
+import { ExternalLink, CheckCircle, XCircle, Eye } from 'lucide-react';
 import type { ToolRecommendationItem, ToolAnalysisItem, DocumentationLink } from '@/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { toolLogos } from '@/lib/tool-logos';
 
 interface ToolCardProps {
   tool: ToolRecommendationItem;
@@ -129,15 +131,26 @@ export function ToolCard({
   isAnalysisLoading,
   onViewDetails,
 }: ToolCardProps) {
+  const logoSrc = toolLogos[tool.toolName.toLowerCase()];
 
   return (
     <Card className="shadow-none border rounded-lg">
       <CardHeader>
         <div className="flex items-center gap-4">
-            <Avatar className="h-16 w-16 text-xl">
-              <AvatarFallback className="bg-muted text-primary font-semibold">
-                {getInitials(tool.toolName)}
-              </AvatarFallback>
+            <Avatar className="h-16 w-16 text-xl bg-card border">
+              {logoSrc ? (
+                  <Image
+                    src={logoSrc}
+                    alt={`${tool.toolName} logo`}
+                    width={64}
+                    height={64}
+                    className="object-contain p-1"
+                  />
+              ) : (
+                <AvatarFallback className="bg-muted text-primary font-semibold">
+                  {getInitials(tool.toolName)}
+                </AvatarFallback>
+              )}
             </Avatar>
             <div>
                 <CardTitle className="text-2xl font-headline text-foreground">{tool.toolName}</CardTitle>
