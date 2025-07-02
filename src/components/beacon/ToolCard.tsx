@@ -14,7 +14,6 @@ import { Button } from '@/components/ui/button';
 import { ExternalLink, CheckCircle, XCircle, Eye } from 'lucide-react';
 import type { ToolRecommendationItem, ToolAnalysisItem, DocumentationLink } from '@/types';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { toolLogos } from '@/lib/tool-logos';
 import { useState, useEffect } from 'react';
 
@@ -143,7 +142,7 @@ export function ToolCard({
     <Card className="shadow-none border rounded-lg">
       <CardHeader>
         <div className="flex items-center gap-4">
-            <Avatar className="h-16 w-16 text-xl bg-card border">
+            <div className="relative flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-md border bg-card text-xl">
               {logoSrc && !logoError ? (
                   <Image
                     src={logoSrc}
@@ -154,11 +153,11 @@ export function ToolCard({
                     onError={() => setLogoError(true)}
                   />
               ) : (
-                <AvatarFallback className="bg-muted text-primary font-semibold">
+                <div className="flex h-full w-full items-center justify-center rounded-md bg-muted text-primary font-semibold">
                   {getInitials(tool.toolName)}
-                </AvatarFallback>
+                </div>
               )}
-            </Avatar>
+            </div>
             <div>
                 <CardTitle className="text-2xl font-headline text-foreground">{tool.toolName}</CardTitle>
                 <CardDescription className="text-base">
