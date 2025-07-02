@@ -16,6 +16,7 @@ import type { ToolRecommendationItem, ToolAnalysisItem, DocumentationLink } from
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { toolLogos } from '@/lib/tool-logos';
+import { useState, useEffect } from 'react';
 
 interface ToolCardProps {
   tool: ToolRecommendationItem;
@@ -132,19 +133,25 @@ export function ToolCard({
   onViewDetails,
 }: ToolCardProps) {
   const logoSrc = toolLogos[tool.toolName.toLowerCase()];
+  const [logoError, setLogoError] = useState(false);
+
+  useEffect(() => {
+    setLogoError(false);
+  }, [logoSrc]);
 
   return (
     <Card className="shadow-none border rounded-lg">
       <CardHeader>
         <div className="flex items-center gap-4">
             <Avatar className="h-16 w-16 text-xl bg-card border">
-              {logoSrc ? (
+              {logoSrc && !logoError ? (
                   <Image
                     src={logoSrc}
                     alt={`${tool.toolName} logo`}
                     width={64}
                     height={64}
                     className="object-contain p-1"
+                    onError={() => setLogoError(true)}
                   />
               ) : (
                 <AvatarFallback className="bg-muted text-primary font-semibold">
