@@ -10,7 +10,7 @@
  */
 export const toolLogos: Record<string, string> = {
   // Add your tool logos here. Example:
-  'functionize': '/logos/functionize.svg',
+  'functionize': '/logos/functionize.png',
   'zeta automation': '/logos/zeta_automation.png',
   'selenium': '/logos/selenium.svg',
   'playwright': '/logos/playwright.svg',
