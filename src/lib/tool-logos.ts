@@ -5,16 +5,16 @@
  * The keys should be the lowercase version of the tool name for consistent lookups.
  * The paths should point to images stored in the `/public` directory.
  *
- * For example, if you have a logo at `public/logos/functionize.svg`,
- * the entry should be: 'functionize': '/logos/functionize.svg'
+ * For example, if you have a logo at `public/logos/functionize.png`,
+ * the entry should be: 'functionize': '/logos/functionize.png'
  */
 export const toolLogos: Record<string, string> = {
   'accelq': '/logos/ACCELQ.png',
-  'appium': '/logos/Appium.svg',
+  'appium': '/logos/Appium.png',
   'applitools': '/logos/Applitools.png',
   'browserstack automate': '/logos/BrowserStack Automate.png',
   'cucumber': '/logos/Cucumber.png',
-  'cypress': '/logos/Cypress.svg',
+  'cypress': '/logos/Cypress.png',
   'detox': '/logos/Detox.png',
   'eggplant': '/logos/Eggplant.png',
   'espresso': '/logos/Espresso.png',
@@ -23,9 +23,9 @@ export const toolLogos: Record<string, string> = {
   'gauge': '/logos/Gauge.png',
   'ghost inspector': '/logos/Ghost Inspector.png',
   'grafana k6': '/logos/Grafana k6.png',
-  'jmeter': '/logos/JMeter.svg',
+  'jmeter': '/logos/JMeter.png',
   'karate dsl': '/logos/Karate DSL.png',
-  'katalon studio': '/logos/Katalon Studio.svg',
+  'katalon studio': '/logos/Katalon Studio.png',
   'kobiton': '/logos/Kobiton.png',
   'lambdatest': '/logos/LambdaTest.png',
   'leapwork': '/logos/Leapwork.png',
@@ -34,7 +34,7 @@ export const toolLogos: Record<string, string> = {
   'newman': '/logos/Newman.png',
   'perfecto': '/logos/Perfecto.png',
   'percy': '/logos/Percy.png',
-  'playwright': '/logos/Playwright.svg',
+  'playwright': '/logos/Playwright.png',
   'puppeteer': '/logos/Puppeteer.png',
   'ranorex': '/logos/Ranorex.png',
   'reflect': '/logos/Reflect.png',
