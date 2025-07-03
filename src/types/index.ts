@@ -100,10 +100,15 @@ export const GetToolDetailsInputSchema = z.object({
 });
 export type GetToolDetailsInput = z.infer<typeof GetToolDetailsInputSchema>;
 
+const ToolDetailItemSchema = z.object({
+  criterionName: z.string().describe("The name of the analysis criterion (e.g., 'Ideal Project & Use Case')."),
+  value: z.string().describe("The detailed text for this criterion, potentially with newlines for paragraphs."),
+});
+
 export const GetToolDetailsOutputSchema = z.object({
     toolName: z.string().describe('The official name of the tool.'),
     overview: z.string().describe('A brief, 1-2 sentence overview of the tool.'),
-    detailedAnalysis: z.string().describe("A detailed, multi-paragraph narrative analysis covering the tool's ideal use cases, technical aspects, best-fit team profile, and cost considerations. Use Markdown for formatting headers and lists."),
+    details: z.array(ToolDetailItemSchema).describe("A list of detailed analysis points, covering ideal use cases, technical aspects, team profile, and cost."),
 });
 export type GetToolDetailsOutput = z.infer<typeof GetToolDetailsOutputSchema>;
 

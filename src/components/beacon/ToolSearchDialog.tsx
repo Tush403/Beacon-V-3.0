@@ -140,13 +140,13 @@ export function ToolSearchDialog({ isOpen, onOpenChange }: ToolSearchDialogProps
 
               <Separator/>
 
-              <div className="space-y-3">
-                {toolDetails.details.map(detail => (
-                    <div key={detail.criterionName}>
-                        <h4 className="font-medium text-foreground text-sm">{detail.criterionName}</h4>
-                        <p className="text-sm text-muted-foreground whitespace-pre-line">{detail.value}</p>
-                    </div>
-                ))}
+              <div className="space-y-4">
+                  {toolDetails.details.map(detail => (
+                      <div key={detail.criterionName}>
+                          <h4 className="font-medium text-foreground text-sm">{detail.criterionName}</h4>
+                          <p className="text-sm text-muted-foreground whitespace-pre-line">{detail.value}</p>
+                      </div>
+                  ))}
               </div>
             </div>
           )}

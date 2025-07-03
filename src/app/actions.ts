@@ -163,7 +163,7 @@ export async function generateToolAnalysisAction(input: GenerateToolAnalysisInpu
 export async function getToolDetailsAction(input: GetToolDetailsInput): Promise<GetToolDetailsOutput> {
     try {
         const result = await genkitGetToolDetails(input);
-        if (!result || !result.overview || !result.detailedAnalysis) {
+        if (!result || !result.overview || !result.details || result.details.length === 0) {
             throw new Error('AI response for tool details was incomplete.');
         }
         return result;
@@ -173,7 +173,10 @@ export async function getToolDetailsAction(input: GetToolDetailsInput): Promise<
         return {
             toolName: `${input.toolName} (Error)`,
             overview: `An error occurred while fetching details for ${input.toolName}. The information could not be retrieved. Please try again later.`,
-            detailedAnalysis: `An internal error prevented the retrieval of tool-specific data. ${error instanceof Error ? error.message : ''}`
+            details: [{
+                criterionName: 'Error Details',
+                value: `An internal error prevented the retrieval of tool-specific data. ${error instanceof Error ? error.message : ''}`
+            }]
         };
     }
 }

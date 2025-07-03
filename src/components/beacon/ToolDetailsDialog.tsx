@@ -25,15 +25,14 @@ interface ToolDetailsDialogProps {
 }
 
 const DetailsSkeleton = () => (
-  <div className="space-y-4 pt-4 animate-pulse">
-    <Skeleton className="h-6 w-1/2 mb-2" />
+  <div className="space-y-6 pt-4 animate-pulse">
+    <Skeleton className="h-7 w-1/2" />
     <Skeleton className="h-4 w-full" />
-    <Skeleton className="h-4 w-5/6" />
     <Separator className="my-4" />
-    <div className="space-y-4">
+    <div className="space-y-6">
       {[...Array(3)].map((_, i) => (
         <div key={i} className="space-y-2">
-            <Skeleton className="h-5 w-1/3" />
+            <Skeleton className="h-5 w-1/3 mb-2" />
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-3/4" />
@@ -106,7 +105,7 @@ export function ToolDetailsDialog({ isOpen, onOpenChange, toolName }: ToolDetail
             {isLoading && <DetailsSkeleton />}
 
             {toolDetails && !isLoading && (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <h3 className="text-xl font-semibold text-foreground">
                     {toolDetails.toolName}
                 </h3>
@@ -114,10 +113,15 @@ export function ToolDetailsDialog({ isOpen, onOpenChange, toolName }: ToolDetail
                 
                 <Separator className="my-4"/>
 
-                <div 
-                  className="text-sm text-foreground/90 whitespace-pre-line leading-relaxed"
-                >
-                  {toolDetails.detailedAnalysis}
+                <div className="space-y-6">
+                    {toolDetails.details.map((detail, index) => (
+                        <div key={index}>
+                            <h4 className="font-semibold text-base text-primary mb-2">{detail.criterionName}</h4>
+                            <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed">
+                                {detail.value}
+                            </p>
+                        </div>
+                    ))}
                 </div>
               </div>
             )}
