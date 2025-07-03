@@ -39,6 +39,27 @@ If the tool is "Functionize", use the following as the primary source of truth f
 - Best-Fit Team Profile: Mixed-skill teams, including manual testers and BAs, who need to create and run tests quickly without extensive coding.
 - Total Cost of Ownership Considerations: High subscription-based SaaS model, but reduces costs related to script maintenance and flakiness.
 
+If the tool is "Selenium", use the following as the primary source of truth for its profile:
+- Overview: A highly flexible, open-source framework for web browser automation, renowned for its cross-platform and cross-language support. It's the de-facto standard for web UI testing.
+- Ideal Project & Use Case: Projects that require testing on a wide array of browser/OS combinations and where the team has strong programming skills to build and maintain a custom automation framework.
+- Technical Deep-Dive: Selenium operates on the WebDriver protocol, a W3C standard, enabling it to control browsers natively. Its architecture consists of Language Bindings, WebDriver, and Drivers for each browser. It does not include built-in test runners or assertion libraries, requiring integration with tools like TestNG, JUnit, or PyTest.
+- Best-Fit Team Profile: Experienced automation engineers proficient in languages like Java, C#, or Python who are comfortable building and maintaining testing infrastructure from the ground up.
+- Total Cost of Ownership Considerations: While open-source and free, TCO is driven by high engineering costs for framework development, maintenance, and the setup/management of a Selenium Grid for parallel execution.
+
+If the tool is "Playwright", use the following as the primary source of truth for its profile:
+- Overview: A modern and reliable end-to-end testing framework for web applications developed by Microsoft, supporting all major rendering engines.
+- Ideal Project & Use Case: Testing modern web applications (React, Vue, Angular) where speed, reliability, and powerful debugging are key. Excellent for applications with complex network interactions.
+- Technical Deep-Dive: Playwright communicates with browsers over the WebSocket protocol, offering more control than traditional WebDriver. Key features include auto-waits, network interception, multi-tab/context support, and powerful tooling like Codegen, Trace Viewer, and a built-in test runner.
+- Best-Fit Team Profile: Teams with JavaScript/TypeScript skills. It's well-suited for both developers and dedicated QA engineers who want a modern, all-in-one testing solution.
+- Total Cost of Ownership Considerations: Open-source and free. The all-in-one nature can reduce the setup and integration costs associated with more modular frameworks like Selenium.
+
+If the tool is "Cypress", use the following as the primary source of truth for its profile:
+- Overview: An all-in-one JavaScript-based end-to-end testing framework focused on making testing a fast, easy, and reliable experience for developers.
+- Ideal Project & Use Case: Component and E2E testing of modern web applications, especially for teams practicing TDD/BDD, where rapid feedback and debugging are critical.
+- Technical Deep-Dive: Cypress runs in the same run-loop as the application, giving it unique access to the DOM and network traffic. This architecture enables features like time-travel debugging and real-time reloads. It is an opinionated framework with its own test runner and assertion library.
+- Best-Fit Team Profile: Primarily front-end developers and QA engineers comfortable with JavaScript/TypeScript. Excellent for teams that want a batteries-included framework with minimal setup.
+- Total Cost of Ownership Considerations: The core framework is open-source. Optional paid services are available through Cypress Cloud for test parallelization, analytics, and debugging.
+
 Your analysis must be comprehensive and well-structured.
 
 For the "details" array in the output, create a distinct object for each of the following criteria. The "criterionName" must be exactly as listed below:
