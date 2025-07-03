@@ -36,7 +36,7 @@ export const toolLogos: Record<string, string> = {
   'percy': '/logos/Percy.png',
   'playwright': '/logos/Playwright.svg',
   'puppeteer': '/logos/Puppeteer.png',
-  'ranorex': '/logos/Ranorex.png',
+  'ranorex': '/logos/Ranorex_.jpeg',
   'reflect': '/logos/Reflect.png',
   'rest assured': '/logos/Rest Assured.png',
   'robot framework': '/logos/Robot Framework.png',
