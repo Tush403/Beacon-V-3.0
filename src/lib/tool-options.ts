@@ -1,4 +1,3 @@
-
 // src/lib/tool-options.ts
 export const automationToolOptions = [
   { value: "accelq", label: "ACCELQ (AI, Codeless)" },
@@ -28,7 +27,7 @@ export const automationToolOptions = [
   { value: "percy", label: "Percy (Visual Testing, AI)" },
   { value: "playwright", label: "Playwright" },
   { value: "puppeteer", label: "Puppeteer" },
-  { value: "ranorex", label: "Ranorex" },
+  { value: "ranorex_studio", label: "Ranorex Studio" },
   { value: "reflect_run", label: "Reflect (Codeless, AI)" },
   { value: "restassured", label: "Rest Assured" },
   { value: "robot_framework", label: "Robot Framework" },
