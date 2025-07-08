@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, Fragment, useCallback, useRef } from 'react';
@@ -10,7 +11,7 @@ import { TrendAnalysisCard } from '@/components/beacon/TrendAnalysisCard';
 import { ToolComparisonTable } from '@/components/beacon/ToolComparisonTable';
 import { recommendToolsAction, generateToolAnalysisAction, compareToolsAction, estimateEffortAction } from '../actions';
 import { useToast } from '@/hooks/use-toast';
-import type { FilterCriteria, ToolRecommendationItem, ToolAnalysisItem, GenerateToolAnalysisInput, CompareToolsOutput, CompareToolsInput, EstimateEffortOutput, EstimateEffortInput } from '@/types';
+import type { FilterCriteria, ToolRecommendationItem, ToolAnalysisItem, GenerateToolAnalysisInput, CompareToolsOutput, CompareToolsInput, EstimateEffortOutput, EstimateEffortInput, ComparisonCriterion } from '@/types';
 import { Separator } from '@/components/ui/separator';
 import { 
   Sidebar, 
@@ -23,19 +24,87 @@ import { automationToolOptions } from '@/lib/tool-options';
 import { GlobalLoader } from '@/components/beacon/GlobalLoader';
 import { cn } from '@/lib/utils';
 import { EffortEstimationResultCard } from '@/components/beacon/EffortEstimationResultCard';
+import { localToolComparisonData, comparisonCriteriaOrder } from '@/lib/tool-comparison-data';
+
+
+// --- Pre-calculated Initial State for Instant Load ---
+const initialFilterValues: FilterCriteria = {
+  applicationUnderTest: 'all',
+  testType: 'all',
+  operatingSystem: 'all',
+  codingRequirement: 'any',
+  codingLanguage: 'any',
+  pricingModel: 'any',
+  reportingAnalytics: 'any',
+  applicationSubCategory: 'any',
+  integrationCapabilities: 'any',
+  teamSizeSuitability: 'any',
+  keyFeatureFocus: 'any',
+  automationTool: undefined,
+  complexityLow: undefined,
+  complexityMedium: undefined,
+  complexityHigh: undefined,
+  complexityHighlyComplex: undefined,
+  useStandardFramework: false,
+  cicdPipelineIntegrated: false,
+  qaTeamSize: undefined,
+};
+
+const defaultRecommendations: ToolRecommendationItem[] = [
+  {
+    toolName: 'Functionize',
+    score: 95,
+    justification: 'An AI-powered testing platform ideal for web applications that automates test creation and maintenance.',
+  },
+  {
+    toolName: 'ZeTA Automation',
+    score: 92,
+    justification: 'A unified, open-source framework for high reusability and comprehensive test coverage across multiple application layers.',
+  },
+  {
+    toolName: 'Selenium',
+    score: 90,
+    justification: 'A highly flexible, open-source framework for web browser automation with extensive community support.',
+  },
+];
+
+const defaultToolNames = defaultRecommendations.map(r => r.toolName);
+const lowercasedDefaultToolNames = defaultToolNames.map(name => name.toLowerCase().trim());
+
+const initialComparisonTable: ComparisonCriterion[] = comparisonCriteriaOrder.map(criterionName => {
+  const toolValues: Record<string, string> = {};
+  defaultToolNames.forEach((toolName, index) => {
+    const localDataKey = lowercasedDefaultToolNames[index];
+    toolValues[toolName] = localToolComparisonData[localDataKey]?.[criterionName] || 'N/A';
+  });
+  return { criterionName, toolValues };
+});
+
+const initialToolOverviews: Record<string, string> = {};
+defaultToolNames.forEach((toolName, index) => {
+  const localDataKey = lowercasedDefaultToolNames[index];
+  initialToolOverviews[toolName] = localToolComparisonData[localDataKey]?.['Overview'] || 'No overview available.';
+});
+
+const initialComparisonData: CompareToolsOutput = {
+  comparisonTable: initialComparisonTable,
+  toolOverviews: initialToolOverviews,
+};
+// --- End Pre-calculated Initial State ---
+
 
 export default function NavigatorPage({ params, searchParams }: { params: any, searchParams: any }) {
-  const [filters, setFilters] = useState<FilterCriteria | null>(null);
-  const [recommendations, setRecommendations] = useState<ToolRecommendationItem[]>([]);
+  const [filters, setFilters] = useState<FilterCriteria | null>(initialFilterValues);
+  const [recommendations, setRecommendations] = useState<ToolRecommendationItem[]>(defaultRecommendations);
   const [toolAnalyses, setToolAnalyses] = useState<Record<string, ToolAnalysisItem | null>>({});
   const [error, setError] = useState<string | null>(null);
   
-  const [comparisonData, setComparisonData] = useState<CompareToolsOutput | null>(null);
-  const [comparedToolNames, setComparedToolNames] = useState<string[]>([]);
+  const [comparisonData, setComparisonData] = useState<CompareToolsOutput | null>(initialComparisonData);
+  const [comparedToolNames, setComparedToolNames] = useState<string[]>(defaultToolNames);
   const [comparisonError, setComparisonError] = useState<string | null>(null);
   const [isComparisonLoading, setIsComparisonLoading] = useState(false);
 
-  const [hasInteracted, setHasInteracted] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(true); // Start as true to show defaults
   const [loadingState, setLoadingState] = useState<'idle' | 'loading' | 'finished'>('idle');
 
   const { toast } = useToast();
@@ -57,31 +126,9 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
     }
   }, [loadingState]);
 
-  const initialFilterValues: FilterCriteria = {
-    applicationUnderTest: 'all',
-    testType: 'all',
-    operatingSystem: 'all',
-    codingRequirement: 'any',
-    codingLanguage: 'any',
-    pricingModel: 'any',
-    reportingAnalytics: 'any',
-    applicationSubCategory: 'any',
-    integrationCapabilities: 'any',
-    teamSizeSuitability: 'any',
-    keyFeatureFocus: 'any',
-    automationTool: undefined,
-    complexityLow: undefined,
-    complexityMedium: undefined,
-    complexityHigh: undefined,
-    complexityHighlyComplex: undefined,
-    useStandardFramework: false,
-    cicdPipelineIntegrated: false,
-    qaTeamSize: undefined,
-  };
 
   const handleFilterSubmit = async (data: FilterCriteria) => {
     mainContentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
-    setHasInteracted(true);
     setLoadingState('loading');
     setError(null);
     setRecommendations([]); 
@@ -182,104 +229,20 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
     }
   };
 
-  const loadDefaultResults = useCallback(async () => {
+  const loadDefaultResults = useCallback(() => {
     mainContentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
     setHasInteracted(true);
     setError(null);
     setToolAnalyses({});
-    setComparisonData(null);
     setComparisonError(null);
     setEffortEstimationResult(null);
-    // Don't set loading state for resets
     
-    const defaultRecommendations: ToolRecommendationItem[] = [
-      {
-        toolName: 'Functionize',
-        score: 95,
-        justification: 'An AI-powered testing platform ideal for web applications that automates test creation and maintenance.',
-      },
-      {
-        toolName: 'ZeTA Automation',
-        score: 92,
-        justification: 'A unified, open-source framework for high reusability and comprehensive test coverage across multiple application layers.',
-      },
-      {
-        toolName: 'Selenium',
-        score: 90,
-        justification: 'A highly flexible, open-source framework for web browser automation with extensive community support.',
-      },
-    ];
-    
+    // Reset all state to the pre-calculated defaults synchronously
     setRecommendations(defaultRecommendations);
     setFilters(initialFilterValues);
-
-    const toolNames = defaultRecommendations.map(r => r.toolName);
-    setComparedToolNames(toolNames);
-    
-    setIsComparisonLoading(true);
-    try {
-      const comparisonInput: CompareToolsInput = { toolNames };
-      const comparisonResult = await compareToolsAction(comparisonInput);
-      setComparisonData(comparisonResult);
-    } catch (e: any) {
-      setComparisonError(e.message || 'An unknown error occurred while fetching default comparison data.');
-      toast({
-        title: 'Error',
-        description: e.message || 'Failed to get default tool comparison.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsComparisonLoading(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toast]);
-
-  // On initial mount, load default results WITHOUT the full-screen animation.
-  useEffect(() => {
-    setHasInteracted(true);
-    setIsComparisonLoading(true);
-    const defaultRecommendations: ToolRecommendationItem[] = [
-      {
-        toolName: 'Functionize',
-        score: 95,
-        justification: 'An AI-powered testing platform ideal for web applications that automates test creation and maintenance.',
-      },
-      {
-        toolName: 'ZeTA Automation',
-        score: 92,
-        justification: 'A unified, open-source framework for high reusability and comprehensive test coverage across multiple application layers.',
-      },
-      {
-        toolName: 'Selenium',
-        score: 90,
-        justification: 'A highly flexible, open-source framework for web browser automation with extensive community support.',
-      },
-    ];
-    
-    setRecommendations(defaultRecommendations);
-    setFilters(initialFilterValues);
-    const toolNames = defaultRecommendations.map(r => r.toolName);
-    setComparedToolNames(toolNames);
-    
-    const fetchInitialComparison = async () => {
-      try {
-        const comparisonInput: CompareToolsInput = { toolNames };
-        const comparisonResult = await compareToolsAction(comparisonInput);
-        setComparisonData(comparisonResult);
-      } catch (e: any) {
-        setComparisonError(e.message || 'An unknown error occurred while fetching default comparison data.');
-        toast({
-          title: 'Error',
-          description: e.message || 'Failed to get default tool comparison.',
-          variant: 'destructive',
-        });
-      } finally {
-        setIsComparisonLoading(false);
-      }
-    };
-    
-    fetchInitialComparison();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setComparedToolNames(defaultToolNames);
+    setComparisonData(initialComparisonData);
+    setIsComparisonLoading(false);
   }, []);
 
   const recommendationsExist = recommendations.length > 0;
