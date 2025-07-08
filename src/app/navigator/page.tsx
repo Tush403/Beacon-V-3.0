@@ -113,10 +113,28 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
   const [year, setYear] = useState<number | null>(null);
   const mainContentRef = useRef<HTMLDivElement>(null);
   const comparisonTableRef = useRef<HTMLDivElement>(null);
+  const [scrollAfterLoad, setScrollAfterLoad] = useState(false);
 
   useEffect(() => {
     setYear(new Date().getFullYear());
   }, []);
+
+  useEffect(() => {
+    if (scrollAfterLoad && loadingState === 'finished' && comparisonTableRef.current && mainContentRef.current) {
+        const scrollTimer = setTimeout(() => {
+            if (comparisonTableRef.current && mainContentRef.current) {
+                const topPosition = comparisonTableRef.current.offsetTop;
+                mainContentRef.current.scrollTo({
+                    top: topPosition - 20, // 20px padding from the top
+                    behavior: 'smooth'
+                });
+                setScrollAfterLoad(false); // Reset the flag
+            }
+        }, 350); // Delay to sync with the content fade-in animation
+
+        return () => clearTimeout(scrollTimer);
+    }
+  }, [scrollAfterLoad, loadingState]);
 
   useEffect(() => {
     // This effect resets the animation state after it has finished, so it can run again.
@@ -184,15 +202,7 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
   };
   
   const handleComparisonToolChange = async (indexToChange: number, newToolValue: string) => {
-    // Scroll the comparison table to the top of the visible area.
-    if (comparisonTableRef.current && mainContentRef.current) {
-      const topPosition = comparisonTableRef.current.offsetTop;
-      mainContentRef.current.scrollTo({
-        top: topPosition - 20, // 20px padding from the top
-        behavior: 'smooth'
-      });
-    }
-
+    setScrollAfterLoad(true); // Set the flag to trigger scroll in useEffect
     setLoadingState('loading'); // Use global loader
 
     const newToolLabel = automationToolOptions.find(opt => opt.value === newToolValue)?.label || newToolValue;
