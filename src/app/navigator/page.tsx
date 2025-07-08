@@ -102,8 +102,7 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
   const [comparisonData, setComparisonData] = useState<CompareToolsOutput | null>(initialComparisonData);
   const [comparedToolNames, setComparedToolNames] = useState<string[]>(defaultToolNames);
   const [comparisonError, setComparisonError] = useState<string | null>(null);
-  const [isComparisonLoading, setIsComparisonLoading] = useState(false);
-
+  
   const [hasInteracted, setHasInteracted] = useState(true); // Start as true to show defaults
   const [loadingState, setLoadingState] = useState<'idle' | 'loading' | 'finished'>('idle');
 
@@ -145,11 +144,9 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
       if (result.recommendations.length > 0) {
         const toolNames = result.recommendations.map(r => r.toolName);
         setComparedToolNames(toolNames);
-        setIsComparisonLoading(true);
         const comparisonInput: CompareToolsInput = { toolNames };
         const comparisonResult = await compareToolsAction(comparisonInput);
         setComparisonData(comparisonResult);
-        setIsComparisonLoading(false);
       }
     } catch (e: any) {
       setError(e.message || 'An unknown error occurred while fetching recommendations.');
@@ -186,6 +183,9 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
   };
   
   const handleComparisonToolChange = async (indexToChange: number, newToolValue: string) => {
+    mainContentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+    setLoadingState('loading'); // Use global loader
+
     const newToolLabel = automationToolOptions.find(opt => opt.value === newToolValue)?.label || newToolValue;
 
     // Create a new recommendations array with the updated tool
@@ -209,9 +209,8 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
     setComparedToolNames(newToolNames);
   
     // Fetch the new comparison data for the updated tool list
-    setIsComparisonLoading(true);
     setComparisonError(null);
-    setComparisonData(null);
+    setComparisonData(null); // Clear old data
 
     try {
       const input: CompareToolsInput = { toolNames: newToolNames };
@@ -226,7 +225,7 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
         variant: 'destructive',
       });
     } finally {
-      setIsComparisonLoading(false);
+      setLoadingState('finished'); // End global loader
     }
   };
   
@@ -260,7 +259,6 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
     setFilters(initialFilterValues);
     setComparedToolNames(defaultToolNames);
     setComparisonData(initialComparisonData);
-    setIsComparisonLoading(false);
   }, []);
 
   const recommendationsExist = recommendations.length > 0;
@@ -317,7 +315,6 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
                       toolNames={comparedToolNames}
                       allTools={automationToolOptions}
                       onToolChange={handleComparisonToolChange}
-                      isLoading={isComparisonLoading}
                     />
                   )}
                   
