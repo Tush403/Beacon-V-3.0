@@ -187,13 +187,31 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
   
   const handleComparisonToolChange = async (indexToChange: number, newToolValue: string) => {
     const newToolLabel = automationToolOptions.find(opt => opt.value === newToolValue)?.label || newToolValue;
-    const newToolNames = [...comparedToolNames];
-    newToolNames[indexToChange] = newToolLabel;
+
+    // Create a new recommendations array with the updated tool
+    const newRecommendations = [...recommendations];
+    const oldTool = newRecommendations[indexToChange];
+    newRecommendations[indexToChange] = {
+      toolName: newToolLabel,
+      score: oldTool.score, // Reuse the score of the tool being replaced for chart consistency
+      justification: 'Manually selected for detailed comparison.'
+    };
+    
+    // Update the recommendations state. This will update the RecommendationsDisplay and ROIChart.
+    setRecommendations(newRecommendations);
+    // Also update the tool analyses state for the new tool
+    if (!toolAnalyses[newToolLabel]) {
+      handleGetAnalysis(newToolLabel);
+    }
+
+    // Now update the comparison table itself.
+    const newToolNames = newRecommendations.map(r => r.toolName);
+    setComparedToolNames(newToolNames);
   
+    // Fetch the new comparison data for the updated tool list
     setIsComparisonLoading(true);
     setComparisonError(null);
     setComparisonData(null);
-    setComparedToolNames(newToolNames);
 
     try {
       const input: CompareToolsInput = { toolNames: newToolNames };
