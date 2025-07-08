@@ -112,6 +112,7 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
 
   const [year, setYear] = useState<number | null>(null);
   const mainContentRef = useRef<HTMLDivElement>(null);
+  const comparisonTableRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setYear(new Date().getFullYear());
@@ -183,7 +184,15 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
   };
   
   const handleComparisonToolChange = async (indexToChange: number, newToolValue: string) => {
-    mainContentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll the comparison table to the top of the visible area.
+    if (comparisonTableRef.current && mainContentRef.current) {
+      const topPosition = comparisonTableRef.current.offsetTop;
+      mainContentRef.current.scrollTo({
+        top: topPosition - 20, // 20px padding from the top
+        behavior: 'smooth'
+      });
+    }
+
     setLoadingState('loading'); // Use global loader
 
     const newToolLabel = automationToolOptions.find(opt => opt.value === newToolValue)?.label || newToolValue;
@@ -310,12 +319,14 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
                     </div>
                   )}
                   {!comparisonError && (
-                    <ToolComparisonTable 
-                      data={comparisonData} 
-                      toolNames={comparedToolNames}
-                      allTools={automationToolOptions}
-                      onToolChange={handleComparisonToolChange}
-                    />
+                    <div ref={comparisonTableRef}>
+                      <ToolComparisonTable 
+                        data={comparisonData} 
+                        toolNames={comparedToolNames}
+                        allTools={automationToolOptions}
+                        onToolChange={handleComparisonToolChange}
+                      />
+                    </div>
                   )}
                   
                   {recommendationsExist && (
