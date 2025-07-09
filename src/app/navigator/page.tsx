@@ -20,12 +20,13 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { BackToTopButton } from '@/components/beacon/BackToTopButton';
-import { AlertTriangle, Loader2 } from 'lucide-react';
+import { AlertTriangle, Loader2, Filter } from 'lucide-react';
 import { automationToolOptions } from '@/lib/tool-options';
 import { GlobalLoader } from '@/components/beacon/GlobalLoader';
 import { cn } from '@/lib/utils';
 import { EffortEstimationResultCard } from '@/components/beacon/EffortEstimationResultCard';
 import { localToolComparisonData, comparisonCriteriaOrder } from '@/lib/tool-comparison-data';
+import { Button } from '@/components/ui/button';
 
 
 // --- Pre-calculated Initial State for Instant Load ---
@@ -95,7 +96,7 @@ const initialComparisonData: CompareToolsOutput = {
 
 
 export default function NavigatorPage({ params, searchParams }: { params: any, searchParams: any }) {
-  const { setOpen, isMobile, setOpenMobile } = useSidebar();
+  const { setOpen, isMobile, setOpenMobile, state, toggleSidebar } = useSidebar();
   const [filters, setFilters] = useState<FilterCriteria | null>(initialFilterValues);
   const [recommendations, setRecommendations] = useState<ToolRecommendationItem[]>(defaultRecommendations);
   const [toolAnalyses, setToolAnalyses] = useState<Record<string, ToolAnalysisItem | null>>({});
@@ -373,6 +374,16 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
           </div>
         </SidebarInset>
       </div>
+      {!isMobile && state === 'collapsed' && (
+        <Button
+          variant="default"
+          className="fixed top-20 right-6 z-40 shadow-lg bg-gradient-from hover:bg-gradient-from/90 text-primary-foreground"
+          onClick={toggleSidebar}
+        >
+          <Filter className="mr-2 h-5 w-5" />
+          Filters
+        </Button>
+      )}
       <BackToTopButton />
     </>
   );

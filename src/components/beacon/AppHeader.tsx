@@ -19,7 +19,7 @@ import { useSidebar, SidebarTrigger } from '@/components/ui/sidebar';
 const RELEASE_NOTES_ACKNOWLEDGED_KEY = 'release_notes_acknowledged_v3.0';
 
 export function AppHeader() {
-  const { isMobile, state, toggleSidebar } = useSidebar();
+  const { isMobile } = useSidebar();
   const [theme, setTheme] = useState('light');
   const [showReleaseNotesDialog, setShowReleaseNotesDialog] = useState(false);
   const [isSearchDialogOpen, setSearchDialogOpen] = useState(false);
@@ -114,12 +114,6 @@ export function AppHeader() {
 
             {/* Right Side: Beacon Branding & Icons */}
             <div className="flex items-center gap-3 sm:gap-4 ml-auto">
-              {!isMobile && state === 'collapsed' && (
-                <Button variant="ghost" className="hover:bg-primary-foreground/10" onClick={toggleSidebar}>
-                  <Filter className="h-5 w-5 mr-2" />
-                  Filters
-                </Button>
-              )}
               <h2 className="text-lg md:text-xl font-headline font-semibold">
                 Beacon
               </h2>
