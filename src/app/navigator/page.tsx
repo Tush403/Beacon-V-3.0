@@ -17,6 +17,7 @@ import {
   Sidebar, 
   SidebarContent, 
   SidebarInset,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { BackToTopButton } from '@/components/beacon/BackToTopButton';
 import { AlertTriangle, Loader2 } from 'lucide-react';
@@ -94,6 +95,7 @@ const initialComparisonData: CompareToolsOutput = {
 
 
 export default function NavigatorPage({ params, searchParams }: { params: any, searchParams: any }) {
+  const { setOpen, isMobile, setOpenMobile } = useSidebar();
   const [filters, setFilters] = useState<FilterCriteria | null>(initialFilterValues);
   const [recommendations, setRecommendations] = useState<ToolRecommendationItem[]>(defaultRecommendations);
   const [toolAnalyses, setToolAnalyses] = useState<Record<string, ToolAnalysisItem | null>>({});
@@ -146,6 +148,11 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
 
 
   const handleFilterSubmit = async (data: FilterCriteria) => {
+    if (isMobile) {
+        setOpenMobile(false);
+    } else {
+        setOpen(false);
+    }
     mainContentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
     setLoadingState('loading');
     setError(null);
@@ -287,7 +294,7 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
     <>
       <GlobalLoader loadingState={loadingState} />
       <div className="flex flex-1 min-w-0">
-        <Sidebar className="border-r" collapsible="icon">
+        <Sidebar className="border-r" collapsible="offcanvas">
           <SidebarContent className="md:mt-16">
             <div className="px-4 pb-4">
               <FilterForm 

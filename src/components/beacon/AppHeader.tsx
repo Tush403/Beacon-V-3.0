@@ -1,8 +1,9 @@
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link'; // Import Link
-import { CogIcon, Mail, Moon, Search, Library, Sun } from 'lucide-react';
+import { CogIcon, Mail, Moon, Search, Library, Sun, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ReleaseNotesDialog } from '@/components/beacon/ReleaseNotesDialog';
 import { ToolSearchDialog } from '@/components/beacon/ToolSearchDialog';
@@ -18,7 +19,7 @@ import { useSidebar, SidebarTrigger } from '@/components/ui/sidebar';
 const RELEASE_NOTES_ACKNOWLEDGED_KEY = 'release_notes_acknowledged_v3.0';
 
 export function AppHeader() {
-  const { isMobile } = useSidebar();
+  const { isMobile, state } = useSidebar();
   const [theme, setTheme] = useState('light');
   const [showReleaseNotesDialog, setShowReleaseNotesDialog] = useState(false);
   const [isSearchDialogOpen, setSearchDialogOpen] = useState(false);
@@ -113,6 +114,14 @@ export function AppHeader() {
 
             {/* Right Side: Beacon Branding & Icons */}
             <div className="flex items-center gap-3 sm:gap-4 ml-auto">
+              {!isMobile && state === 'collapsed' && (
+                <SidebarTrigger asChild>
+                  <Button variant="ghost" className="hover:bg-primary-foreground/10">
+                    <Filter className="h-5 w-5 mr-2" />
+                    Filters
+                  </Button>
+                </SidebarTrigger>
+              )}
               <h2 className="text-lg md:text-xl font-headline font-semibold">
                 Beacon
               </h2>
