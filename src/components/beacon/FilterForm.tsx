@@ -49,7 +49,6 @@ import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { automationToolOptions } from '@/lib/tool-options';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { EffortEstimationResultCard } from './EffortEstimationResultCard';
 import { useToast } from '@/hooks/use-toast';
 
 
@@ -79,8 +78,6 @@ interface FilterFormProps {
   isLoading: boolean;
   defaultValues?: Partial<FilterCriteria>;
   onEstimate: (input: EstimateEffortInput) => void;
-  estimationResult: EstimateEffortOutput | null;
-  onClearEstimation: () => void;
   onResetToDefaults: () => void;
 }
 
@@ -209,7 +206,7 @@ const ToolCombobox = ({
   );
 };
 
-export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, estimationResult, onClearEstimation, onResetToDefaults }: FilterFormProps) {
+export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, onResetToDefaults }: FilterFormProps) {
   const form = useForm<FilterFormValues>({
     resolver: zodResolver(filterSchema),
     defaultValues: { ...defaultFormValues, ...defaultValues },
@@ -387,12 +384,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-2 pt-4 pb-4 space-y-4">
-              {estimationResult ? (
-                <EffortEstimationResultCard 
-                  estimationResult={estimationResult}
-                  onClose={onClearEstimation}
-                />
-              ) : (
+              
                 <>
                   <p className="text-xs text-muted-foreground">
                     Provide project details to get an effort estimation.
@@ -526,7 +518,7 @@ export function FilterForm({ onSubmit, isLoading, defaultValues, onEstimate, est
                     </Button>
                   </div>
                 </>
-              )}
+              
             </AccordionContent>
           </AccordionItem>
         </Accordion>

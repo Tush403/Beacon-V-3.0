@@ -96,7 +96,7 @@ const initialComparisonData: CompareToolsOutput = {
 
 
 export default function NavigatorPage({ params, searchParams }: { params: any, searchParams: any }) {
-  const { setOpen, isMobile, setOpenMobile, state, toggleSidebar } = useSidebar();
+  const { isMobile, toggleSidebar, state } = useSidebar();
   const [filters, setFilters] = useState<FilterCriteria | null>(initialFilterValues);
   const [recommendations, setRecommendations] = useState<ToolRecommendationItem[]>(defaultRecommendations);
   const [toolAnalyses, setToolAnalyses] = useState<Record<string, ToolAnalysisItem | null>>({});
@@ -149,11 +149,7 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
 
 
   const handleFilterSubmit = async (data: FilterCriteria) => {
-    if (isMobile) {
-        setOpenMobile(false);
-    } else {
-        setOpen(false);
-    }
+    toggleSidebar();
     mainContentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
     setLoadingState('loading');
     setError(null);
@@ -303,8 +299,6 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
                 isLoading={isLoading}
                 defaultValues={initialFilterValues}
                 onEstimate={handleEstimateSubmit}
-                estimationResult={effortEstimationResult}
-                onClearEstimation={() => setEffortEstimationResult(null)}
                 onResetToDefaults={loadDefaultResults}
               />
             </div>
@@ -385,6 +379,10 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
         </Button>
       )}
       <BackToTopButton />
+      <EffortEstimationResultCard 
+        estimationResult={effortEstimationResult}
+        onClose={() => setEffortEstimationResult(null)}
+      />
     </>
   );
 }
