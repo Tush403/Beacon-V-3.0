@@ -25,7 +25,8 @@ export function EffortEstimationResultCard({ estimationResult, onClose }: Effort
             AI Effort Estimation Result
           </DialogTitle>
           <DialogDescription>
-            Confidence Score: <span className="font-semibold text-foreground">{estimationResult.confidenceScore}%</span>
+            A "Person-Day" is the amount of work one person can do in a single day.
+            Your confidence score in this estimate is <span className="font-semibold text-foreground">{estimationResult.confidenceScore}%</span>.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
