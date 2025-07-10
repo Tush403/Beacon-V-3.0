@@ -111,7 +111,7 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
 
   const { toast } = useToast();
 
-  const [effortEstimationResult, setEffortEstimationResult] = useState<EstimateEffortOutput | null>(null);
+  const [estimationDisplayData, setEstimationDisplayData] = useState<{ result: EstimateEffortOutput; qaTeamSize: number; } | null>(null);
 
   const [year, setYear] = useState<number | null>(null);
   const mainContentRef = useRef<HTMLDivElement>(null);
@@ -157,7 +157,7 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
     setToolAnalyses({});
     setComparisonData(null);
     setComparisonError(null);
-    setEffortEstimationResult(null); // Clear estimation on new filter
+    setEstimationDisplayData(null); // Clear estimation on new filter
     
     try {
       const result = await recommendToolsAction(data);
@@ -254,10 +254,10 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
   
   const handleEstimateSubmit = async (input: EstimateEffortInput) => {
     setLoadingState('loading');
-    setEffortEstimationResult(null);
+    setEstimationDisplayData(null);
     try {
       const result = await estimateEffortAction(input);
-      setEffortEstimationResult(result);
+      setEstimationDisplayData({ result, qaTeamSize: input.qaTeamSize || 1 });
     } catch (e: any) {
       toast({
         title: 'Estimation Error',
@@ -275,7 +275,7 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
     setError(null);
     setToolAnalyses({});
     setComparisonError(null);
-    setEffortEstimationResult(null);
+    setEstimationDisplayData(null);
     
     // Reset all state to the pre-calculated defaults synchronously
     setRecommendations(defaultRecommendations);
@@ -380,8 +380,8 @@ export default function NavigatorPage({ params, searchParams }: { params: any, s
       )}
       <BackToTopButton />
       <EffortEstimationResultCard 
-        estimationResult={effortEstimationResult}
-        onClose={() => setEffortEstimationResult(null)}
+        estimationData={estimationDisplayData}
+        onClose={() => setEstimationDisplayData(null)}
       />
     </>
   );

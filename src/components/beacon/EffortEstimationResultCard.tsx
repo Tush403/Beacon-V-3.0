@@ -5,40 +5,53 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Button } from '@/components/ui/button';
 import { Calculator } from 'lucide-react';
 import type { EstimateEffortOutput } from '@/types';
+import { useMemo } from 'react';
 
 interface EffortEstimationResultCardProps {
-  estimationResult: EstimateEffortOutput | null;
+  estimationData: { result: EstimateEffortOutput; qaTeamSize: number; } | null;
   onClose: () => void;
 }
 
-export function EffortEstimationResultCard({ estimationResult, onClose }: EffortEstimationResultCardProps) {
-  if (!estimationResult) {
+export function EffortEstimationResultCard({ estimationData, onClose }: EffortEstimationResultCardProps) {
+  const calculatedDays = useMemo(() => {
+    if (!estimationData) return 0;
+    const { result, qaTeamSize } = estimationData;
+    if (qaTeamSize > 0) {
+      return (result.estimatedEffortDays / qaTeamSize).toFixed(1);
+    }
+    return result.estimatedEffortDays.toFixed(1);
+  }, [estimationData]);
+
+  if (!estimationData) {
     return null;
   }
+  
+  const { result, qaTeamSize } = estimationData;
 
   return (
-    <Dialog open={!!estimationResult} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="sm:max-w-lg">
+    <Dialog open={!!estimationData} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl font-headline text-foreground">
             <Calculator className="h-6 w-6 text-foreground" />
-            AI Effort Estimation Result
+            AI Effort Estimation
           </DialogTitle>
           <DialogDescription>
-            A "Person-Day" is the amount of work one person can do in a single day.
-            Your confidence score in this estimate is <span className="font-semibold text-foreground">{estimationResult.confidenceScore}%</span>.
+            This AI-powered estimate is based on the project details you provided. Your confidence score is <span className="font-semibold text-foreground">{result.confidenceScore}%</span>.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div className="flex flex-col items-center justify-center text-center p-4 bg-muted/50 rounded-lg">
-            <p className="text-sm font-medium text-foreground">Estimated Project Effort</p>
-            <p className="text-5xl font-bold text-primary my-1">{estimationResult.estimatedEffortDays}</p>
-            <p className="text-sm text-muted-foreground">Person-Days</p>
+            <p className="text-sm font-medium text-foreground">Estimated Project Duration</p>
+            <p className="text-5xl font-bold text-primary my-1">{calculatedDays}</p>
+            <p className="text-sm text-muted-foreground">
+              Days (based on a team of {qaTeamSize} {qaTeamSize === 1 ? 'engineer' : 'engineers'})
+            </p>
           </div>
           <div className="space-y-2">
             <h4 className="font-semibold text-base">Explanation</h4>
             <p className="text-sm text-muted-foreground whitespace-pre-line border bg-muted/20 p-3 rounded-md">
-              {estimationResult.explanation}
+              {result.explanation}
             </p>
           </div>
         </div>
