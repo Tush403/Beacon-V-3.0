@@ -16,9 +16,11 @@ export function EffortEstimationResultCard({ estimationData, onClose }: EffortEs
   const calculatedDays = useMemo(() => {
     if (!estimationData) return 0;
     const { result, qaTeamSize } = estimationData;
+    // Handle division by zero or invalid qaTeamSize
     if (qaTeamSize > 0) {
       return (result.estimatedEffortDays / qaTeamSize).toFixed(1);
     }
+    // If team size is 0 or not provided, return the raw person-days as the duration for a single person.
     return result.estimatedEffortDays.toFixed(1);
   }, [estimationData]);
 
@@ -27,10 +29,11 @@ export function EffortEstimationResultCard({ estimationData, onClose }: EffortEs
   }
   
   const { result, qaTeamSize } = estimationData;
+  const teamSizeForDisplay = qaTeamSize > 0 ? qaTeamSize : 1;
 
   return (
     <Dialog open={!!estimationData} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl font-headline text-foreground">
             <Calculator className="h-6 w-6 text-foreground" />
@@ -45,7 +48,7 @@ export function EffortEstimationResultCard({ estimationData, onClose }: EffortEs
             <p className="text-sm font-medium text-foreground">Estimated Project Duration</p>
             <p className="text-5xl font-bold text-primary my-1">{calculatedDays}</p>
             <p className="text-sm text-muted-foreground">
-              Days (based on a team of {qaTeamSize} {qaTeamSize === 1 ? 'engineer' : 'engineers'})
+              Days (based on a team of {teamSizeForDisplay} {teamSizeForDisplay === 1 ? 'engineer' : 'engineers'})
             </p>
           </div>
           <div className="space-y-2">
