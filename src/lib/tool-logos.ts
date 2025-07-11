@@ -35,6 +35,7 @@ export const toolLogos: Record<string, string> = {
   'perfecto': '/logos/Perfecto.png',
   'percy': '/logos/Percy.png',
   'playwright': '/logos/Playwright.png',
+  'postman': '/logos/Postman.png',
   'puppeteer': '/logos/Puppeteer.png',
   'ranorex studio': '/logos/Ranorex Studio.png',
   'reflect': '/logos/Reflect.png',
