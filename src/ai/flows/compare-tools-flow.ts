@@ -52,29 +52,29 @@ const prompt = ai.definePrompt({
 
 If "ZeTA Automation" is one of the tools, use the following information as the primary source of truth for its comparison points:
 - Tool Overview: A unified, open-source automation framework for high reusability and comprehensive test coverage across multiple application layers.
-- Initial Setup Time: 2-4 days; framework setup and environment configuration.
-- Maintenance Overhead: Low; utility-driven layers minimize script breakage.
-- Test Creation Speed: High; pre-built templates accelerate authoring.
-- Script Reusability: High; shared libraries and config-driven design.
-- Parallel Execution Support: Excellent; native CI integration for parallel runs.
-- Test Case Creation Effort: Medium; template-based creation simplifies process.
-- Skill Requirement: Moderate; Java and Maven knowledge preferred.
-- Overall Automation Coverage: Very High; unified UI, API, DB, and Security.
-- Total Cost of Ownership: Low; open-source, requires internal infrastructure.
+- Initial Setup Time: 2-4 days; framework setup.
+- Maintenance Overhead: Low; utility-driven layers.
+- Test Creation Speed: High; pre-built templates.
+- Script Reusability: High; shared libraries.
+- Parallel Execution Support: Excellent; native CI integration.
+- Test Case Creation Effort: Medium; template-based.
+- Skill Requirement: Moderate; Java & Maven.
+- Overall Automation Coverage: Very High; UI, API, DB, Security.
+- Total Cost of Ownership: Low; open-source.
 
 If "Functionize" is one of the tools, use the following as the primary source of truth for its comparison points:
 - Tool Overview: An AI-powered testing platform for web applications that automates test creation and maintenance.
-- Initial Setup Time: < 1 day; cloud-based, no local setup needed.
-- Maintenance Overhead: Very Low; AI-powered self-healing adapts to UI changes.
-- Test Creation Speed: Very High; uses natural language and visual tools.
-- Script Reusability: Moderate; promotes reusable test steps and flows.
-- Parallel Execution Support: Excellent; cloud infrastructure scales massively.
-- Test Case Creation Effort: Very Low; NLP & visual tools for test creation.
-- Skill Requirement: Low; no coding required for most tasks.
-- Overall Automation Coverage: High; primarily focuses on web UI & E2E.
-- Total Cost of Ownership: High; subscription-based SaaS model.
+- Initial Setup Time: < 1 day; cloud-based.
+- Maintenance Overhead: Very Low; AI self-healing.
+- Test Creation Speed: Very High; NLP & visual tools.
+- Script Reusability: Moderate; reusable steps/flows.
+- Parallel Execution Support: Excellent; scalable cloud.
+- Test Case Creation Effort: Very Low; NLP & visual tools.
+- Skill Requirement: Low; no coding required.
+- Overall Automation Coverage: High; web UI & E2E focus.
+- Total Cost of Ownership: High; SaaS subscription.
 
-Provide a detailed comparison based on these criteria. For each criterion, provide a concise but informative summary (around 10-15 words) for each tool. The content should be suitable for a table cell but provide more detail than a single word.
+Provide a very brief comparison based on these criteria. For each criterion, provide a concise summary (around 5-10 words) for each tool. The content should be suitable for a table cell. Use short, punchy phrases and keywords rather than full sentences.
 - Initial Setup Time: Estimate the typical time in days or hours to get the tool running for a new project.
 - Maintenance Overhead: Assess the effort required to maintain tests, handle updates, and manage flakiness.
 - Test Creation Speed: How quickly can new tests be authored? Consider scripting vs. low-code/codeless approaches.

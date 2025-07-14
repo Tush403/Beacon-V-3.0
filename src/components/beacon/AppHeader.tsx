@@ -1,8 +1,9 @@
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link'; // Import Link
-import { CogIcon, Mail, Moon, Search, Library, Sun } from 'lucide-react';
+import { CogIcon, Mail, Moon, Search, Library, Sun, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ReleaseNotesDialog } from '@/components/beacon/ReleaseNotesDialog';
 import { ToolSearchDialog } from '@/components/beacon/ToolSearchDialog';

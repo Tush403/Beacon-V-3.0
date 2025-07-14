@@ -79,7 +79,7 @@ export function ROIChart({ recommendedTools }: ROIChartProps) {
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[350px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 5, right: 30, left: 0, bottom: 20 }}>
+            <LineChart data={chartData} margin={{ top: 5, right: 30, left: 15, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis 
                 dataKey="month" 
@@ -100,7 +100,7 @@ export function ROIChart({ recommendedTools }: ROIChartProps) {
                 stroke="hsl(var(--foreground))" 
                 fontSize={12}
               >
-                 <Label value="ROI (%)" angle={-90} position="insideLeft" dx={-5} fill="hsl(var(--foreground))" fontSize={12} />
+                 <Label value="ROI (%)" angle={-90} position="insideLeft" fill="hsl(var(--foreground))" fontSize={12} />
               </YAxis>
               <RechartsTooltip
                 cursor={{ stroke: 'hsl(var(--primary))', strokeDasharray: '3 3' }}
@@ -136,4 +136,3 @@ export function ROIChart({ recommendedTools }: ROIChartProps) {
     </Card>
   );
 }
-

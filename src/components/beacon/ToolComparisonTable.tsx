@@ -120,7 +120,10 @@ export function ToolComparisonTable({ data, toolNames, allTools, onToolChange, i
   };
 
   return (
-    <Card className="shadow-lg w-full">
+    <Card 
+        key={toolNames.join('-')} 
+        className="shadow-lg w-full animate-in fade-in-50 duration-500"
+    >
       <CardHeader className="flex flex-row items-start justify-between">
         <div>
             <CardTitle className="flex items-center gap-2 text-2xl font-headline text-foreground">

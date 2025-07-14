@@ -34,27 +34,31 @@ const prompt = ai.definePrompt({
     - Highly Complex: {{complexityHighlyComplex}}
   - Using Standard Framework: {{#if useStandardFramework}}Yes{{else}}No{{/if}}
   - CI/CD Integrated: {{#if cicdPipelineIntegrated}}Yes{{else}}No{{/if}}
-  - QA Team Size (for potential parallel work, not overall project duration): {{qaTeamSize}}
+  - QA Team Size (for calculating final duration, not total person-days): {{qaTeamSize}}
   - Project Description: {{#if projectDescription}}{{projectDescription}}{{else}}No additional project description provided.{{/if}}
 
-  Considerations:
-  - Test case counts are primary drivers. Assign nominal days per complexity (e.g., Low: 0.05-0.1 days, Medium: 0.1-0.15 days, High: 0.15-0.25 days, Highly Complex: 0.25-0.4 days).
-  - If a specific automation tool is mentioned, and it's known for rapid development (e.g., codeless tools), adjust estimates slightly downwards. If it's known for complexity (e.g., requiring extensive setup), adjust slightly upwards. If 'None' or 'Undecided', assume a generic scripting tool.
-  - Using a standard framework generally speeds up development and maintenance.
-  - CI/CD integration might add some initial setup effort but is not the primary driver for test creation effort itself.
-  - QA team size might influence how quickly the work can be done if tasks are parallelizable, but the total person-days effort should be estimated first.
-  
-  Provide:
-  1. estimatedEffortDays: Your single, most likely estimate in person-days, presented as a precise number. If total test cases are zero, this must be 0.
-  2. explanation: A brief explanation of your reasoning, highlighting key factors.
-  3. confidenceScore: A score from 90 to 100 indicating your confidence in the estimate. If you cannot provide an estimate with at least 90% confidence, explain why in the explanation field but still provide your best possible single estimate.
-  
-  If the total number of test cases (sum of all complexities: low, medium, high, highly complex) is 0, then estimatedEffortDays must be 0, and the explanation should state that no test cases were provided.
-  The estimate should be purely for the automation effort itself (design, scripting, execution, initial debugging). Do not include environment setup, long-term maintenance, or extensive documentation writing unless implied by standard framework usage.
-  Be realistic and base your estimate on common industry experiences.
+  Follow these steps for your calculation and explanation:
+  1.  **Calculate Base Estimate**: Use the following multipliers for test case complexities to get a base person-day estimate. Show this calculation.
+      - Low: 0.06 days/case
+      - Medium: 0.12 days/case
+      - High: 0.2 days/case
+      - Highly Complex: 0.3 days/case
+  2.  **Apply Tool-Specific Adjustments**:
+      - If "Functionize" is the tool, apply a 15% reduction to the base estimate for its AI efficiency. State this adjustment clearly.
+      - If "ZeTA Automation" is the tool, apply a 10% reduction for its template-driven approach. State this adjustment.
+      - For other known script-heavy tools (Selenium, Playwright, Cypress), make no adjustment to the base estimate.
+  3.  **Apply Framework/CI-CD Adjustments**:
+      - If 'useStandardFramework' is true, apply an additional 5% reduction to the current estimate. State this.
+      - If 'cicdPipelineIntegrated' is true, add a fixed 2 person-days for initial setup overhead. State this.
+  4.  **Final Estimate & Explanation**: Sum all calculations to get the final 'estimatedEffortDays'. The explanation must clearly walk through each step of the calculation (Base Estimate, Tool Adjustment, Framework/CI-CD adjustments) to arrive at the final number. Round the final person-day estimate to two decimal places.
+  5.  **Confidence Score**: Provide a confidence score between 90-100. Base confidence on how many parameters were provided. If a tool and all complexities are given, confidence should be high (95-98%).
+
+  If the total number of test cases (sum of all complexities) is 0, then 'estimatedEffortDays' must be 0, and the explanation should state that no test cases were provided. The confidence score in this case should be 100.
+
+  The final 'estimatedEffortDays' is the key output. The explanation should be a transparent breakdown of how you reached it. Do not factor the qaTeamSize into the final 'estimatedEffortDays' output; it's for context only.
   `,
   config: {
-    temperature: 0.2, // Lower temperature for more deterministic and precise estimates
+    temperature: 0.1, // Very low temperature for consistent, deterministic calculations
   }
 });
 
@@ -65,10 +69,6 @@ const estimateEffortFlow = ai.defineFlow(
     outputSchema: EstimateEffortOutputSchema,
   },
   async (input) => {
-    // Business logic to handle zero test cases is now in the action wrapper (actions.ts)
-    // for better separation of concerns and to handle undefined inputs before Zod defaults.
-    // The prompt is still robust enough to handle a zero-case if called directly.
-    
     const {output} = await prompt(input);
     if (!output) {
         throw new Error("AI failed to generate an effort estimate.");
